@@ -5,6 +5,9 @@ __pycache__/
 
 # Data folder
 data/
+test/
+models/
+checkpoints/
 
 # C extensions
 *.so

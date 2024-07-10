@@ -1,14 +1,20 @@
 import os
+import sys
 import pandas as pd
-from valentine.metrics import F1Score, PrecisionTopNPercent
-from valentine import valentine_match
-from valentine.algorithms import JaccardDistanceMatcher, DistributionBased, Coma, Cupid, SimilarityFlooding
-from valentine.algorithms import schema_only_algorithms, instance_only_algorithms, schema_instance_algorithms
-import pprint
 import csv
 import time
 import datetime
-pp = pprint.PrettyPrinter(indent=4, sort_dicts=False)
+
+from valentine import valentine_match
+
+project_path = os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.join(project_path))
+
+from algorithms.schema_matching.additional_metrics import RecallAtTopK
+import algorithms.schema_matching.cl.cl as cl
+import algorithms.schema_matching.era.era as era
+
 
 current_dir = os.getcwd()
 GDC_DIR = os.path.join(current_dir,  'data', 'gdc')
@@ -17,30 +23,19 @@ GDC_GT_DIR = os.path.join(GDC_DIR, 'ground-truth')
 GDC_DATA_DIR = os.path.join(GDC_DIR, 'source-tables')
 
 RESULT_FOLDER = os.path.join(GDC_DIR, 'results')
+EXPERIMENT_NAME = 'gdc_recallAtK_matching'
 RESULT_FILE = os.path.join(
-    RESULT_FOLDER, 'macher_results_' + datetime.datetime.now().strftime("%Y%m%d%H%M%S") + '.csv')
+    RESULT_FOLDER, EXPERIMENT_NAME + '_results_' + datetime.datetime.now().strftime("%Y%m%d%H%M%S") + '.csv')
 
-target_files = ['Clark.csv']
+target_files = ['Dou.csv']
+
+TOP_K = 20
 
 matchers = {
-    # 'Jaccard' : JaccardDistanceMatcher(),
-    # 'DistributionBased': DistributionBased(),
-    'Coma': Coma(),
-    # 'ComaInstances': Coma(use_instances=True),
-    # 'Cupid': Cupid(),
-    # 'SimilarityFlooding': SimilarityFlooding(),
+    'ContrastiveLearning' : cl.CLMatcher(model_name='cl-reducer-v0.1', top_k=TOP_K),
+    'EmbedRetrieveAlignTop20_MP': era.EmbedRetrieveAlign(model_name='all-mpnet-base-v2', top_k=TOP_K),
+    # 'EmbedRetrieveAlignTop20_Mini': era.EmbedRetrieveAlign(model_name='all-MiniLM-L12-v2', top_k=TOP_K)
 }
-
-
-def get_matcher_type(matcher):
-    if matcher in schema_only_algorithms:
-        return 'Schema'
-    elif matcher in instance_only_algorithms:
-        return 'Instance'
-    elif matcher in schema_instance_algorithms:
-        return 'SchemaInstance'
-    else:
-        return 'Unknown'
 
 
 def record_result(result):
@@ -50,18 +45,16 @@ def record_result(result):
 
 
 def create_result_file():
-
     if not os.path.exists(RESULT_FOLDER):
         os.makedirs(RESULT_FOLDER)
 
     with open(RESULT_FILE, 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['Matcher', 'MatcherType',  'Filename', 'GTSize', 'Precision', 'F1Score', 'Recall',
-                        'RecallAtSizeOfGroundtruth', 'PrecisionTop10Percent', 'Runtime (s)'])
+        writer.writerow(['Matcher', 'Filename', 'GTruthSize', 'RecallAtK1', 'RecallAtK5',
+                        'RecallAtK10', 'RecallAtK20',  'Runtime (s)'])
 
 
 def evaluate_matchers_on_gdc():
-
     print("Evaluating matchers on GDC dataset")
 
     create_result_file()
@@ -75,14 +68,12 @@ def evaluate_matchers_on_gdc():
             continue
 
         if os.path.isfile(os.path.join(GDC_GT_DIR, filename)):
-
             gt_df = pd.read_csv(os.path.join(GDC_GT_DIR, filename))
             ground_truth = list(gt_df.itertuples(index=False, name=None))
 
             df_input = pd.read_csv(os.path.join(GDC_DATA_DIR, filename))
 
             for matcher_name, matcher in matchers.items():
-
                 print("Running ", matcher_name, ' on ', filename)
 
                 start_time = time.time()
@@ -90,21 +81,26 @@ def evaluate_matchers_on_gdc():
                 end_time = time.time()
                 runtime = end_time - start_time
 
-                metrics = matches.get_metrics(ground_truth)
+                # Calculate RecallAtK for k=1, k=5, k=10, k=20
+                recall_at_k1 = RecallAtTopK(1).apply(matches, ground_truth)
+                recall_at_k5 = RecallAtTopK(5).apply(matches, ground_truth)
+                recall_at_k10 = RecallAtTopK(10).apply(matches, ground_truth)
+                recall_at_k20 = RecallAtTopK(20).apply(matches, ground_truth)
+
+                # Record results
                 result = [
                     matcher_name,
-                    get_matcher_type(type(matcher).__name__),
                     filename,
                     len(ground_truth),
-                    metrics['Precision'],
-                    metrics['F1Score'],
-                    metrics['Recall'],
-                    metrics['RecallAtSizeofGroundTruth'],
-                    metrics['PrecisionTop10Percent'],
+                    recall_at_k1,
+                    recall_at_k5,
+                    recall_at_k10,
+                    recall_at_k20,
                     runtime
                 ]
-
                 record_result(result)
+                print(f"Recall at K1: {recall_at_k1}, K5: {recall_at_k5}, K10: {recall_at_k10}, K20: {recall_at_k20}")
+                
 
 
 def main():
