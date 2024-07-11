@@ -14,6 +14,7 @@ sys.path.append(os.path.join(project_path))
 from algorithms.schema_matching.additional_metrics import RecallAtTopK
 import algorithms.schema_matching.cl.cl as cl
 import algorithms.schema_matching.era.era as era
+import algorithms.schema_matching.era.table2text as table2text
 
 
 current_dir = os.getcwd()
@@ -27,13 +28,16 @@ EXPERIMENT_NAME = 'gdc_recallAtK_matching'
 RESULT_FILE = os.path.join(
     RESULT_FOLDER, EXPERIMENT_NAME + '_results_' + datetime.datetime.now().strftime("%Y%m%d%H%M%S") + '.csv')
 
-target_files = ['Dou.csv']
+target_files = ['Gilette.csv']
 
 TOP_K = 20
 
+complexTransformer = table2text.Dataset2Text(num_context_columns=0, num_context_rows=0, col_summary_impl=table2text.ComplexColumnSummary())
+
 matchers = {
     'ContrastiveLearning' : cl.CLMatcher(model_name='cl-reducer-v0.1', top_k=TOP_K),
-    'EmbedRetrieveAlignTop20_MP': era.EmbedRetrieveAlign(model_name='all-mpnet-base-v2', top_k=TOP_K),
+    # 'EmbedRetrieveAlignTop20_MP': era.EmbedRetrieveAlign(model_name='all-mpnet-base-v2', top_k=TOP_K),
+    'ComplexEmbedRetrieveAlignTop20_MP': era.EmbedRetrieveAlign(model_name='all-mpnet-base-v2', top_k=TOP_K, column_transformer=complexTransformer)
     # 'EmbedRetrieveAlignTop20_Mini': era.EmbedRetrieveAlign(model_name='all-MiniLM-L12-v2', top_k=TOP_K)
 }
 
@@ -59,8 +63,11 @@ def evaluate_matchers_on_gdc():
 
     create_result_file()
 
+    # gdc_table = pd.read_csv(os.path.join(
+    #     GDC_DIR, 'target-tables',  'gdc_table.csv'))
     gdc_table = pd.read_csv(os.path.join(
         GDC_DIR, 'target-tables',  'gdc_table.csv'))
+    
 
     for filename in os.listdir(GDC_GT_DIR):
 
@@ -72,6 +79,7 @@ def evaluate_matchers_on_gdc():
             ground_truth = list(gt_df.itertuples(index=False, name=None))
 
             df_input = pd.read_csv(os.path.join(GDC_DATA_DIR, filename))
+            
 
             for matcher_name, matcher in matchers.items():
                 print("Running ", matcher_name, ' on ', filename)
