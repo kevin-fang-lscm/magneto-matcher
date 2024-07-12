@@ -37,16 +37,14 @@ class NameAndValueSampleColumnSummary(ColumnSummary):
             col_type = ""
 
         col_values = np.array(col_values)
-        summary = f"{col_name} {col_type} attribute of {
-            table_name} table, " if table_name else f"{col_name} {col_type} attribute, "
+        summary = f"{col_name} {col_type} attribute of {table_name} table, " if table_name else f"{col_name} {col_type} attribute, "
 
         unique_vals = pd.Series(col_values).nunique()
         total_vals = len(col_values)
         if (unique_vals <= DEFAULT_VALUE_SAMPLE_SIZE):
             chosen_val = list(set(col_values))
             chosen_val = [trim_string(val) for val in chosen_val]
-            summary += f"with unique values: {
-                ', '.join(chosen_val)}"
+            summary += f"with unique values: {', '.join(chosen_val)}"
         else:
             random_sample = random.sample(list(col_values), min(
                 DEFAULT_VALUE_SAMPLE_SIZE, total_vals))
@@ -75,8 +73,7 @@ class ComplexColumnSummary(ColumnSummary):
         # Basic statistics
         text += f"Number of Rows: {len(col_values)}\n"
         text += f"Number of Unique Values: {column.nunique()}\n"
-        text += f"Percentage of Missing Values: {
-            (column.isnull().sum() / len(column)) * 100:.2f}%\n"
+        text += f"Percentage of Missing Values: {(column.isnull().sum() / len(column)) * 100:.2f}%\n"
 
         unique_vals = pd.Series(col_values).nunique()
         total_vals = len(col_values)
@@ -91,8 +88,7 @@ class ComplexColumnSummary(ColumnSummary):
             chosen_val = [trim_string(val) for val in chosen_val]
 
         # Sample values
-        text += f"Sample Values: {', '.join(map(str,
-                                            chosen_val))}\n"
+        text += f"Sample Values: {', '.join(map(str,chosen_val))}\n"
 
         # Unique values (for object and category types)
         if col_type == 'object' or col_type == 'string':
@@ -104,8 +100,7 @@ class ComplexColumnSummary(ColumnSummary):
         # Numerical statistics (for numeric types)
         if pd.api.types.is_numeric_dtype(dtype):
             # print(col_values)
-            text += f"Min: {column.min()}, Max: {column.max()
-                                                 }, Mean: {column.mean():.2f}, Median: {column.median()}\n"
+            text += f"Min: {column.min()}, Max: {column.max()}, Mean: {column.mean(): .2f}, Median: {column.median()}\n"
             text += f"Standard Deviation: {column.std():.2f}\n"
 
             # Add quantile information
@@ -114,8 +109,7 @@ class ComplexColumnSummary(ColumnSummary):
 
         # Date statistics (for datetime types)
         if pd.api.types.is_datetime64_any_dtype(dtype):
-            text += f"Earliest Date: {column.min()
-                                      }, Latest Date: {column.max()}\n"
+            text += f"Earliest Date: {column.min()}, Latest Date: {column.max()}\n"
             text += f"Date Range: {(column.max() - column.min()).days} days\n"
 
         return text.strip()
@@ -132,12 +126,12 @@ class Column2TextOrganizer(ABC):
 
 class DefaultColumn2TextOrganizer(Column2TextOrganizer):
     def transform(self, df, col_name, col_values, context_rows, context_columns, col_summary_impl, table_name=None):
-        col_text = col_summary_impl.summarize(df, col_name, col_values, table_name)
+        col_text = col_summary_impl.summarize(
+            df, col_name, col_values, table_name)
         if context_rows and context_columns:
             row_texts = []
             for i in range(len(context_rows)):
-                row_values = [f"{context_columns[j]}: {trim_string(
-                    context_rows[i][j])}" for j in range(len(context_columns))]
+                row_values = [f"{context_columns[j]}: {trim_string(context_rows[i][j])}" for j in range(len(context_columns))]
                 # Include the value of the column in context
                 row_values.append(
                     f"{col_name}: {trim_string(col_values[i])}")
@@ -227,7 +221,8 @@ if __name__ == "__main__":
         'Column4': [10.1, 11.2, 12.3, 13.4, 14.5]
     }
 
-    dataset = Dataset2Text(num_context_columns=0, num_context_rows=0, col_summary_impl=ComplexColumnSummary())
+    dataset = Dataset2Text(num_context_columns=0, num_context_rows=0,
+                           col_summary_impl=ComplexColumnSummary())
 
     df = pd.DataFrame(data)
     dataset.transform(df)

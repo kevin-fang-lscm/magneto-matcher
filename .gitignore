@@ -8,6 +8,9 @@ data/
 test/
 models/
 checkpoints/
+mlruns/
+model/
+investigations/
 
 # C extensions
 *.so

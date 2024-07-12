@@ -12,20 +12,15 @@ from valentine import valentine_match
 
 
 class EmbedRetrieveAlign(BaseMatcher):
-    def __init__(self, column_transformer: Dataset2Text = Dataset2Text(num_context_columns=0, num_context_rows=0), model_name: str = 'all-mpnet-base-v2', top_k: int = 1):
+    def __init__(self, model_name: str, column_transformer: Dataset2Text = Dataset2Text(num_context_columns=0, num_context_rows=0),  top_k: int = 1):
         self.column_transformer = column_transformer
         self.top_k = top_k
-
+        print(f"Loading model '{model_name}'")
         try:
             # Try to load the model from sentence-transformers
             self.model = SentenceTransformer(model_name)
         except ValueError:
-            # If the model is not found in sentence-transformers, try to load it from disk
-            if os.path.exists(model_name):
-                self.model = SentenceTransformer(model_name)
-            else:
-                raise ValueError(
-                    f"Model '{model_name}' not found in sentence-transformers or on disk.")
+                raise ValueError(f"Model '{model_name}' not found in sentence-transformers or on disk.")
 
     def _get_column_embeddings(self, table: pd.DataFrame) -> Tuple[List[str], np.ndarray]:
         columns = table.columns

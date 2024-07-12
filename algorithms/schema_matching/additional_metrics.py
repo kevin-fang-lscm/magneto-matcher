@@ -47,4 +47,8 @@ class RecallAtTopK(Metric):
         tp = len(ground_truth_set.intersection(matches_set))
         recall = round((tp / len(ground_truth_set)), 3)
 
+        values_not_in_gt = ground_truth_set - matches_set
+        for v in values_not_in_gt:
+            print("Value not in gt: ", v)
+
         return recall
