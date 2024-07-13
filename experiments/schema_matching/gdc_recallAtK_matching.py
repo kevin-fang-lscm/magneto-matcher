@@ -38,7 +38,7 @@ complexTransformer = table2text.Dataset2Text(
     num_context_columns=0, num_context_rows=0, col_summary_impl=table2text.ComplexColumnSummary())
 
 matchers = {
-    'ContrastiveLearning' : cl.CLMatcher(model_name='cl-reducer-v0.1', top_k=TOP_K)
+    'ContrastiveLearning' : cl.CLMatcher(model_name='cl-reducer-v0.1', top_k=TOP_K),
     # 'EmbedRetrieveAlignTop20_MP': era.EmbedRetrieveAlign(model_name='all-mpnet-base-v2', top_k=TOP_K),
     # 'ComplexEmbedRetrieveAlignTop20_MP': era.EmbedRetrieveAlign(model_name='all-mpnet-base-v2', top_k=TOP_K, column_transformer=complexTransformer),
     # 'NewModelComplexEmbedRetrieveAlignTop20_MP': era.EmbedRetrieveAlign(model_name=MODEL_PATH, column_transformer=complexTransformer, top_k=TOP_K)
@@ -75,8 +75,8 @@ def evaluate_matchers_on_gdc():
 
     for filename in os.listdir(GDC_GT_DIR):
 
-        # if filename not in target_files:
-        #     continue
+        if filename not in target_files:
+            continue
 
         if os.path.isfile(os.path.join(GDC_GT_DIR, filename)):
             gt_df = pd.read_csv(os.path.join(GDC_GT_DIR, filename))
@@ -92,11 +92,35 @@ def evaluate_matchers_on_gdc():
                 end_time = time.time()
                 runtime = end_time - start_time
 
+                cols_in_gt =  set([x[0] for x in ground_truth])
+                matches_per_col = {}
+                for m in matches:
+                    source_col = m[0][1]
+                    if source_col not in matches_per_col:
+                        matches_per_col[source_col] = []
+                    matches_per_col[source_col].append(m)
+                for col in matches_per_col:
+                    if col not in cols_in_gt:
+                        continue
+                    mean_score = 0
+                    for v in matches_per_col[col]:
+                        print("Match: ", v, " Score: ", matches[v])
+                        mean_score += matches[v]
+                    mean_score = mean_score / len(matches_per_col[col])
+                    print("Mean score for column ", col, " is ", mean_score)
+                    print("Col in GT?", col in cols_in_gt)
+                    print("\n")
+                    
+
                 # # Calculate RecallAtK for k=1, k=5, k=10, k=20
                 # recall_at_k1 = RecallAtTopK(1).apply(matches, ground_truth)
                 # recall_at_k5 = RecallAtTopK(5).apply(matches, ground_truth)
                 # recall_at_k10 = RecallAtTopK(10).apply(matches, ground_truth)
                 recall_at_k20 = RecallAtTopK(20).apply(matches, ground_truth)
+                # recall_at_k40 = RecallAtTopK(40).apply(matches, ground_truth)
+
+                # print(
+                #     f"Recall at K1: {recall_at_k1}, K5: {recall_at_k5}, K10: {recall_at_k10}, K20: {recall_at_k20}, K40: {recall_at_k40}\n")
 
                 # # Record results
                 # result = [

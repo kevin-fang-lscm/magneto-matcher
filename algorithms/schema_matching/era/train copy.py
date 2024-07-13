@@ -4,13 +4,15 @@ import os
 import sys
 import random
 import pandas as pd
-import torch
+
 
 # project_path = os.path.dirname(os.path.dirname(
 #     os.path.dirname(os.path.abspath(__file__))))
 # sys.path.append(os.path.join(project_path, 'algorithms', 'schema_matching', 'era'))
 
 from table2text import Dataset2Text, ComplexColumnSummary
+from torch import cuda
+
 
 current_dir = os.getcwd()
 
@@ -37,6 +39,7 @@ class Dataset2TextTrainning(Dataset):
 
 
 def get_training_dataset(directory):
+
     dataTransformer = Dataset2Text(
         num_context_columns=0, num_context_rows=0, col_summary_impl=ComplexColumnSummary())
 
@@ -45,7 +48,9 @@ def get_training_dataset(directory):
     folder_list = [f.path for f in os.scandir(directory) if f.is_dir()]
     random.shuffle(folder_list)
 
+
     for folder_path in folder_list:
+
         df1 = pd.read_csv(os.path.join(folder_path, 'table_lhs.csv'))
         _, col2TextLhs = dataTransformer.transform(df1)
 
@@ -57,6 +62,7 @@ def get_training_dataset(directory):
         ground_truth_tuples = list(gt_df.itertuples(index=False, name=None))
 
         for gtTuple in ground_truth_tuples:
+            
             if gtTuple[0] not in col2TextLhs or gtTuple[1] not in col2TextRhs:
                 continue
 
@@ -77,24 +83,16 @@ def train_model(directory, model_path):
     # Define the loss function
     loss = losses.MultipleNegativesRankingLoss(model)
 
-    # Detect the device to use (MPS for Mac, CUDA for GPU, CPU as fallback)
-    if torch.cuda.is_available():
-        device = 'cuda'
-    elif torch.backends.mps.is_available():
-        device = 'mps'
-    else:
-        device = 'cpu'
-
-    print(f"Using device: {device}")
-    model.to(device)
-
     # Train the model using the fit method
+    device = 'cuda' if cuda.is_available() else 'cpu'
     model.fit(
         train_objectives=[(train_dataloader, loss)],
         epochs=10,  # Set the number of epochs
         warmup_steps=100,  # Number of warmup steps for learning rate scheduler
-        output_path=MODEL_PATH  # Directory to save the model
+        output_path=MODEL_PATH,  # Directory to save the model
+        device=device  # Specify the device to use
     )
+
 
 if __name__ == "__main__":
     train_model(TRAINDATA_DIR, MODEL_PATH)
