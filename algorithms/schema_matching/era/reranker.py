@@ -1,6 +1,5 @@
+import pandas as pd
 from typing import Dict, List, Tuple
-from valentine.algorithms.base_matcher import BaseMatcher
-from valentine.data_sources.base_table import BaseTable
 from valentine.algorithms.match import Match
 from abc import ABC, abstractmethod
 
@@ -9,7 +8,7 @@ from abc import ABC, abstractmethod
 
 class MatchReranker(ABC):
     @abstractmethod
-    def rerank_matches(self, source_input: BaseTable, target_input: BaseTable, matches: Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
+    def rerank_matches(self, source_input: pd.DataFrame, target_input: pd.DataFrame, matches: Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
         pass
 
 
@@ -22,11 +21,23 @@ class PKMatchReranker(MatchReranker):
                 approximate_keys.append(column)
         return approximate_keys
     # tries to find key columns in the source and target table, if they are found, they are added as a match
-    def rerank_matches(self, source_input: BaseTable, target_input: BaseTable, matches: Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
-        source_df = source_input.get_df()
-        target_df = target_input.get_df()
-
-        approximate_keys = self._find_approximate_keys(source_df)
-        print("Approximate keys in source table: ", approximate_keys)
+    def rerank_matches(self, source_input: pd.DataFrame, target_input: pd.DataFrame, matches: Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
         
+
+        approximate_keys = self._find_approximate_keys(source_input)
+        print("Approximate keys in source table: ", approximate_keys)
+
+
+class ZeroShotColumnClassificationReranker(MatchReranker):
+
+    def rerank_matches(self, source_input: pd.DataFrame, target_input: pd.DataFrame, matches: Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
+        
+
+        cols_in_matches = sorted(list(set([match[0][1] for match in matches.keys()])))
+
+        for col in cols_in_matches:
+            print("Column: ", col)
+            matches_for_col = {k[1][1]: v for k, v in matches.items() if k[0][1] == col}
+            print("\t Matches for column: ", matches_for_col)
+
 

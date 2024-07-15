@@ -59,3 +59,27 @@ class EmbedRetrieveAlign(BaseMatcher):
         matches = {k: v for k, v in matches.items() if v > 0.0}
 
         return matches
+
+class RerankEmbedRetrieveAlign(EmbedRetrieveAlign):
+    def __init__(self, model_name: str, column_transformer: Dataset2Text = Dataset2Text(num_context_columns=0, num_context_rows=0), top_k: int = 1, rerank_top_k: int = 1):
+        super().__init__(model_name, column_transformer, top_k)
+        self.rerank_top_k = rerank_top_k
+
+    def rerank_matches(self, matches: Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
+        reranked_matches = {}
+        for source_target, score in matches.items():
+            source_column, target_column = source_target
+            source_input_name, target_input_name = source_column[0], target_column[0]
+            source_column_name, target_column_name = source_column[1], target_column[1]
+
+            # Perform reranking step here
+            # ...
+
+            reranked_matches[source_target] = score
+
+        return reranked_matches
+
+    def get_matches(self, source_input: BaseTable, target_input: BaseTable) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
+        matches = super().get_matches(source_input, target_input)
+        reranked_matches = self.rerank_matches(matches)
+        return reranked_matches

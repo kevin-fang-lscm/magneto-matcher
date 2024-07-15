@@ -172,7 +172,7 @@ class Dataset2Text():
                  column2text_impl=DefaultColumn2TextOrganizer(),
                  choose_context_columns_impl=SamplingColumnContextSelector(),
                  choose_context_row_values_impl=SamplingRowContextSelector(),
-                 col_summary_impl=NameAndValueSampleColumnSummary(),
+                 col_summary_impl=ComplexColumnSummary(),
                  table_name=None):
 
         self.num_context_columns = num_context_columns

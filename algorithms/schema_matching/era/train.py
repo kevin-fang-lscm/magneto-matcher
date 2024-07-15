@@ -6,6 +6,8 @@ import random
 import pandas as pd
 import torch
 
+os.environ['PYTORCH_MPS_HIGH_WATERMARK_RATIO'] = '0.0'
+
 # project_path = os.path.dirname(os.path.dirname(
 #     os.path.dirname(os.path.abspath(__file__))))
 # sys.path.append(os.path.join(project_path, 'algorithms', 'schema_matching', 'era'))
@@ -74,7 +76,7 @@ def train_model(directory, model_path):
     train_dataloader = DataLoader(dataset, shuffle=True, batch_size=TRAIN_MINI_BATCH_SIZE, pin_memory=True)
     model = SentenceTransformer('all-mpnet-base-v2')
 
-    # Define the loss function
+    
     loss = losses.MultipleNegativesRankingLoss(model)
 
     # Detect the device to use (MPS for Mac, CUDA for GPU, CPU as fallback)
@@ -88,7 +90,7 @@ def train_model(directory, model_path):
     print(f"Using device: {device}")
     model.to(device)
 
-    # Train the model using the fit method
+    
     model.fit(
         train_objectives=[(train_dataloader, loss)],
         epochs=10,  # Set the number of epochs
