@@ -1,38 +1,35 @@
-import os
-import sys
-import pandas as pd
+from valentine import valentine_match
 import datetime
 import time
 import csv
+import pandas as pd
+import os
+import sys
 
-
-from valentine import valentine_match
 project_path = os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(os.path.join(project_path))
 
-from algorithms.schema_matching.topk.topk_metrics import RecallAtTopK
-import algorithms.schema_matching.topk.ccsm.ccsm as ccsm
-import algorithms.schema_matching.topk.cl.cl as cl
-import algorithms.schema_matching.topk.era.era as era
 
-TOP_K_LIST = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40, 45, 50]
-TOP_K = TOP_K_LIST[-1]
+import algorithms.schema_matching.cl.cl as cl
+import algorithms.schema_matching.ccsm.ccsm as ccsm
+
+
+
+
 
 
 def get_gdc_matchers():
     matchers = {}
 
-    matchers['ContrastiveLearning'] = cl.CLMatcher(
-        model_name='bdi-cl-v0.2', top_k=TOP_K)
 
-    matchers['CCSM'] = ccsm.CombinedColumnSimilarityMatcher(top_k=TOP_K)
+    # matchers['ContrastiveLearning'] = cl.CLMatcher(
+    #     model_name='cl-reducer-v0.1', top_k=1)
 
-    matchers['MPNetEmbedRetrieveAlign'] = era.EmbedRetrieveAlign(model_name='all-mpnet-base-v2', top_k=TOP_K)
+    matchers['CCSM'] = ccsm.CombinedColumnSimilarityMatcher()
+    
+    
 
-    curr_dir = os.getcwd()
-    gdc_model_path = os.path.join(curr_dir,  'model', 'fine_gdc')
-    matchers['FineTunedEmbedRetrieveAlign'] = era.EmbedRetrieveAlign(model_name=gdc_model_path, top_k=TOP_K)
 
     return matchers
 
@@ -49,7 +46,7 @@ def config_experiment_for_dataset(dataset):
 
     if dataset_name == 'gdc':
 
-        experiment_name = 'schema_matching_gdc_recallAtK'
+        experiment_name = 'schema_matching_gdc_one2oneMapping'
 
         data_dir = os.path.join(curr_dir,  'data', 'gdc')
 
@@ -65,8 +62,15 @@ def config_experiment_for_dataset(dataset):
         gt_dir = os.path.join(data_dir, 'ground-truth')
 
         for filename in os.listdir(gt_dir):
+
+            if filename != 'Krug.csv':
+                continue
+
+
             if filename == '.DS_Store':
                 continue
+
+
             gt_file_path = os.path.join(gt_dir, filename)
             if os.path.isfile(gt_file_path):
                 source_file_path = os.path.join(source_dir, filename)
@@ -84,8 +88,7 @@ def create_result_file():
         writer = csv.writer(file)
 
         header = ['Matcher', 'Filenames', 'GTruthSize']
-        for k in TOP_K_LIST:
-            header.append(f'RecallAtK{k}')
+        header.append(f'PrecisionAtGTSize')
         header.append('Runtime (s)')
         writer.writerow(header)
         print(f"Result file created at {result_file}")
@@ -121,19 +124,20 @@ def evaluate_matchers():
             end_time = time.time()
             runtime = end_time - start_time
 
-            result = [matcher_name, source_file_name +
-                      '_to_' + target_file_name, len(ground_truth)]
-            for k in TOP_K_LIST:
-                recall_at_k = RecallAtTopK(k).apply(matches, ground_truth)
-                result.append(recall_at_k)
-            result.append(runtime)
-            record_result(result)
+            metrics = matches.get_metrics(ground_truth)
+    
+            print(metrics)
+            
+
+            # result = [matcher_name, source_file_name +
+            #           '_to_' + target_file_name, len(ground_truth)]
+            
 
 
 def main():
-
+    
     config_experiment_for_dataset('gdc')
-
+    
     evaluate_matchers()
 
 

@@ -5,12 +5,11 @@ __pycache__/
 
 # Data folder
 data/
-test/
 models/
 checkpoints/
 mlruns/
 model/
-investigations/
+other_tests/
 
 # C extensions
 *.so

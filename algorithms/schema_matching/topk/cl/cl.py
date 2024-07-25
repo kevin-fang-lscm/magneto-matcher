@@ -22,9 +22,9 @@ from algorithms.download import get_cached_model_or_download
 class CLMatcher(BaseMatcher):
 
 
-#bdi-cl-v0.2
+# "bdi-cl-v0.2"
 # "cl-reducer-v0.1"
-    def __init__(self, model_name: str = "cl-reducer-v0.1", top_k=1):
+    def __init__(self, model_name: str = "bdi-cl-v0.2", top_k=1):
         model_path = get_cached_model_or_download(model_name)
         self.top_k = top_k
         self.api = ContrastiveLearningAPI(model_path=model_path, top_k=top_k)
@@ -33,7 +33,7 @@ class CLMatcher(BaseMatcher):
                     source_input: BaseTable,
                     target_input: BaseTable) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
        
-        print("Using this method")
+        
 
         dataset = source_input.get_df()
 

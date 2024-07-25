@@ -7,7 +7,7 @@ from typing import Dict, List, Tuple
 from valentine.algorithms.base_matcher import BaseMatcher
 from valentine.algorithms.match import Match
 from valentine.data_sources.base_table import BaseTable
-from algorithms.schema_matching.era.table2text import Dataset2Text
+from algorithms.schema_matching.topk.era.table2text import Dataset2Text
 from valentine import valentine_match
 
 

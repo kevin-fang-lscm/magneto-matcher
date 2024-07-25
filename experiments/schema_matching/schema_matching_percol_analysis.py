@@ -4,6 +4,7 @@ import pandas as pd
 import datetime
 import time
 import csv
+import warnings
 
 
 from valentine import valentine_match
@@ -16,9 +17,38 @@ import algorithms.schema_matching.topk.ccsm.ccsm as ccsm
 import algorithms.schema_matching.topk.cl.cl as cl
 import algorithms.schema_matching.topk.era.era as era
 
-TOP_K_LIST = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+TOP_K_LIST = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100]
+# TOP_K_LIST = [1, 2, 3, 10]
 TOP_K = TOP_K_LIST[-1]
 
+def infer_column_type(series):
+
+    
+    
+    
+    # Drop NaNs for type checking
+    non_null_series = series.dropna()
+
+    # Suppress warnings during type checks
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        
+        # Check if the series can be converted to numeric
+        try:
+            pd.to_numeric(non_null_series)
+            return 'numeric'
+        except ValueError:
+            pass
+
+        # Check if the series can be converted to datetime
+        try:
+            pd.to_datetime(non_null_series)
+            return 'date'
+        except ValueError:
+            pass
+
+    # If neither, return 'string'
+    return 'string'
 
 def get_gdc_matchers():
     matchers = {}
@@ -26,7 +56,7 @@ def get_gdc_matchers():
     matchers['ContrastiveLearning'] = cl.CLMatcher(
         model_name='bdi-cl-v0.2', top_k=TOP_K)
 
-    matchers['CCSM'] = ccsm.CombinedColumnSimilarityMatcher(top_k=TOP_K)
+    # matchers['CCSM'] = ccsm.CombinedColumnSimilarityMatcher(top_k=TOP_K)
 
     matchers['MPNetEmbedRetrieveAlign'] = era.EmbedRetrieveAlign(model_name='all-mpnet-base-v2', top_k=TOP_K)
 
@@ -49,7 +79,7 @@ def config_experiment_for_dataset(dataset):
 
     if dataset_name == 'gdc':
 
-        experiment_name = 'schema_matching_gdc_recallAtK'
+        experiment_name = 'schema_matching_precolposition_gdc'
 
         data_dir = os.path.join(curr_dir,  'data', 'gdc')
 
@@ -67,6 +97,10 @@ def config_experiment_for_dataset(dataset):
         for filename in os.listdir(gt_dir):
             if filename == '.DS_Store':
                 continue
+
+            # if filename != 'Krug.csv':
+            #     continue
+
             gt_file_path = os.path.join(gt_dir, filename)
             if os.path.isfile(gt_file_path):
                 source_file_path = os.path.join(source_dir, filename)
@@ -83,10 +117,7 @@ def create_result_file():
     with open(result_file, 'w', newline='') as file:
         writer = csv.writer(file)
 
-        header = ['Matcher', 'Filenames', 'GTruthSize']
-        for k in TOP_K_LIST:
-            header.append(f'RecallAtK{k}')
-        header.append('Runtime (s)')
+        header = ['Matcher', 'Source File', 'Target File', 'Source Column', 'Target Column', 'Data Type','TopK',  'Target Column Index']
         writer.writerow(header)
         print(f"Result file created at {result_file}")
 
@@ -121,13 +152,26 @@ def evaluate_matchers():
             end_time = time.time()
             runtime = end_time - start_time
 
-            result = [matcher_name, source_file_name +
-                      '_to_' + target_file_name, len(ground_truth)]
-            for k in TOP_K_LIST:
-                recall_at_k = RecallAtTopK(k).apply(matches, ground_truth)
-                result.append(recall_at_k)
-            result.append(runtime)
-            record_result(result)
+            #print(matches)
+            for source_col, target_col in ground_truth:
+                # print(source_col, target_col)
+                candidate_matches = [ (match[1][1],matches[match]) for match in matches if match[0][1] == source_col]
+                candidate_matches.sort(key=lambda x: x[1], reverse=True)
+
+                target_col_index = next((index for index, match in enumerate(candidate_matches) if match[0] == target_col), -1)
+
+                # print(candidate_matches)
+                # print(target_col_index)
+                # print('\n')
+
+                data_type = infer_column_type(source_df[source_col])
+
+                
+                result_line = [matcher_name, source_file_name, target_file_name, source_col, target_col, data_type, TOP_K, target_col_index]
+
+                record_result(result_line)
+                
+                
 
 
 def main():
