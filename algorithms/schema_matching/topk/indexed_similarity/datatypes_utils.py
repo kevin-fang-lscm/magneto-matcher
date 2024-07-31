@@ -29,6 +29,8 @@ NULL_REPRESENTATIONS = {
     "0",
     "other, specify",
     "other",
+    "exposure to secondhand smoke history not available",
+    "indeterminate",
     None,
     np.nan,
     pd.NaT,
@@ -39,7 +41,12 @@ NULL_REPRESENTATIONS = {
 BINARY_VALUES = {
     "yes", "no",
     "true", "false",
+    "t", "f", 
+    "y", "n",
     "1", "0",
+    "1.0", "0.0",
+    "1.00", "0.00",
+    "0.", "1.",
     "present", "absent",
     "positive", "negative",
     "detected", "not detected",
@@ -52,7 +59,10 @@ BINARY_VALUES = {
     "approved", "rejected",
     "included", "excluded",
     "passed", "failed",
-    "accepted", "denied"
+    "accepted", "denied", 
+    "smoker", "non-smoker",
+    "present", "not identified",
+    "no or minimal exposure to secondhand smoke"
 }
 
 
@@ -67,6 +77,15 @@ def is_binary(value):
         value = value.lower()
     return value in BINARY_VALUES
 
+def is_numeric_string(value):
+    value = str(value)
+    value = value.replace("<", "").replace(">", "").replace("=", "")
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
+
 # def clean_null_cells(df):
 #     return df.applymap(lambda x: None if is_null(x) else x)
 def clean_null_cells(df):
@@ -76,32 +95,44 @@ def clean_null_cells(df):
 
 def detect_column_type(col):
 
+    # print('\n')
+    # print(col)
+
     col = col[~col.apply(is_null)]
 
-    if pd.api.types.is_numeric_dtype(col) and set(col.unique()).issubset({0, 1}):
-        return 'binary'
+    if len(col.dropna()) == 0:
+        return "numeric"
+
+    if pd.api.types.is_numeric_dtype(col):
+        unique_values = set(col.dropna().unique())
+        unique_values_as_int = set(map(int, unique_values))
+        if unique_values_as_int.issubset({0, 1}):
+            return "binary"
+        
+    if col.apply(is_numeric_string).all():
+        return "numeric"
 
     unique_values = set([str(val).lower() for val in col.unique()])
 
     if len(unique_values) == 2 and all(is_binary(val) for val in unique_values):
-        return 'binary'
+        return "binary"
 
     if pd.api.types.is_numeric_dtype(col):
-        return 'numeric'
+        return "numeric"
 
-    return 'categorical'
+    return "categorical"
 
 
 # df = pd.DataFrame({
-#     'numeric_col': [1, 2, 3, 4],
-#     'binary_col': ['yes', 'no', 'yes', 'no'],
-#     'categorical_col': ['a', 'b', 'c', 'a'],
-#     'binary_numeric_col': [1, 0, 1, 0],
-#     'null_col': ['Not Reported', 'unknown', 'yes', 'nO']
+#     "numeric_col": [1, 2, 3, 4],
+#     "binary_col": ["yes", "no", "yes", "no"],
+#     "categorical_col": ["a", "b", "c", "a"],
+#     "binary_numeric_col": [1, 0, 1, 0],
+#     "null_col": ["Not Reported", "unknown", "yes", "nO"]
 # })
 
-# print(detect_column_type(df['numeric_col']))
-# print(detect_column_type(df['binary_col']))
-# print(detect_column_type(df['categorical_col']))
-# print(detect_column_type(df['binary_numeric_col']))
-# print(detect_column_type(df['null_col']))
+# print(detect_column_type(df["numeric_col"]))
+# print(detect_column_type(df["binary_col"]))
+# print(detect_column_type(df["categorical_col"]))
+# print(detect_column_type(df["binary_numeric_col"]))
+# print(detect_column_type(df["null_col"]))
