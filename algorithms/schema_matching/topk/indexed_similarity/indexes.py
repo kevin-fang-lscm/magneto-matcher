@@ -6,19 +6,21 @@ from transformers import AutoTokenizer, AutoModel
 import faiss
 import tqdm
 import bisect
-from datatypes_utils import clean_null_cells
+from datatypes_utils import clean_null_cells, expand_column_name
 from utils import hash_dataframe
 
 curr_directory = os.path.dirname(os.path.realpath(__file__))
 CACHE_DIR = os.path.join(curr_directory, "cache")
 
-
+#model_name = dmis-lab/biobert-v1.1
 class SimilarityIndex:
-    def __init__(self, df, model_name="dmis-lab/biobert-v1.1", clean_nulls=True):
+    def __init__(self, df, model_name="dmis-lab/biobert-v1.1", clean_nulls=True, index_column_name=True):
         if clean_nulls:
             self.df = clean_null_cells(df)
         else:
             self.df = df
+
+        self.index_column_name = index_column_name
 
         df_hash = str(hash_dataframe(self.df))
         index_file = os.path.join(CACHE_DIR, model_name, df_hash)
@@ -34,21 +36,31 @@ class SimilarityIndex:
             # save embeddings on disk
             index_file_dir = os.path.dirname(index_file)
             os.makedirs(index_file_dir, exist_ok=True)
-            np.save(index_file, self.embeddings)
-
-            self.index = self._build_faiss_index(self.embeddings)
+            np.save(index_file, self.embeddings)    
         else:
             print("Loading embeddings from disk ...")
             self.embeddings = np.load(index_file + ".npy")
-            self.index = self._build_faiss_index(self.embeddings)
+            
+        self.index = self._build_faiss_index(self.embeddings)
 
     def _prepare_inverted_index_entries(self):
         inverted_index = {}
         for column in self.df.columns:
-            for value in self.df[column].dropna():
+            for value in self.df[column].dropna().unique():
                 if value not in inverted_index:
                     inverted_index[value] = []
                 inverted_index[value].append(column)
+
+        # also includes the import terms from the column names into the index
+        if self.index_column_name:
+            for column_name in self.df.columns:
+                expanded_column_name_terms = expand_column_name(column_name)
+                for term in expanded_column_name_terms:
+                    if term not in inverted_index:
+                        inverted_index[term] = []
+                    inverted_index[term].append(column_name)
+                
+
         return inverted_index
 
     def encode_text(self, text):
@@ -68,15 +80,19 @@ class SimilarityIndex:
         return embeddings_np
 
     def _build_faiss_index(self, embeddings):
-        print("Building faiss index ...")
+
+        # print("Building faiss index ...")
+        # embeddings = np.asarray(embeddings, dtype=np.float32)
         faiss.normalize_L2(embeddings)
+
+
         d = embeddings.shape[1]
         index = faiss.IndexFlatIP(d)
         index.add(embeddings)
         print("Done.")
         return index
 
-    def query(self, query_text, k=40):
+    def query(self, query_text, k=20):
         query_embedding = self.encode_text(query_text).astype('float32')
         faiss.normalize_L2(query_embedding.reshape(1, -1))
         D, I = self.index.search(query_embedding.reshape(1, -1), k)
