@@ -1,5 +1,5 @@
 
-from constants import NULL_REPRESENTATIONS, BINARY_VALUES
+from .constants import NULL_REPRESENTATIONS, BINARY_VALUES
 import numpy as np
 import tqdm
 import pandas as pd

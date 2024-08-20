@@ -11,6 +11,7 @@ mlruns/
 model/
 other_tests/
 journal/
+results/
 
 # C extensions
 *.so

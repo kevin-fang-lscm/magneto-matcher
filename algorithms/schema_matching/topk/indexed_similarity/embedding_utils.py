@@ -42,9 +42,12 @@ def compute_cosine_similarity(embeddings_input: torch.Tensor, embeddings_target:
 
     # Remove self-similarities
     
+    min_top_k = min(top_k, similarities.shape[1])
+
+    
 
     # Get top K scores and indices
-    top_k_scores, top_k_indices = torch.topk(similarities, top_k, dim=1, largest=True, sorted=True)
+    top_k_scores, top_k_indices = torch.topk(similarities, min_top_k, dim=1, largest=True, sorted=True)
     
     # Convert to numpy arrays for easier handling
     top_k_scores = top_k_scores.cpu().numpy()

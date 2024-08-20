@@ -1,477 +1,225 @@
 import os
 import pandas as pd
-from typing import Dict, List, Tuple
-from abc import ABC, abstractmethod
-import faiss
+from typing import Dict, Tuple
 import tqdm
-import numpy as np
-import re
-
+import concurrent.futures
+import torch
+from transformers import AutoTokenizer, AutoModel
 from valentine.algorithms.base_matcher import BaseMatcher
 from valentine.data_sources.base_table import BaseTable
 from valentine.algorithms.match import Match
-
-from .indexes import SimilarityIndex
-from .datatypes_utils import detect_column_type, is_null, expand_column_name
-from .utils import normalize_scores, are_similar_ignore_case_and_punctuation, are_equal_ignore_case_and_punctuation, is_main_theme_similar, hash_string_list
-
-from sentence_transformers import SentenceTransformer
-from collections import Counter
-
+from .preprocessing import clean_df, get_type2columns_map, clean_column_name
+from .embedding_utils import compute_cosine_similarity, compute_cosine_similarity_simple
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-curr_directory = os.path.dirname(os.path.realpath(__file__))
-CACHE_DIR = os.path.join(curr_directory, "cache_col_names")
-
 
 class IndexedSimilarityMatcher(BaseMatcher):
-    def __init__(self, model_name='all-MiniLM-L6-v2', top_k: int = 40):
 
-        self.model_name = model_name
-        self.model = SentenceTransformer(model_name)
+    def __init__(self, config=None, use_instances=False):
 
-        self.top_k = top_k
+        default_config = {
+            'model_name': 'sentence-transformers/all-mpnet-base-v2',
+            'params': {
+                'column_name': {
+                    'top_k': 10,
+                    'minimum_similarity': 0.4,
+                },
+                'column_value': {
+                    'top_k_sim_values': 30,
+                    'minimum_similarity': 0.4,
+                }
+            }
+        }
 
-        self.source_df = None
-        self.target_df = None
+        self.config = config if config else default_config
 
-        self.source_categorical_df = None
-        self.source_numeric_df = None
-        self.source_binary_df = None
+        self.model_name = self.config['model_name']
+        self.params = self.config['params']
 
-        self.source_gene_df = None
+        self.use_instances = use_instances
 
-        self.target_categorical_df = None
-        self.target_numeric_df = None
-        self.target_binary_df = None
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+        self.model = AutoModel.from_pretrained(self.model_name)
 
-        self.target_gene_df = None
-
-        self.catdomain_inverted_index = None
-        self.catcol2indexes_dict = {}
-
-        self.positions = []
-
-    def _organize_columns_by_type(self, source_df, target_df):
-
-        self.source_df = source_df
-        self.target_df = target_df
-
-        source_categorical_columns = []
-        source_numeric_columns = []
-        source_binary_columns = []
-
-        source_gene_columns = []
-
-        for col in source_df.columns:
-
-            if "gene" in col.lower():
-                source_gene_columns.append(col)
-            elif detect_column_type(source_df[col]) == 'binary':
-                source_binary_columns.append(col)
-            elif detect_column_type(source_df[col]) == 'numeric':
-                source_numeric_columns.append(col)
-            else:
-                source_categorical_columns.append(col)
-
-        self.source_categorical_df = source_df[source_categorical_columns]
-        self.source_numeric_df = source_df[source_numeric_columns]
-        self.source_binary_df = source_df[source_binary_columns]
-
-        self.source_gene_df = source_df[source_gene_columns]
-
-        # print('source_categorical_columns', source_categorical_columns)
-        # print('source_numeric_columns', source_numeric_columns)
-        # print('source_binary_columns', source_binary_columns)
-        # print('source_gene_columns', source_gene_columns)
-        # print('\n')
-
-        target_categorical_columns = []
-        target_numeric_columns = []
-        target_binary_columns = []
-
-        target_gene_columns = []
-
-        for col in target_df.columns:
-            if "gene" in col.lower():
-                target_gene_columns.append(col)
-            elif detect_column_type(target_df[col]) == 'binary':
-                target_binary_columns.append(col)
-            elif detect_column_type(target_df[col]) == 'numeric':
-                target_numeric_columns.append(col)
-            else:
-                target_categorical_columns.append(col)
-
-        self.target_categorical_df = target_df[target_categorical_columns]
-        self.target_numeric_df = target_df[target_numeric_columns]
-        self.target_binary_df = target_df[target_binary_columns]
-        self.target_gene_df = target_df[target_gene_columns]
-
-    def _get_categorical_candidate_columns(self, column, clean_nulls=True, splitCamelCase=True):
-
-        values = self.source_categorical_df[column].dropna().unique()
-        if clean_nulls:
-            values = [value for value in values if not is_null(value)]
-        if splitCamelCase:
-            values = [re.sub('([a-z0-9])([A-Z])', r'\1 \2', value)
-                      for value in values]
-
-        candidates_columns = set()
-
-        # adding the column name terms in the search
-        column_terms = expand_column_name(column)
-        values.extend(column_terms)
-
-        # print(f'Querying for {column} values')
-        for value in values:
-            results = self.catdomain_inverted_index.query(value, 10)
-            # print(f'Querying for {value} ... ')
-            for result in results:
-                # print('\t', result)
-                candidates_columns.update(result['columns'])
-
-        return list(candidates_columns)
-
-    def _rerank_categorical_candidates(self, column, candidates_columns, clean_nulls=True):
-
-        candidate_col_max_sim = {}
-        for candidate_col in candidates_columns:
-
-            if candidate_col not in self.catcol2indexes_dict:
-                # only retrieve it once
-                self.catcol2indexes_dict[candidate_col] = self.catdomain_inverted_index.get_col_index(
-                    candidate_col)
-
-            col_values, col_index = self.catcol2indexes_dict[candidate_col]
-
-            max_sim = {}
-            values = self.source_categorical_df[column].dropna().unique()
-            if clean_nulls:
-                values = [value for value in values if not is_null(value)]
-
-            for value in values:
-                if value in col_values:
-                    max_sim[value] = 1.0
-                else:
-                    query_embedding = self.catdomain_inverted_index.encode_text(
-                        value).astype('float32')
-                    faiss.normalize_L2(query_embedding.reshape(1, -1))
-                    topk = 1
-                    D, I = col_index.search(
-                        query_embedding.reshape(1, -1), topk)
-                    similarity = D[0][0]
-                    max_sim[value] = similarity
-            sum_similarities = sum(max_sim.values())
-            candidate_col_max_sim[candidate_col] = sum_similarities
-            # mean_similarities = sum_similarities / len(max_sim)
-            # candidate_col_max_sim[candidate_col] = mean_similarities
-
-        sorted_candidate_col_max_sim = sorted(
-            candidate_col_max_sim.items(), key=lambda x: x[1], reverse=True)
-        return sorted_candidate_col_max_sim
-
-    def _handle_categorical_complex(self):
-
-        print('Handling categorical columns')
-        self.catdomain_inverted_index = SimilarityIndex(
-            self.target_categorical_df)
-
-        cat_matches = {}
-        for col in tqdm.tqdm(self.source_categorical_df.columns):
-
-            # if not col.lower()=='Ethnicity_Self_Identify'.lower():
-            #     continue
-
-            unique_ratio = len(self.source_categorical_df[col].dropna(
-            ).unique()) / len(self.source_categorical_df[col])
-            if unique_ratio > 0.80:  # approximate key
-                # print(f"Number of unique values in column {col} is more than 99%")
-                cat_matches[col] = {"submitter_id": 1.0}
-                return cat_matches
-                
-
-            candidates_columns = self._get_categorical_candidate_columns(col)
-
-            sorted_candidate_col_max_sim = self._rerank_categorical_candidates(
-                col, candidates_columns)
-
-            topk_entries = sorted_candidate_col_max_sim[:self.top_k]
-
-            topk_entries = normalize_scores(topk_entries)
-
-            # re ordering based on column name
-            equal_entries = [
-                entry for entry in topk_entries if are_equal_ignore_case_and_punctuation(col, entry[0])]
-            equal_entries = [(entry[0], 1.0) for entry in equal_entries]
-
-            similar_entries = [
-                entry for entry in topk_entries if are_similar_ignore_case_and_punctuation(col, entry[0])]
-            similar_entries = [(entry[0], 0.9999) for entry in similar_entries]
-
-            similar_named_entries_out_topk = [
-                (target_col, 0.9998) for target_col in self.target_df.columns if are_similar_ignore_case_and_punctuation(col, target_col)]
-
-            # similar_named_entries_out_topk = [
-            #     (target_col, 0.9998) for target_col in self.target_df.columns if is_main_theme_similar(col, target_col)]
-
-            non_similar_column_name = [
-                entry for entry in topk_entries if entry not in equal_entries]
-            non_similar_column_name = [
-                entry for entry in non_similar_column_name if entry not in similar_entries]
-
-            topk_entries = {}
-            topk_entries.update(equal_entries)
-            topk_entries.update(similar_entries)
-            topk_entries.update(similar_named_entries_out_topk)
-            topk_entries.update(non_similar_column_name)
-
-            # print(f'Column {col} topk entries:')
-            # print(topk_entries)
-
-            cat_matches[col] = topk_entries
-
-            # source, target = [
-            #     col_pair for col_pair in ground_truth if col_pair[0] == col][0]
-
-            # position = -1
-            # if target in topk_entries:
-            #     position = list(topk_entries.keys()).index(target)
-            # else:
-            #     print(f'Column {col} ... {source} -> {target} not found in topk entries')
-            #     print(topk_entries)
-            #     print(self.source_df[source].unique())
-            #     print(self.target_df[target].unique())
-            #     print('\n')
-
-            # self.positions.append(position)
-
-        return cat_matches
-
-    def _find_similar_column_names(self, colnames_candidates, colnames_target):
-
-        colname_hash = str(hash_string_list(colnames_target))
-        cache_file = os.path.join(CACHE_DIR, self.model_name, colname_hash)
-
+    def _get_embeddings(self, texts, batch_size=32):
         embeddings = []
-        if not os.path.isfile(cache_file + ".npy"):
-            # Encode target column names
+        for i in range(0, len(texts), batch_size):
+            batch_texts = texts[i:i+batch_size]
+            inputs = self.tokenizer(batch_texts, padding=True,
+                                    truncation=True, return_tensors="pt")
+            with torch.no_grad():
+                outputs = self.model(**inputs)
+            embeddings.append(outputs.last_hidden_state.mean(dim=1))
+        return torch.cat(embeddings)
 
-            for target_colname in tqdm.tqdm(colnames_target, desc="Encoding target columns"):
-                embedding = self.model.encode(
-                    target_colname, show_progress_bar=False)
-                embeddings.append(embedding)
-
-            embeddings = np.array(embeddings).astype('float32')
-
-            # save embeddings on disk
-            index_file_dir = os.path.dirname(cache_file)
-            os.makedirs(index_file_dir, exist_ok=True)
-            np.save(cache_file, embeddings)
-        else:
-            print("Loading embeddings from disk ...")
-            embeddings = np.load(cache_file + ".npy")
-
-        print("Building FAISS index ...")
-        # Normalize embeddings and build index
-        faiss.normalize_L2(embeddings)
-        # Create FAISS index
-        d = embeddings.shape[1]
-        index = faiss.IndexFlatIP(d)
-        index.add(embeddings)
-
-        matches = {}
-        for colname in tqdm.tqdm(colnames_candidates, desc="Finding matches"):
-            query_embedding = self.model.encode(
-                colname, show_progress_bar=False).astype('float32')
-            faiss.normalize_L2(query_embedding.reshape(1, -1))
-
-            D, I = index.search(query_embedding.reshape(1, -1), self.top_k)
-
-            colname_matches = {}
-            for i, idx in enumerate(I[0]):
-                colname_matches[colnames_target[idx]] = float(D[0][i])
-
-            matches[colname] = colname_matches
-
-        return matches
-
-    # def _handle_categorical(self, ground_truth):
-
-    #     print('Handling categorical columns')
-
-    #     cat_matches = self._find_similar_column_names(
-    #         self.source_categorical_df.columns, self.target_categorical_df.columns)
-
-    #     for col in self.source_categorical_df.columns:
-    #         source, target = [
-    #             col_pair for col_pair in ground_truth if col_pair[0] == col][0]
-    #         topk_entries = cat_matches[col]
-    #         position = -1
-    #         if target in topk_entries:
-    #             position = list(topk_entries.keys()).index(target)
-    #         else:
-    #             print(f'Column {source}->{target} not found in topk entries')
-    #             # print(topk_entries)
-    #             is_in = target in self.target_categorical_df.columns
-    #             print(f'Column {target} in target: {is_in}')
-
-    #         self.positions.append(position)
-
-    def _handle_numerical(self):
-        # print('Handling numerical columns')
-
-        num_matches = self._find_similar_column_names(
-            self.source_numeric_df.columns, self.target_numeric_df.columns)
-
-        # for col in self.source_numeric_df.columns:
-        #     source, target = [
-        #         col_pair for col_pair in ground_truth if col_pair[0] == col][0]
-        #     topk_entries = num_matches[col]
-        #     position = -1
-        #     if target in topk_entries:
-        #         position = list(topk_entries.keys()).index(target)
-        #     # else:
-        #     #     print(f'Column {source}->{target} not found in topk entries')
-        #     #     # print(topk_entries)
-
-        #     #     is_in = target in self.target_numeric_df.columns
-        #     #     print(f'Column {target} in target: {is_in}')
-
-        #     self.positions.append(position)
-
-        return num_matches
-
-    def _handle_binary(self):
-        # print('Handling binary columns')
-        binary_matches = self._find_similar_column_names(
-            self.source_binary_df.columns, self.target_binary_df.columns)
-
-        # for col in self.source_binary_df.columns:
-        #     source, target = [
-        #         col_pair for col_pair in ground_truth if col_pair[0] == col][0]
-        #     topk_entries = binary_matches[col]
-        #     position = -1
-        #     if target in topk_entries:
-        #         position = list(topk_entries.keys()).index(target)
-        # else:
-        #     print(
-        #         f'Column {source}->{target} not found in topk entries')
-
-        #     is_in = target in self.target_binary_df.columns
-        #     print(f'Column {target} in target: {is_in}')
-
-        # self.positions.append(position)
-
-        return binary_matches
-
-    def get_matches(self,
-                    source_input: BaseTable,
-                    target_input: BaseTable) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
-
-        source_df = source_input.get_df()
-
-        target_df = target_input.get_df()
-
-        self._organize_columns_by_type(source_df, target_df)
-
-        cat_matches = self._handle_categorical_complex()
-
-        num_matches = self._handle_numerical()
-
-        binary_matches = self._handle_binary()
-
-
-        matches = {}
-        matches.update(cat_matches)
-        matches.update(num_matches)
-        matches.update(binary_matches)
-
-        # print('Matches: ', matches)
-
-        final_matches = { }
-
-        for col_input, matches_col in matches.items():
-            for col_target, score in matches_col.items():
-                match = Match(target_input.name, col_target,
-                        source_input.name, col_input,
-                        score).to_dict
-                final_matches.update(match)
-
-        # print('Final Matches: ', final_matches)
+    def _column_name_matching(self, input_colnames, target_colnames):
+        
+        input_colnames_dict = {clean_column_name(col): col for col in input_colnames}
+        target_colnames_dict = {clean_column_name(col): col for col in target_colnames}
+        
+        
+        cleaned_input_colnames = list(input_colnames_dict.keys())
+        cleaned_target_colnames = list(target_colnames_dict.keys())
+        
+        
+        embeddings_input = self._get_embeddings(cleaned_input_colnames)
+        embeddings_target = self._get_embeddings(cleaned_target_colnames)
+        
+        
+        top_k = min(self.params['column_name']['top_k'], len(cleaned_target_colnames))
+        topk_similarity, topk_indices = compute_cosine_similarity_simple(
+            embeddings_input, embeddings_target, top_k)
+        
+        
+        column_similarity_map = {}
+        for i, cleaned_input_col in enumerate(cleaned_input_colnames):
+            original_input_col = input_colnames_dict[cleaned_input_col]
+            column_similarity_map[original_input_col] = {}
             
-        # Remove the pairs with zero similarity
-        matches = {k: v for k, v in final_matches.items() if v > 0.0}
+            for j in range(top_k):
+                cleaned_target_col = cleaned_target_colnames[topk_indices[i, j]]
+                original_target_col = target_colnames_dict[cleaned_target_col]
+                similarity = topk_similarity[i, j].item()
+                
+                if similarity >= self.params['column_name']['minimum_similarity']:
+                    column_similarity_map[original_input_col][original_target_col] = similarity
+        
+        ranked_column_similarity_map = {}
+        for original_input_col, matches in column_similarity_map.items():
+            ranked_column_similarity_map[original_input_col] = dict(
+                sorted(matches.items(), key=lambda item: item[1], reverse=True))
+        
+        return ranked_column_similarity_map
+
+
+    def _create_column_value_embedding_dict(self, df):
+
+        col2_val_emb = {}
+
+        def process_column(column):
+            col_values = df[column].dropna().unique().tolist()
+            return column, col_values, self._get_embeddings(col_values)
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futures = {executor.submit(
+                process_column, column): column for column in df.columns}
+
+            for future in tqdm.tqdm(concurrent.futures.as_completed(futures), total=len(futures)):
+                column, col_values, col_embeddings = future.result()
+                col2_val_emb[column] = (col_values, col_embeddings)
+        return col2_val_emb
+
+    def _column_value_matching(self, input_df, target_df):
+
+        col2valemb_input = self._create_column_value_embedding_dict(input_df)
+        col2valemb_target = self._create_column_value_embedding_dict(target_df)
+
+        # flatten version of the embeddings for faster computation of cosine similarity
+        all_target_embeddings = []
+        all_target_values = []
+        target_column_mapping = []
+
+        # Track the start and end positions for each target column, for retrieving the embeddings from all_target_embeddings for a specific column
+        current_position = 0
+        target_column_boundaries = {}
+
+        for target_col, (target_values, target_embeddings) in col2valemb_target.items():
+
+            num_values = len(target_values)
+
+            all_target_embeddings.append(target_embeddings)
+            all_target_values.extend(target_values)
+            target_column_mapping.extend([target_col] * num_values)
+
+            target_column_boundaries[target_col] = (
+                current_position, current_position + num_values)
+            current_position += num_values
+
+        # we flatten the embeddings for faster computation
+        all_target_embeddings = torch.cat(all_target_embeddings)
+
+        column_similarity_map = {}
+
+        for input_col, (input_values, input_embeddings) in col2valemb_input.items():
+
+            # for each column, compare to all values in target columns
+            top_k_scores, top_k_indices, similarities = compute_cosine_similarity(
+                input_embeddings, all_target_embeddings, self.config['params']['column_value']['top_k_sim_values'])
+            top_k_columns = {
+                target_column_mapping[idx] for row_indices in top_k_indices for idx in row_indices}
+
+            # print(f"Top matches for {input_col}:")
+            reranked_columns = {}
+
+            for target_col in list(top_k_columns):
+
+                # TODO: save the value mappings
+                (indx_begin, idx_end) = target_column_boundaries[target_col]
+
+                similarities_col = similarities[:, indx_begin:idx_end]
+
+                max_scores, max_positions = torch.max(similarities_col, dim=1)
+
+                # values_input = [input_values[idx]
+                #                 for idx in range(len(input_values))]
+                # max_values_target = [
+                #     all_target_values[indx_begin + idx] for idx in max_positions]
+                # combinations = list(zip(values_input, max_values_target))
+
+                # for comb, score in zip(combinations, max_scores):
+                #     print(f"{input_col} -> {target_col} : {comb} -> {score}")
+
+                score_sum = torch.sum(max_scores).item()/len(max_scores)
+
+                if score_sum >= self.config['params']['column_value']['minimum_similarity']:
+                    reranked_columns[target_col] = score_sum
+
+            reranked_columns = dict(
+                sorted(reranked_columns.items(), key=lambda item: item[1], reverse=True))
+
+            column_similarity_map[input_col] = reranked_columns
+
+        return column_similarity_map
+
+    def get_matches(self, source_df: BaseTable, target_df: BaseTable) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
+
+        input = source_df.get_df()
+        target = target_df.get_df()
+
+        input = clean_df(input)
+        target = clean_df(target)
+
+        all_matches = {}
+
+        colnames_input = input.columns
+        colnames_target = target.columns
+
+        if len(colnames_input) > 0 and len(colnames_target) > 0:
+                # print(f"Matching {type} columns")
+                ranked_column_similarity_map = self._column_name_matching(
+                    colnames_input, colnames_target)
+                all_matches.update(ranked_column_similarity_map)
+
+        if self.use_instances:
+
+            type2cols_input = get_type2columns_map(input)
+            type2cols_target = get_type2columns_map(target)
+
+            categorical_colnames_input = type2cols_input['categorical']
+            categorical_cols_target = type2cols_target['categorical']
+
+            if len(categorical_colnames_input) > 0 and len(categorical_cols_target) > 0:
+                # print("Matching categorical columns")
+                ranked_column_similarity_map = self._column_value_matching(
+                    input[categorical_colnames_input], target[categorical_cols_target])
+                all_matches.update(ranked_column_similarity_map)
+
+        matches = {}
+        for col_input, matches_dict in all_matches.items(): 
+           for col_target, score in matches_dict.items():
+                match = Match(target_df.name, col_target,
+                              source_df.name, col_input, score).to_dict
+                matches.update(match)
 
         return matches
-
-
-# def get_dataframes(file):
-#     # gdc_cat_path = './data/gdc/gdc_cat_ingt.csv'
-#     # gdc_cat_path = './data/gdc/gdc_cat.csv'
-#     gdc_cat_path = './data/gdc/gdc_num_cat.csv'
-
-#     df_gdc = pd.read_csv(gdc_cat_path, encoding='utf-8', engine='python')
-
-#     df_input = pd.read_csv(f'./data/gdc/source-tables/{file}')
-
-#     gt_df = pd.read_csv(
-#         f'./data/gdc/ground-truth/{file}', encoding='utf-8', engine='python')
-#     ground_truth = list(gt_df.itertuples(index=False, name=None))
-
-#     gt_gdc_cols = set([col[1] for col in ground_truth])
-#     gt_gdc_cols = set(gt_gdc_cols).intersection(df_gdc.columns)
-#     gt_gdc_cols_in_input_df = [col_pair[0]
-#                                for col_pair in ground_truth if col_pair[1] in gt_gdc_cols]
-
-#     df_input = df_input[gt_gdc_cols_in_input_df]
-
-#     return df_input, df_gdc, ground_truth
-
-
-# def mean_reciprocal_rank(positions):
-#     reciprocal_ranks = []
-#     for position in positions:
-#         if position != -1:
-#             reciprocal_ranks.append(1 / (position + 1))
-#     if reciprocal_ranks:
-#         return sum(reciprocal_ranks) / len(positions)
-#     else:
-#         return 0.0
-
-
-# if __name__ == '__main__':
-
-#     files = ['Dou.csv', 'Krug.csv', 'Clark.csv',  'Vasaikar.csv',
-#              'Wang.csv', 'Satpathy.csv', 'Cao.csv', 'Huang.csv', 'Gilette.csv']
-#     # file = files[-1]
-
-#     files = ['Clark.csv']
-
-#     positions_global = []
-#     for file in files:
-#         print("File: ", file)
-
-#         df_input, df_gdc, ground_truth = get_dataframes(file)
-
-#         matcher = IndexedSimilarityMatcher()
-#         positions = matcher.get_matches(df_input, df_gdc, ground_truth)
-
-#         positions_global.extend(positions)
-
-#         print('\n')
-
-#     print(positions_global)
-
-#     num_of_non_matches = positions_global.count(-1)
-
-#     print(
-#         f'Number of non-matches: {num_of_non_matches} out of {len(positions_global)}')
-
-#     mrr = mean_reciprocal_rank(positions_global)
-#     print(f"Mean Reciprocal Rank: {mrr}")
-
-#     number_frequency = Counter(positions_global)
-#     print("Frequency of each number:")
-#     for number, frequency in number_frequency.items():
-#         print(f"{number}: {frequency}")

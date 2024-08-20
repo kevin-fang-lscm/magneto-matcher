@@ -24,10 +24,11 @@ class CLMatcher(BaseMatcher):
 
 # "bdi-cl-v0.2"
 # "cl-reducer-v0.1"
-    def __init__(self, model_name: str = "bdi-cl-v0.2", top_k=1):
+    def __init__(self, model_name: str = "bdi-cl-v0.2", top_k=10):
         model_path = get_cached_model_or_download(model_name)
         self.top_k = top_k
         self.api = ContrastiveLearningAPI(model_path=model_path, top_k=top_k)
+        self.minimum_similarity = 0.4
 
     def get_matches(self,
                     source_input: BaseTable,
@@ -54,7 +55,7 @@ class CLMatcher(BaseMatcher):
                 matches.update(match)
 
         # Remove the pairs with zero similarity
-        matches = {k: v for k, v in matches.items() if v > 0.0}
+        matches = {k: v for k, v in matches.items() if v >= self.minimum_similarity}
 
         return matches
 
