@@ -5,9 +5,12 @@ import time
 
 project_path = os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
 sys.path.append(os.path.join(project_path))
 
-import algorithms.schema_matching.topk.indexed_fast.indexed_similarity as indexed_similarity
+import algorithms.schema_matching.topk.indexed_similarity as isim
+
+# from algorithms.schema_matching.topk.indexed_similarity import IndexedSimilarityMatcher
 
 from valentine.metrics import F1Score, PrecisionTopNPercent
 from valentine import valentine_match
@@ -58,10 +61,11 @@ def compute_mean_ranking_reciprocal(matches, ground_truth):
 
 
 def run_for_gdc_alt():
-    gdc_input_df = pd.read_csv('./data/gdc_alt/Dou-ucec-discovery.csv')
-    gdc_target_df = pd.read_csv('./data/gdc_alt/Dou-ucec-confirmatory.csv')
+    print(project_path)
+    gdc_input_df = pd.read_csv(project_path+'/data/gdc_alt/Dou-ucec-discovery.csv')
+    gdc_target_df = pd.read_csv(project_path+'/data/gdc_alt/Dou-ucec-confirmatory.csv')
 
-    gt_df = pd.read_csv('./data/gdc_alt/gt.csv')
+    gt_df = pd.read_csv(project_path+'/data/gdc_alt/gt.csv')
     gt_df.dropna(inplace=True)
     ground_truth = list(gt_df.itertuples(index=False, name=None))
 
@@ -74,7 +78,7 @@ def run_for_gdc_alt():
     # matchers = [IndexedSimilarityMatcher(), Coma(), Coma(
     #     use_instances=True, java_xmx="10096m")]
 
-    matchers = [indexed_similarity.IndexedSimilarityMatcher()]
+    matchers = [isim.IndexedSimilarityMatcher()]
 
     for matcher in matchers:
         print("Matcher: ", matcher)

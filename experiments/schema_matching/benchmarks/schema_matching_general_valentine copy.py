@@ -18,7 +18,7 @@ sys.path.append(os.path.join(project_path))
 
 import algorithms.schema_matching.topk.indexed_similarity.indexed_similarity as indexed_similarity
 import algorithms.schema_matching.topk.cl.cl as cl
-from experiments.schema_matching.benchmarks.utils import compute_mean_ranking_reciprocal, compute_mean_ranking_reciprocal_detail, create_result_file, record_result
+from experiments.schema_matching.benchmarks.utils import compute_mean_ranking_reciprocal, create_result_file, record_result
 
 
 def extract_matchings(json_data):
@@ -75,8 +75,7 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
         if len(ground_truth) == 0:
             continue
 
-        # matchers = ["Coma", "ComaInst", "IndexedSimilarity", "IndexedSimilarityInst", "CL"]
-        matchers = [ "CL"]
+        matchers = ["Coma", "ComaInst", "IndexedSimilarity", "IndexedSimilarityInst", "CL"]
 
         for matcher in matchers:
 
@@ -97,10 +96,8 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
             runtime = end_time - start_time
             print(f"Runtime for valentine_match: {runtime:.4f} seconds")
 
-            # mrr_score = compute_mean_ranking_reciprocal(
-            #     matches, ground_truth)
-            detail = f"Type: {type}, Table: {folder}, Matcher: {method_name}"
-            mrr_score = compute_mean_ranking_reciprocal_detail(matches, ground_truth, detail)
+            mrr_score = compute_mean_ranking_reciprocal(
+                matches, ground_truth)
 
             all_metrics = matches.get_metrics(ground_truth)
 
@@ -178,9 +175,8 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
                 runtime = end_time - start_time
                 print(f"Runtime for valentine_match: {runtime:.4f} seconds")
 
-                # mrr_score = compute_mean_ranking_reciprocal(matches, ground_truth)
-                detail = f"Type: {type}, Table: {table_folder}, Matcher: {method_name}"
-                mrr_score = compute_mean_ranking_reciprocal_detail(matches, ground_truth, detail)
+                mrr_score = compute_mean_ranking_reciprocal(
+                    matches, ground_truth)
 
                 all_metrics = matches.get_metrics(ground_truth)
 
@@ -204,12 +200,12 @@ if __name__ == '__main__':
 
     # Magellan
 
-    DATASET='Magellan'
-    ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema Matching Benchmarks/Valentine-datasets/Magellan'
-    run_valentine_benchmark_one_level(BENCHMARK, DATASET, ROOT)
+    # DATASET='Magellan'
+    # ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema matching data/Valentine-datasets/Magellan'
+    # run_valentine_benchmark_one_level(BENCHMARK, DATASET, ROOT)
 
     # OpenData
-    # run_valentine_benchmark_three_levels()
+    run_valentine_benchmark_three_levels()
 
     # ChEMBL
     # DATASET='ChEMBL'

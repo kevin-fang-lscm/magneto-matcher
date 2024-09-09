@@ -192,14 +192,7 @@ class IndexedSimilarityMatcher(BaseMatcher):
 
         all_matches = {}
 
-        colnames_input = input.columns
-        colnames_target = target.columns
-
-        if len(colnames_input) > 0 and len(colnames_target) > 0:
-                # print(f"Matching {type} columns")
-                ranked_column_similarity_map = self._column_name_matching(
-                    colnames_input, colnames_target)
-                all_matches.update(ranked_column_similarity_map)
+       
 
         if self.use_instances:
 
@@ -214,6 +207,34 @@ class IndexedSimilarityMatcher(BaseMatcher):
                 ranked_column_similarity_map = self._column_value_matching(
                     input[categorical_colnames_input], target[categorical_cols_target])
                 all_matches.update(ranked_column_similarity_map)
+
+            numerical_colnames_input = type2cols_input['numerical']
+            numerical_cols_target = type2cols_target['numerical']
+
+            if len(numerical_colnames_input) > 0 and len(numerical_cols_target) > 0:
+                # print("Matching numerical columns")
+                ranked_column_similarity_map = self._column_value_matching(
+                    input[numerical_colnames_input], target[numerical_cols_target])
+                all_matches.update(ranked_column_similarity_map)
+            
+            binary_colnames_input = type2cols_input['binary']
+            binary_cols_target = type2cols_target['binary']
+
+            if len(binary_colnames_input) > 0 and len(binary_cols_target) > 0:
+                # print("Matching binary columns")
+                ranked_column_similarity_map = self._column_value_matching(
+                    input[binary_colnames_input], target[binary_cols_target])
+                all_matches.update(ranked_column_similarity_map)
+
+        else:
+            colnames_input = input.columns
+            colnames_target = target.columns
+
+            if len(colnames_input) > 0 and len(colnames_target) > 0:
+                    # print(f"Matching {type} columns")
+                    ranked_column_similarity_map = self._column_name_matching(
+                        colnames_input, colnames_target)
+                    all_matches.update(ranked_column_similarity_map)
 
         matches = {}
         for col_input, matches_dict in all_matches.items(): 
