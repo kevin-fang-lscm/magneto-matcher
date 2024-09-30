@@ -67,7 +67,7 @@ def compute_mean_ranking_reciprocal_detail(matches, ground_truth, details):
                 for entry in ordered_matches[input_col]:
                     print(entry)
 
-                s = "\n" + details
+                s = "\n" + details 
                 s += f"\n{input_col} -> {target_col} not found"
                 s += f"\n\tMethod Matches for {input_col}: {ordered_matches_list}\n"
 

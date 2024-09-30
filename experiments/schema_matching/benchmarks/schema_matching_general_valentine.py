@@ -76,7 +76,7 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
             continue
 
         # matchers = ["Coma", "ComaInst", "IndexedSimilarity", "IndexedSimilarityInst", "CL"]
-        matchers = [ "CL"]
+        matchers = [ "ComaInst"]
 
         for matcher in matchers:
 

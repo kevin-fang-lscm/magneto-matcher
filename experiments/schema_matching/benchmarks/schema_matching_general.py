@@ -9,6 +9,7 @@ project_path = os.path.dirname(os.path.dirname(
 sys.path.append(os.path.join(project_path))
 
 import algorithms.schema_matching.topk.indexed_similarity as isim
+import algorithms.schema_matching.topk.cl.cl as cl
 
 # from algorithms.schema_matching.topk.indexed_similarity import IndexedSimilarityMatcher
 
@@ -50,8 +51,8 @@ def compute_mean_ranking_reciprocal(matches, ground_truth):
                 score = 1/(position + 1)
             else:
                 print(f"1- Mapping {input_col} -> {target_col} not found")
-                for entry in ordered_matches[input_col]:
-                    print(entry)
+                # for entry in ordered_matches[input_col]:
+                #     print(entry)
         # else:
             # print(f"2- Mapping {input_col} -> {target_col} not found")
         total_score += score
@@ -78,7 +79,10 @@ def run_for_gdc_alt():
     # matchers = [IndexedSimilarityMatcher(), Coma(), Coma(
     #     use_instances=True, java_xmx="10096m")]
 
-    matchers = [isim.IndexedSimilarityMatcher()]
+    # matchers = [isim.IndexedSimilarityMatcher()]
+    matchers = [Coma(),isim.IndexedSimilarityMatcher(), cl.CLMatcher()]
+
+    # Coma()
 
     for matcher in matchers:
         print("Matcher: ", matcher)
@@ -88,6 +92,8 @@ def run_for_gdc_alt():
         matches = valentine_match(gdc_input_df, gdc_target_df, matcher)
         metrics = matches.get_metrics(ground_truth)
 
+
+
         end_time = time.time()
         runtime = end_time - start_time
         print(f"Runtime for valentine_match: {runtime:.4f} seconds")
@@ -95,14 +101,14 @@ def run_for_gdc_alt():
         score = compute_mean_ranking_reciprocal(matches, ground_truth)
         print("Mean Ranking Reciprocal Score: ", score)
 
-        # print("Normal Metrics:")
-        # pp.pprint(metrics)
+        print("Normal Metrics:")
+        pp.pprint(metrics)
 
-        # matches = matches.one_to_one()
-        # metrics = matches.get_metrics(ground_truth)
-        # print("One2One Metrics:")
-        # pp.pprint(metrics)
-        # print("\n\n")
+        matches = matches.one_to_one()
+        metrics = matches.get_metrics(ground_truth)
+        print("One2One Metrics:")
+        pp.pprint(metrics)
+        print("\n\n")
 
 
 if __name__ == '__main__':
