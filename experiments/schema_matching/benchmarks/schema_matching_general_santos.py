@@ -33,7 +33,7 @@ def run_for_santos_benchmark():
                                datetime.datetime.now().strftime("%Y%m%d%H%M%S") + '.csv')
 
     create_result_file(results_dir, result_file, HEADER)
-    root = '/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema matching data/santos_benchmark/'
+    root = '/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema Matching Benchmarks/santos_benchmark/'
 
     # interested = '311_calls_historic_data_a.csv'
     # interested = 'time_spent_watching_vcr_movies_a.csv'

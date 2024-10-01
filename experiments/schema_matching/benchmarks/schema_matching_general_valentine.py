@@ -75,8 +75,8 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
         if len(ground_truth) == 0:
             continue
 
-        # matchers = ["Coma", "ComaInst", "IndexedSimilarity", "IndexedSimilarityInst", "CL"]
-        matchers = [ "ComaInst"]
+        matchers = ["Coma", "ComaInst", "IndexedSimilarity", "IndexedSimilarityInst", "CL"]
+        # matchers = [ "Coma"]
 
         for matcher in matchers:
 
@@ -155,9 +155,9 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
             if len(ground_truth) == 0:
                 continue
 
-            #matchers = ["Coma", "ComaInst", "IndexedSimilarity", "IndexedSimilarityInst", "CL"]
+            matchers = ["Coma", "ComaInst", "IndexedSimilarity", "IndexedSimilarityInst", "CL"]
 
-            matchers = ["CL"]
+            # matchers = ["CL"]
 
             for matcher in matchers:
                 print("Matcher: ", matcher)
@@ -204,12 +204,12 @@ if __name__ == '__main__':
 
     # Magellan
 
-    DATASET='Magellan'
-    ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema Matching Benchmarks/Valentine-datasets/Magellan'
-    run_valentine_benchmark_one_level(BENCHMARK, DATASET, ROOT)
+    # DATASET='Magellan'
+    # ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema Matching Benchmarks/Valentine-datasets/Magellan'
+    # run_valentine_benchmark_one_level(BENCHMARK, DATASET, ROOT)
 
     # OpenData
-    # run_valentine_benchmark_three_levels()
+    run_valentine_benchmark_three_levels()
 
     # ChEMBL
     # DATASET='ChEMBL'

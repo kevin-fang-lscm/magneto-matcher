@@ -1,0 +1,24 @@
+
+Type: <class 'type'>, Table: Musicians_semjoinable, Matcher: IndexedSimilarity
+genreLabel -> kind not found
+	Method Matches for genreLabel: ['musicianID', 'musicianName']
+
+Type: <class 'type'>, Table: Musicians_unionable, Matcher: IndexedSimilarity
+genreLabel -> kind not found
+	Method Matches for genreLabel: ['religionLabel', 'recordCompany', 'musicianID', 'geniusNameLabel', 'musicianName']
+
+Type: View-Unionable, Table: miller2_both_0_1_ac4_av, Matcher: CL
+Fiscal year -> miller2_FisY not found
+	Method Matches for Fiscal year: ['miller2_OrganiID', 'miller2_AmSpe']
+
+Type: View-Unionable, Table: miller2_both_0_30_ac5_av, Matcher: CL
+Fiscal year -> miller2_fsclr not found
+	Method Matches for Fiscal year: ['miller2_rgnstnd', 'miller2_mntspnt']
+
+Type: View-Unionable, Table: miller2_both_0_30_ac5_av, Matcher: CL
+Sector percent -> miller2_sctrprcnt not found
+	Method Matches for Sector percent: ['miller2_mntspnt', 'miller2_ntdmnt(prjct-lvlbdgt)', 'miller2_mxmmcdcntrbtn(prjct-lvl)', 'miller2_prjctnmbr']
+
+Type: View-Unionable, Table: miller2_both_0_30_ac5_av, Matcher: CL
+Climate change mitigation (marker) -> miller2_clmtchngmtgtn(mrkr) not found
+	Method Matches for Climate change mitigation (marker): ['miller2_ctstlfrdvlpmnt(mrkr)']
