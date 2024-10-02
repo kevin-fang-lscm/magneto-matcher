@@ -20,6 +20,8 @@ import algorithms.schema_matching.topk.indexed_similarity.indexed_similarity as 
 import algorithms.schema_matching.topk.cl.cl as cl
 from experiments.schema_matching.benchmarks.utils import compute_mean_ranking_reciprocal, compute_mean_ranking_reciprocal_detail, create_result_file, record_result
 
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
 
 def extract_matchings(json_data):
 
@@ -48,7 +50,7 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
     Run the valentine benchmark for one level of the dataset (Magelan and Wikidata)
     '''
 
-    HEADER = ['benchmark', 'dataset', 'source_table', 'target_table', 'method', 'runtime', 'mrr',  'All_Precision', 'All_F1Score', 'All_Recall', 'All_PrecisionTop10Percent', 'All_RecallAtSizeofGroundTruth',
+    HEADER = ['benchmark', 'dataset', 'source_table', 'target_table','ncols_src','ncols_tgt','nrows_src','nrows_tgt','method', 'runtime', 'mrr',  'All_Precision', 'All_F1Score', 'All_Recall', 'All_PrecisionTop10Percent', 'All_RecallAtSizeofGroundTruth',
               'One2One_Precision', 'One2One_F1Score', 'One2One_Recall', 'One2One_PrecisionTop10Percent', 'One2One_RecallAtSizeofGroundTruth']
 
     results_dir = os.path.join(
@@ -70,13 +72,18 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
         df_target = pd.read_csv(target_file)
         ground_truth = extract_matchings(open(mapping_file).read())
 
+        ncols_src = str(df_source.shape[1])
+        ncols_tgt = str(df_target.shape[1])
+        nrows_src = str(df_source.shape[0])
+        nrows_tgt = str(df_target.shape[0])
+
         # print(ground_truth)
 
         if len(ground_truth) == 0:
             continue
 
         matchers = ["Coma", "ComaInst", "IndexedSimilarity", "IndexedSimilarityInst", "CL"]
-        # matchers = [ "Coma"]
+        matchers = [ "CL"]
 
         for matcher in matchers:
 
@@ -110,7 +117,7 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
             source_file = source_file.split('/')[-1]
             target_file = target_file.split('/')[-1]
 
-            result = [BENCHMARK, DATASET, source_file, target_file, method_name, runtime, mrr_score, all_metrics['Precision'], all_metrics['F1Score'], all_metrics['Recall'], all_metrics['PrecisionTop10Percent'], all_metrics['RecallAtSizeofGroundTruth'],
+            result = [BENCHMARK, DATASET, source_file, target_file, ncols_src, ncols_tgt, nrows_src, nrows_tgt, method_name, runtime, mrr_score, all_metrics['Precision'], all_metrics['F1Score'], all_metrics['Recall'], all_metrics['PrecisionTop10Percent'], all_metrics['RecallAtSizeofGroundTruth'],
                       one2one_metrics['Precision'], one2one_metrics['F1Score'], one2one_metrics['Recall'], one2one_metrics['PrecisionTop10Percent'], one2one_metrics['RecallAtSizeofGroundTruth']]
 
             record_result(result_file, result)
@@ -121,7 +128,7 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
     Run the valentine benchmark for datasets split on Unionable, View-Unionable, Joinable, Semantically-Joinable
     '''
 
-    HEADER = ['benchmark', 'dataset', 'type', 'source_table', 'target_table', 'method', 'runtime', 'mrr',  'All_Precision', 'All_F1Score', 'All_Recall', 'All_PrecisionTop10Percent', 'All_RecallAtSizeofGroundTruth',
+    HEADER = ['benchmark', 'dataset', 'type', 'source_table', 'target_table', 'ncols_src','ncols_tgt','nrows_src','nrows_tgt', 'nmatches','method', 'runtime', 'mrr',  'All_Precision', 'All_F1Score', 'All_Recall', 'All_PrecisionTop10Percent', 'All_RecallAtSizeofGroundTruth',
               'One2One_Precision', 'One2One_F1Score', 'One2One_Recall', 'One2One_PrecisionTop10Percent', 'One2One_RecallAtSizeofGroundTruth']
 
     results_dir = os.path.join(
@@ -152,12 +159,19 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
             df_target = pd.read_csv(target_file)
             ground_truth = extract_matchings(open(mapping_file).read())
 
+            ncols_src = str(df_source.shape[1])
+            ncols_tgt = str(df_target.shape[1])
+            nrows_src = str(df_source.shape[0])
+            nrows_tgt = str(df_target.shape[0])
+
+            nmatches = len(ground_truth)
+
             if len(ground_truth) == 0:
                 continue
 
-            matchers = ["Coma", "ComaInst", "IndexedSimilarity", "IndexedSimilarityInst", "CL"]
+            # matchers = ["Coma", "ComaInst", "IndexedSimilarity", "IndexedSimilarityInst", "CL"]
 
-            # matchers = ["CL"]
+            matchers = ["Coma"]
 
             for matcher in matchers:
                 print("Matcher: ", matcher)
@@ -190,7 +204,7 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
                 source_file = source_file.split('/')[-1]
                 target_file = target_file.split('/')[-1]
 
-                result = [BENCHMARK, DATASET, type, source_file, target_file, method_name, runtime, mrr_score, all_metrics['Precision'], all_metrics['F1Score'], all_metrics['Recall'], all_metrics['PrecisionTop10Percent'], all_metrics['RecallAtSizeofGroundTruth'],
+                result = [BENCHMARK, DATASET, type, source_file, target_file, ncols_src, ncols_tgt, nrows_src, nrows_tgt, nmatches, method_name, runtime, mrr_score, all_metrics['Precision'], all_metrics['F1Score'], all_metrics['Recall'], all_metrics['PrecisionTop10Percent'], all_metrics['RecallAtSizeofGroundTruth'],
                           one2one_metrics['Precision'], one2one_metrics['F1Score'], one2one_metrics['Recall'], one2one_metrics['PrecisionTop10Percent'], one2one_metrics['RecallAtSizeofGroundTruth']]
 
                 record_result(result_file, result)
@@ -203,7 +217,6 @@ if __name__ == '__main__':
     # run_valentine_benchmark_one_level()
 
     # Magellan
-
     # DATASET='Magellan'
     # ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema Matching Benchmarks/Valentine-datasets/Magellan'
     # run_valentine_benchmark_one_level(BENCHMARK, DATASET, ROOT)
@@ -218,5 +231,5 @@ if __name__ == '__main__':
 
     # TPC-DI
     # DATASET='TPC-DI'
-    # ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema matching data/Valentine-datasets/TPC-DI/'
+    # ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema Matching Benchmarks/Valentine-datasets/TPC-DI/'
     # run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)

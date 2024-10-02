@@ -39,7 +39,7 @@ def run():
 
 
 
-    matchers = [Coma()]
+    matchers = [Coma(use_instances=True)]
 
     # Coma()
 

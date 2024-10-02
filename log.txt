@@ -1,24 +1,396 @@
 
-Type: <class 'type'>, Table: Musicians_semjoinable, Matcher: IndexedSimilarity
-genreLabel -> kind not found
-	Method Matches for genreLabel: ['musicianID', 'musicianName']
+Type: View-Unionable, Table: miller2_both_0_50_ac2_ev, Matcher: Coma
+Trade development (marker) -> TrDev not found
+	Method Matches for Trade development (marker): ['ICTAAToFoDevelo']
 
-Type: <class 'type'>, Table: Musicians_unionable, Matcher: IndexedSimilarity
-genreLabel -> kind not found
-	Method Matches for genreLabel: ['religionLabel', 'recordCompany', 'musicianID', 'geniusNameLabel', 'musicianName']
+Type: View-Unionable, Table: miller2_both_0_50_ac2_ev, Matcher: Coma
+CountryRegion name -> CouRegN not found
+	Method Matches for CountryRegion name: ['CounRegPe']
 
-Type: View-Unionable, Table: miller2_both_0_1_ac4_av, Matcher: CL
-Fiscal year -> miller2_FisY not found
-	Method Matches for Fiscal year: ['miller2_OrganiID', 'miller2_AmSpe']
+Type: View-Unionable, Table: miller2_both_0_30_ac4_av, Matcher: Coma
+PBA type -> miller2_PBATy not found
+	Method Matches for PBA type: ['miller2_CounRePe']
 
-Type: View-Unionable, Table: miller2_both_0_30_ac5_av, Matcher: CL
-Fiscal year -> miller2_fsclr not found
-	Method Matches for Fiscal year: ['miller2_rgnstnd', 'miller2_mntspnt']
+Type: View-Unionable, Table: miller2_both_0_30_ac4_av, Matcher: Coma
+Organisation name -> miller2_OrgNa not found
+	Method Matches for Organisation name: ['miller2_OrganiT', 'miller2_OrganID']
 
-Type: View-Unionable, Table: miller2_both_0_30_ac5_av, Matcher: CL
-Sector percent -> miller2_sctrprcnt not found
-	Method Matches for Sector percent: ['miller2_mntspnt', 'miller2_ntdmnt(prjct-lvlbdgt)', 'miller2_mxmmcdcntrbtn(prjct-lvl)', 'miller2_prjctnmbr']
+Type: View-Unionable, Table: miller2_both_0_30_ac4_av, Matcher: Coma
+ICT as a tool for development (marker) -> miller2_ICTAATFoDeve not found
+	Method Matches for ICT as a tool for development (marker): ['miller2_KnoFoDevelo']
 
-Type: View-Unionable, Table: miller2_both_0_30_ac5_av, Matcher: CL
-Climate change mitigation (marker) -> miller2_clmtchngmtgtn(mrkr) not found
-	Method Matches for Climate change mitigation (marker): ['miller2_ctstlfrdvlpmnt(mrkr)']
+Type: View-Unionable, Table: miller2_both_0_30_ac4_av, Matcher: Coma
+CountryRegion name -> miller2_CouReNa not found
+	Method Matches for CountryRegion name: ['miller2_CounRePe']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac2_av, Matcher: Coma
+Organisation class -> OrgCl not found
+	Method Matches for Organisation class: ['OrganiS']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac2_av, Matcher: Coma
+CountryRegion name -> CouRegNa not found
+	Method Matches for CountryRegion name: ['CouRegPe']
+
+Type: View-Unionable, Table: miller2_both_0_30_ac4_ev, Matcher: Coma
+CountryRegion name -> miller2_CouReN not found
+	Method Matches for CountryRegion name: ['miller2_CouRegID']
+
+Type: View-Unionable, Table: miller2_both_0_30_ac4_ev, Matcher: Coma
+Continent name -> miller2_ConNa not found
+	Method Matches for Continent name: ['miller2_ContiID']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac2_ev, Matcher: Coma
+Organisation type -> OrganiTy not found
+	Method Matches for Organisation type: ['OrganID']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac2_ev, Matcher: Coma
+Organisation class -> OrgaCl not found
+	Method Matches for Organisation class: ['OrganS']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac2_av, Matcher: Coma
+Organisation class -> OrgCl not found
+	Method Matches for Organisation class: ['OrganiSu']
+
+Type: View-Unionable, Table: miller2_both_0_30_ac2_ev, Matcher: Coma
+Project number -> PrNum not found
+	Method Matches for Project number: ['ProPr']
+
+Type: View-Unionable, Table: miller2_both_0_30_ac2_ev, Matcher: Coma
+Trade development (marker) -> TrDev not found
+	Method Matches for Trade development (marker): ['KnoFoDevelo']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac4_ev, Matcher: Coma
+Organisation class -> miller2_OrgCla not found
+	Method Matches for Organisation class: ['miller2_OrganiS']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac4_av, Matcher: Coma
+CountryRegion name -> miller2_CouRegNa not found
+	Method Matches for CountryRegion name: ['miller2_CouRegPerc']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac4_av, Matcher: Coma
+Organisation name -> miller2_OrgaNa not found
+	Method Matches for Organisation name: ['miller2_OrganID']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac4_av, Matcher: Coma
+PBA type -> miller2_PBATy not found
+	Method Matches for PBA type: ['miller2_FSTCPe']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac4_av, Matcher: Coma
+Organisation type -> miller2_OrgaT not found
+	Method Matches for Organisation type: ['miller2_OrganID']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac4_ev, Matcher: Coma
+Fiscal year -> miller2_FiYe not found
+	Method Matches for Fiscal year: ['miller2_BilaAiMar']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac4_ev, Matcher: Coma
+Trade development (marker) -> miller2_TrDev not found
+	Method Matches for Trade development (marker): ['miller2_PartDeveAGoGove']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac4_ev, Matcher: Coma
+Section name -> miller2_SeN not found
+	Method Matches for Section name: ['miller2_Dese']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac4_ev, Matcher: Coma
+Organisation ID -> miller2_OrgID not found
+	Method Matches for Organisation ID: ['miller2_OrganiN']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac4_ev, Matcher: Coma
+CountryRegion name -> miller2_CouReNa not found
+	Method Matches for CountryRegion name: ['miller2_CounRegID']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac4_av, Matcher: Coma
+Trade development (marker) -> miller2_TrDevel not found
+	Method Matches for Trade development (marker): ['miller2_KnowlFDevelo']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac4_av, Matcher: Coma
+Organisation class -> miller2_OrganCl not found
+	Method Matches for Organisation class: ['miller2_DisaIss']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac4_av, Matcher: Coma
+Amount spent -> miller2_AmSpe not found
+	Method Matches for Amount spent: ['miller2_UntAmoProBu']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac4_av, Matcher: Coma
+Section name -> miller2_SeN not found
+	Method Matches for Section name: ['Sector name']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac4_av, Matcher: Coma
+PBA type -> miller2_PBAT not found
+	Method Matches for PBA type: ['miller2_AmSpe']
+
+Type: Joinable, Table: miller2_vertical_50_ac4_ev, Matcher: Coma
+CountryRegion name -> miller2_CoRegN not found
+	Method Matches for CountryRegion name: ['miller2_CouRegID']
+
+Type: Joinable, Table: miller2_both_50_30_ac2_ev, Matcher: Coma
+Sector name -> SecNa not found
+	Method Matches for Sector name: ['SePe']
+
+Type: Joinable, Table: miller2_both_50_30_ac2_ev, Matcher: Coma
+CountryRegion name -> CounRegNa not found
+	Method Matches for CountryRegion name: ['CounRegID']
+
+Type: Joinable, Table: miller2_both_50_70_ac4_ev, Matcher: Coma
+Amount spent -> miller2_AmSpe not found
+	Method Matches for Amount spent: ['miller2_UntAmoProBu']
+
+Type: Joinable, Table: miller2_both_50_70_ac4_ev, Matcher: Coma
+FSTC percent -> miller2_FSTCPe not found
+	Method Matches for FSTC percent: ['miller2_SePerc']
+
+Type: Joinable, Table: miller2_vertical_30_ac2_ev, Matcher: Coma
+Section ID -> SeID not found
+	Method Matches for Section ID: ['SecID']
+
+Type: Joinable, Table: miller2_vertical_70_ac4_ev, Matcher: Coma
+Fiscal year -> miller2_FiYe not found
+	Method Matches for Fiscal year: ['miller2_BilaAMar']
+
+Type: Joinable, Table: miller2_vertical_70_ac4_ev, Matcher: Coma
+Trade development (marker) -> miller2_TrDeve not found
+	Method Matches for Trade development (marker): ['miller2_ICTAAToFoDevel']
+
+Type: Joinable, Table: miller2_vertical_70_ac4_ev, Matcher: Coma
+Organisation class -> miller2_OrgaCla not found
+	Method Matches for Organisation class: ['miller2_OrganS']
+
+Type: Joinable, Table: miller2_vertical_70_ac4_ev, Matcher: Coma
+PBA type -> miller2_PBATy not found
+	Method Matches for PBA type: ['miller2_FiYe']
+
+Type: Joinable, Table: miller2_both_50_50_ac2_ev, Matcher: Coma
+Sector ID -> SeID not found
+	Method Matches for Sector ID: ['SecID']
+
+Type: Joinable, Table: miller2_both_50_50_ac2_ev, Matcher: Coma
+Organisation class -> OrgaCla not found
+	Method Matches for Organisation class: ['OrganiS']
+
+Type: Joinable, Table: miller2_both_50_50_ac2_ev, Matcher: Coma
+Continent name -> ConNa not found
+	Method Matches for Continent name: ['ContID']
+
+Type: Joinable, Table: miller2_vertical_30_ac4_ev, Matcher: Coma
+Organisation type -> miller2_OrganTy not found
+	Method Matches for Organisation type: ['miller2_OrganID']
+
+Type: Joinable, Table: miller2_vertical_30_ac4_ev, Matcher: Coma
+PBA type -> miller2_PBAT not found
+	Method Matches for PBA type: ['miller2_IRTCPe', 'miller2_CoRePe', 'miller2_AmoSpe']
+
+Type: Joinable, Table: miller2_vertical_30_ac4_ev, Matcher: Coma
+IRTC percent -> miller2_IRTCPe not found
+	Method Matches for IRTC percent: ['miller2_SePerc']
+
+Type: Joinable, Table: miller2_vertical_30_ac4_ev, Matcher: Coma
+Organisation name -> miller2_OrgaN not found
+	Method Matches for Organisation name: ['miller2_OrganID']
+
+Type: Joinable, Table: miller2_vertical_70_ac2_ev, Matcher: Coma
+CountryRegion name -> CouReN not found
+	Method Matches for CountryRegion name: ['CoRegPe']
+
+Type: Joinable, Table: miller2_vertical_50_ac2_ev, Matcher: Coma
+Organisation sub-class -> OrgSu not found
+	Method Matches for Organisation sub-class: ['OrganiT']
+
+Type: Joinable, Table: miller2_vertical_50_ac2_ev, Matcher: Coma
+Continent ID -> ConID not found
+	Method Matches for Continent ID: ['ContiNa']
+
+Type: Joinable, Table: miller2_both_50_30_ac4_ev, Matcher: Coma
+Project number -> miller2_PrNu not found
+	Method Matches for Project number: ['miller2_RegPr']
+
+Type: Semantically-Joinable, Table: miller2_vertical_30_ac2_av, Matcher: Coma
+Organisation class -> OrganiCla not found
+	Method Matches for Organisation class: ['OrganiS']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac4_av, Matcher: Coma
+Continent ID -> miller2_ConID not found
+	Method Matches for Continent ID: ['miller2_ContiNa']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac4_av, Matcher: Coma
+PBA type -> miller2_PBATy not found
+	Method Matches for PBA type: ['miller2_SePe']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac4_av, Matcher: Coma
+CountryRegion ID -> miller2_CouReID not found
+	Method Matches for CountryRegion ID: ['miller2_ProBrowCounID']
+
+Type: Semantically-Joinable, Table: miller2_both_50_50_ac4_av, Matcher: Coma
+Fiscal year -> miller2_FiYe not found
+	Method Matches for Fiscal year: ['miller2_BilatAiMar']
+
+Type: Semantically-Joinable, Table: miller2_both_50_30_ac2_av, Matcher: Coma
+CountryRegion percent -> CoRePerc not found
+	Method Matches for CountryRegion percent: ['CounRegN']
+
+Type: Semantically-Joinable, Table: miller2_both_50_70_ac4_av, Matcher: Coma
+Fiscal year -> miller2_FiY not found
+	Method Matches for Fiscal year: ['miller2_BilatAMar']
+
+Type: Semantically-Joinable, Table: miller2_both_50_70_ac4_av, Matcher: Coma
+PBA type -> miller2_PBAT not found
+	Method Matches for PBA type: ['miller2_SecPe']
+
+Type: Semantically-Joinable, Table: miller2_both_50_70_ac4_av, Matcher: Coma
+Continent ID -> miller2_ConID not found
+	Method Matches for Continent ID: ['miller2_ContiN']
+
+Type: Semantically-Joinable, Table: miller2_vertical_50_ac4_av, Matcher: Coma
+Organisation name -> miller2_OrgNa not found
+	Method Matches for Organisation name: ['miller2_OrganTy', 'miller2_OrganCl']
+
+Type: Semantically-Joinable, Table: miller2_both_50_30_ac4_av, Matcher: Coma
+Organisation ID -> miller2_OrgaID not found
+	Method Matches for Organisation ID: ['miller2_OrganiSu']
+
+Type: Semantically-Joinable, Table: miller2_both_50_30_ac4_av, Matcher: Coma
+PBA type -> miller2_PBATy not found
+	Method Matches for PBA type: ['miller2_AmSpe']
+
+Type: Semantically-Joinable, Table: miller2_both_50_70_ac2_av, Matcher: Coma
+Organisation name -> OrgNa not found
+	Method Matches for Organisation name: ['OrganiT', 'OrganID']
+
+Type: Semantically-Joinable, Table: miller2_both_50_70_ac2_av, Matcher: Coma
+Section ID -> SeID not found
+	Method Matches for Section ID: ['Sector ID']
+
+Type: Semantically-Joinable, Table: miller2_vertical_50_ac2_av, Matcher: Coma
+Continent name -> ContN not found
+	Method Matches for Continent name: ['ContID']
+
+Type: Semantically-Joinable, Table: miller2_vertical_50_ac2_av, Matcher: Coma
+Section ID -> SecID not found
+	Method Matches for Section ID: ['Sector ID']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac2_av, Matcher: Coma
+Division ID -> DiID not found
+	Method Matches for Division ID: ['DiviNa']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac2_av, Matcher: Coma
+Organisation name -> OrgaN not found
+	Method Matches for Organisation name: ['OrganiT']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac2_av, Matcher: Coma
+CountryRegion percent -> CouRePe not found
+	Method Matches for CountryRegion percent: ['CouReNa']
+
+Type: Semantically-Joinable, Table: miller2_both_50_50_ac2_av, Matcher: Coma
+Organisation type -> OrgTy not found
+	Method Matches for Organisation type: ['OrganiSu']
+
+Type: Semantically-Joinable, Table: miller2_both_50_50_ac2_av, Matcher: Coma
+Section name -> SecNa not found
+	Method Matches for Section name: ['Sector name']
+
+Type: Semantically-Joinable, Table: miller2_both_50_50_ac2_av, Matcher: Coma
+Division ID -> DiID not found
+	Method Matches for Division ID: ['DiviN']
+
+Type: Semantically-Joinable, Table: miller2_both_50_50_ac2_av, Matcher: Coma
+Organisation name -> OrganiN not found
+	Method Matches for Organisation name: ['OrganiSu']
+
+Type: Semantically-Joinable, Table: miller2_both_50_50_ac2_av, Matcher: Coma
+CountryRegion percent -> CounRegPe not found
+	Method Matches for CountryRegion percent: ['CounRegID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_ev, Matcher: Coma
+Fiscal year -> miller2_FiY not found
+	Method Matches for Fiscal year: ['miller2_BilatAiMar']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_ev, Matcher: Coma
+PBA type -> miller2_PBAT not found
+	Method Matches for PBA type: ['miller2_IRTCPe', 'miller2_AmoSpe']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_ev, Matcher: Coma
+Organisation class -> miller2_OrganiCla not found
+	Method Matches for Organisation class: ['miller2_OrganiS']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_ev, Matcher: Coma
+Organisation ID -> OrgID not found
+	Method Matches for Organisation ID: ['OrganiSu']
+
+Type: Unionable, Table: miller2_horizontal_50_ac2_ev, Matcher: Coma
+Project number -> ProNu not found
+	Method Matches for Project number: ['ProgrPr']
+
+Type: Unionable, Table: miller2_horizontal_50_ac2_ev, Matcher: Coma
+CountryRegion ID -> CoReID not found
+	Method Matches for CountryRegion ID: ['CounRegNa']
+
+Type: Unionable, Table: miller2_horizontal_50_ac2_av, Matcher: Coma
+Sector name -> SeN not found
+	Method Matches for Sector name: ['SecPe']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_av, Matcher: Coma
+Organisation class -> OrgaCla not found
+	Method Matches for Organisation class: ['OrganiS']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_av, Matcher: Coma
+Fiscal year -> miller2_FiY not found
+	Method Matches for Fiscal year: ['miller2_BilaAMar']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_av, Matcher: Coma
+PBA type -> miller2_PBAT not found
+	Method Matches for PBA type: ['miller2_SecPe']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_av, Matcher: Coma
+Amount spent -> miller2_AmoSp not found
+	Method Matches for Amount spent: ['miller2_UntAmoPrBu']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_av, Matcher: Coma
+PBA type -> miller2_PBATy not found
+	Method Matches for PBA type: ['miller2_IRTCPe']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_av, Matcher: Coma
+Organisation class -> miller2_OrganCl not found
+	Method Matches for Organisation class: ['miller2_OrganiS']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_av, Matcher: Coma
+Amount spent -> miller2_AmSp not found
+	Method Matches for Amount spent: ['miller2_UntAmoPrBu']
+
+Type: Unionable, Table: miller2_horizontal_0_ac4_av, Matcher: Coma
+Project number -> miller2_ProNum not found
+	Method Matches for Project number: ['miller2_ProgPr']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_av, Matcher: Coma
+Organisation ID -> OrgID not found
+	Method Matches for Organisation ID: ['OrganiT']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_ev, Matcher: Coma
+Organisation ID -> OrgID not found
+	Method Matches for Organisation ID: ['OrganiNa']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_ev, Matcher: Coma
+Organisation class -> OrgCl not found
+	Method Matches for Organisation class: ['OrganS']
+
+Type: Unionable, Table: miller2_horizontal_0_ac4_ev, Matcher: Coma
+Project number -> miller2_PrNum not found
+	Method Matches for Project number: ['miller2_RegPr', 'miller2_CouRePer']
+
+Type: Unionable, Table: miller2_horizontal_0_ac4_ev, Matcher: Coma
+PBA type -> miller2_PBAT not found
+	Method Matches for PBA type: ['miller2_AmoSpe']
+
+Type: Unionable, Table: miller2_horizontal_0_ac4_ev, Matcher: Coma
+Organisation class -> miller2_OrganCla not found
+	Method Matches for Organisation class: ['miller2_OrganS']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_ev, Matcher: Coma
+Project number -> miller2_ProNu not found
+	Method Matches for Project number: ['miller2_ProPr']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_ev, Matcher: Coma
+PBA type -> miller2_PBAT not found
+	Method Matches for PBA type: ['miller2_SePe']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_ev, Matcher: Coma
+Organisation ID -> miller2_OrgID not found
+	Method Matches for Organisation ID: ['miller2_OrganiTy']

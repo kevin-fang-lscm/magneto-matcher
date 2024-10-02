@@ -1,0 +1,452 @@
+
+Type: View-Unionable, Table: prospect_both_0_50_ac3_av, Matcher: CL
+NumberChildren -> nmbrchldrn not found
+	Method Matches for NumberChildren: ['nmbrcrdtcrds']
+
+Type: View-Unionable, Table: prospect_both_0_50_ac3_av, Matcher: CL
+Employer -> mplr not found
+	Method Matches for Employer: ['ddrssln1']
+
+Type: View-Unionable, Table: prospect_both_0_50_ac3_av, Matcher: CL
+Country -> cntr not found
+	Method Matches for Country: ['ddrssln1']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac3_ev, Matcher: CL
+FirstName -> frstnm not found
+	Method Matches for FirstName: ['gncd', 'pstlcd', 'stt']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac3_ev, Matcher: CL
+LastName -> lstnm not found
+	Method Matches for LastName: ['frstnm', 'ddrssln2', 'pstlcd', 'ddrssln1']
+
+Type: View-Unionable, Table: prospect_both_0_30_ac5_ev, Matcher: CL
+LastName -> prospect_lstnm not found
+	Method Matches for LastName: ['prospect_ddrssln1']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac2_ev, Matcher: CL
+LastName -> LNa not found
+	Method Matches for LastName: ['AdLi2', 'AddrL1']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac2_ev, Matcher: CL
+NumberCreditCards -> NuCreCar not found
+	Method Matches for NumberCreditCards: ['NumCa', 'NuCh']
+
+Type: View-Unionable, Table: prospect_both_0_50_ac2_av, Matcher: CL
+Country -> Co not found
+	Method Matches for Country: ['LNa']
+
+Type: View-Unionable, Table: prospect_both_0_50_ac2_av, Matcher: CL
+State -> Sta not found
+	Method Matches for State: ['LNa', 'AgID']
+
+Type: View-Unionable, Table: prospect_both_0_50_ac2_ev, Matcher: CL
+LastName -> LNa not found
+	Method Matches for LastName: ['FiNa', 'AdLi1', 'PosCo']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac2_av, Matcher: CL
+NumberChildren -> NuCh not found
+	Method Matches for NumberChildren: ['NumC', 'NumCreCar']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac3_av, Matcher: CL
+Employer -> mplr not found
+	Method Matches for Employer: ['frstnm', 'pstlcd']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac4_av, Matcher: CL
+Country -> prospect_Co not found
+	Method Matches for Country: ['prospect_LaNa']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac4_av, Matcher: CL
+State -> prospect_St not found
+	Method Matches for State: ['prospect_FiNa', 'prospect_AddLi1', 'prospect_LaNa', 'prospect_AgID']
+
+Type: View-Unionable, Table: prospect_both_0_70_ec_ev, Matcher: CL
+LastName -> LastName not found
+	Method Matches for LastName: ['FirstName', 'PostalCode', 'AddressLine2', 'AddressLine1']
+
+Type: View-Unionable, Table: prospect_both_0_30_ac2_av, Matcher: CL
+Employer -> Empl not found
+	Method Matches for Employer: ['LaN']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac5_av, Matcher: CL
+Country -> prospect_cntr not found
+	Method Matches for Country: ['prospect_frstnm']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac5_av, Matcher: CL
+State -> prospect_stt not found
+	Method Matches for State: ['prospect_frstnm', 'prospect_gncd']
+
+Type: View-Unionable, Table: prospect_both_0_30_ac3_av, Matcher: CL
+Employer -> mplr not found
+	Method Matches for Employer: ['lstnm']
+
+Type: View-Unionable, Table: prospect_both_0_30_ac3_av, Matcher: CL
+Country -> cntr not found
+	Method Matches for Country: ['lstnm']
+
+Type: View-Unionable, Table: prospect_both_0_50_ac5_ev, Matcher: CL
+FirstName -> prospect_frstnm not found
+	Method Matches for FirstName: ['prospect_gncd']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac1_av, Matcher: CL
+City -> prospect_City not found
+	Method Matches for City: ['prospect_LastName']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac1_av, Matcher: CL
+State -> prospect_State not found
+	Method Matches for State: ['prospect_FirstName', 'prospect_LastName', 'prospect_AddressLine1']
+
+Type: View-Unionable, Table: prospect_both_0_50_ac5_av, Matcher: CL
+Employer -> prospect_mplr not found
+	Method Matches for Employer: ['prospect_frstnm', 'prospect_ddrssln2']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac1_ev, Matcher: CL
+FirstName -> prospect_FirstName not found
+	Method Matches for FirstName: ['prospect_AgencyID']
+
+Type: View-Unionable, Table: prospect_both_0_50_ac1_av, Matcher: CL
+State -> prospect_State not found
+	Method Matches for State: ['prospect_FirstName', 'prospect_LastName', 'prospect_AgencyID', 'prospect_AddressLine1', 'prospect_PostalCode']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac5_ev, Matcher: CL
+LastName -> prospect_lstnm not found
+	Method Matches for LastName: ['prospect_ddrssln1', 'prospect_ddrssln2']
+
+Type: View-Unionable, Table: prospect_both_0_30_ac3_ev, Matcher: CL
+FirstName -> frstnm not found
+	Method Matches for FirstName: ['gncd', 'pstlcd']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac4_ev, Matcher: CL
+LastName -> prospect_LaN not found
+	Method Matches for LastName: ['prospect_AdLi1', 'prospect_AddLi2']
+
+Type: View-Unionable, Table: prospect_both_0_50_ac4_av, Matcher: CL
+Gender -> prospect_Ge not found
+	Method Matches for Gender: ['prospect_MidIn']
+
+Type: View-Unionable, Table: prospect_both_0_50_ac4_av, Matcher: CL
+Employer -> prospect_Empl not found
+	Method Matches for Employer: ['prospect_FiN', 'prospect_AdL1']
+
+Type: View-Unionable, Table: prospect_both_0_30_ec_ev, Matcher: CL
+LastName -> LastName not found
+	Method Matches for LastName: ['PostalCode', 'AddressLine2']
+
+Type: Joinable, Table: prospect_horizontal_50_ec_av, Matcher: CL
+State -> State not found
+	Method Matches for State: ['FirstName', 'PostalCode', 'LastName', 'AddressLine1']
+
+Type: Joinable, Table: prospect_both_50_70_ac2_ev, Matcher: CL
+NumberChildren -> NuChi not found
+	Method Matches for NumberChildren: ['NuC']
+
+Type: Joinable, Table: prospect_both_50_70_ac4_ev, Matcher: CL
+NumberChildren -> prospect_NumChil not found
+	Method Matches for NumberChildren: ['prospect_NumC']
+
+Type: Joinable, Table: prospect_both_50_30_ac2_ev, Matcher: CL
+NumberChildren -> NuChi not found
+	Method Matches for NumberChildren: ['NuC']
+
+Type: Joinable, Table: prospect_both_50_50_ac4_ev, Matcher: CL
+NumberChildren -> prospect_NuChi not found
+	Method Matches for NumberChildren: ['prospect_NumC']
+
+Type: Semantically-Joinable, Table: prospect_vertical_50_ac4_av, Matcher: CL
+City -> prospect_C not found
+	Method Matches for City: ['prospect_AdLi1']
+
+Type: Semantically-Joinable, Table: prospect_both_50_70_ec_av, Matcher: CL
+Employer -> Employer not found
+	Method Matches for Employer: ['AddressLine1', 'AddressLine2', 'FirstName']
+
+Type: Semantically-Joinable, Table: prospect_both_50_70_ac2_av, Matcher: CL
+NumberCreditCards -> NuCreCar not found
+	Method Matches for NumberCreditCards: ['NumC']
+
+Type: Semantically-Joinable, Table: prospect_both_50_70_ac2_av, Matcher: CL
+State -> Sta not found
+	Method Matches for State: ['AgeID']
+
+Type: Semantically-Joinable, Table: prospect_both_50_30_ac4_av, Matcher: CL
+Employer -> prospect_Em not found
+	Method Matches for Employer: ['prospect_PoCo']
+
+Type: Semantically-Joinable, Table: prospect_both_50_50_ec_av, Matcher: CL
+Employer -> Employer not found
+	Method Matches for Employer: ['LastName', 'AddressLine1']
+
+Type: Semantically-Joinable, Table: prospect_both_50_50_ec_av, Matcher: CL
+State -> State not found
+	Method Matches for State: ['LastName', 'AgencyID']
+
+Type: Semantically-Joinable, Table: prospect_both_50_30_ac5_av, Matcher: CL
+State -> prospect_stt not found
+	Method Matches for State: ['prospect_frstnm']
+
+Type: Semantically-Joinable, Table: prospect_vertical_50_ac1_av, Matcher: CL
+State -> prospect_State not found
+	Method Matches for State: ['prospect_AddressLine1']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ac5_av, Matcher: CL
+NumberCars -> prospect_nmbrcrs not found
+	Method Matches for NumberCars: ['prospect_nmbrcrdtcrds']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ac5_av, Matcher: CL
+Gender -> prospect_gndr not found
+	Method Matches for Gender: ['prospect_mddlntl']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ac5_av, Matcher: CL
+Employer -> prospect_mplr not found
+	Method Matches for Employer: ['prospect_lstnm', 'prospect_ddrssln2', 'prospect_pstlcd', 'prospect_ddrssln1']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ac1_av, Matcher: CL
+Employer -> prospect_Employer not found
+	Method Matches for Employer: ['prospect_AddressLine1', 'prospect_LastName', 'prospect_PostalCode']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ac1_av, Matcher: CL
+State -> prospect_State not found
+	Method Matches for State: ['prospect_AddressLine1']
+
+Type: Semantically-Joinable, Table: prospect_both_50_50_ac2_av, Matcher: CL
+FirstName -> FirN not found
+	Method Matches for FirstName: ['LaNa']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ac4_av, Matcher: CL
+Employer -> prospect_Emp not found
+	Method Matches for Employer: ['prospect_LaNa', 'prospect_AddL2', 'prospect_PosC', 'prospect_FirNa']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ac4_av, Matcher: CL
+State -> prospect_Sta not found
+	Method Matches for State: ['prospect_LaNa', 'prospect_PosC']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ac4_av, Matcher: CL
+NumberCars -> prospect_NumC not found
+	Method Matches for NumberCars: ['prospect_NumCrCa']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ec_av, Matcher: CL
+Employer -> Employer not found
+	Method Matches for Employer: ['AddressLine1']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ec_av, Matcher: CL
+Country -> Country not found
+	Method Matches for Country: ['AddressLine1']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ac3_av, Matcher: CL
+Country -> cntr not found
+	Method Matches for Country: ['ddrssln1', 'ddrssln2']
+
+Type: Semantically-Joinable, Table: prospect_vertical_30_ac5_av, Matcher: CL
+Gender -> prospect_gndr not found
+	Method Matches for Gender: ['prospect_mddlntl']
+
+Type: Semantically-Joinable, Table: prospect_both_50_50_ac1_av, Matcher: CL
+State -> prospect_State not found
+	Method Matches for State: ['prospect_AgencyID']
+
+Type: Semantically-Joinable, Table: prospect_both_50_50_ac1_av, Matcher: CL
+Employer -> prospect_Employer not found
+	Method Matches for Employer: ['prospect_AddressLine2']
+
+Type: Semantically-Joinable, Table: prospect_vertical_30_ac1_av, Matcher: CL
+Employer -> prospect_Employer not found
+	Method Matches for Employer: ['prospect_AddressLine2']
+
+Type: Semantically-Joinable, Table: prospect_both_50_50_ac4_av, Matcher: CL
+Country -> prospect_Co not found
+	Method Matches for Country: ['prospect_AddrLi2']
+
+Type: Semantically-Joinable, Table: prospect_vertical_50_ec_av, Matcher: CL
+Employer -> Employer not found
+	Method Matches for Employer: ['PostalCode']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ac2_av, Matcher: CL
+CreditRating -> CrRa not found
+	Method Matches for CreditRating: ['In', 'NWo']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ac2_av, Matcher: CL
+Country -> Coun not found
+	Method Matches for Country: ['AddLi1', 'AddL2']
+
+Type: Semantically-Joinable, Table: prospect_both_50_70_ac4_av, Matcher: CL
+State -> prospect_St not found
+	Method Matches for State: ['prospect_FiN']
+
+Type: Semantically-Joinable, Table: prospect_vertical_50_ac3_av, Matcher: CL
+City -> ct not found
+	Method Matches for City: ['mrtlstts', 'mddlntl']
+
+Type: Semantically-Joinable, Table: prospect_both_50_70_ac5_av, Matcher: CL
+NumberCars -> prospect_nmbrcrs not found
+	Method Matches for NumberCars: ['prospect_nmbrcrdtcrds']
+
+Type: Semantically-Joinable, Table: prospect_both_50_70_ac5_av, Matcher: CL
+City -> prospect_ct not found
+	Method Matches for City: ['prospect_frstnm']
+
+Type: Semantically-Joinable, Table: prospect_both_50_70_ac1_av, Matcher: CL
+State -> prospect_State not found
+	Method Matches for State: ['prospect_AgencyID']
+
+Type: Unionable, Table: prospect_horizontal_100_ac3_av, Matcher: CL
+City -> ct not found
+	Method Matches for City: ['frstnm', 'pstlcd']
+
+Type: Unionable, Table: prospect_horizontal_100_ac3_av, Matcher: CL
+State -> stt not found
+	Method Matches for State: ['frstnm', 'pstlcd', 'wnrrntflg', 'lstnm']
+
+Type: Unionable, Table: prospect_horizontal_100_ac3_av, Matcher: CL
+Country -> cntr not found
+	Method Matches for Country: ['lstnm', 'ddrssln1', 'frstnm']
+
+Type: Unionable, Table: prospect_horizontal_50_ac4_av, Matcher: CL
+State -> prospect_Sta not found
+	Method Matches for State: ['prospect_FirN', 'prospect_AgeID', 'prospect_LNa', 'prospect_PoCo']
+
+Type: Unionable, Table: prospect_horizontal_50_ac4_av, Matcher: CL
+Country -> prospect_Coun not found
+	Method Matches for Country: ['prospect_LNa']
+
+Type: Unionable, Table: prospect_horizontal_50_ac4_av, Matcher: CL
+Employer -> prospect_Emp not found
+	Method Matches for Employer: ['prospect_FirN', 'prospect_LNa']
+
+Type: Unionable, Table: prospect_horizontal_50_ac5_av, Matcher: CL
+State -> prospect_stt not found
+	Method Matches for State: ['prospect_frstnm']
+
+Type: Unionable, Table: prospect_horizontal_50_ac5_av, Matcher: CL
+Country -> prospect_cntr not found
+	Method Matches for Country: ['prospect_lstnm']
+
+Type: Unionable, Table: prospect_horizontal_0_ac2_ev, Matcher: CL
+LastName -> LN not found
+	Method Matches for LastName: ['AdLi2', 'FiN', 'AddrL1', 'PoC']
+
+Type: Unionable, Table: prospect_horizontal_50_ac1_av, Matcher: CL
+State -> prospect_State not found
+	Method Matches for State: ['prospect_FirstName', 'prospect_LastName']
+
+Type: Unionable, Table: prospect_horizontal_50_ac1_av, Matcher: CL
+Country -> prospect_Country not found
+	Method Matches for Country: ['prospect_LastName']
+
+Type: Unionable, Table: prospect_horizontal_100_ac2_av, Matcher: CL
+NumberChildren -> NumCh not found
+	Method Matches for NumberChildren: ['NumCreCa']
+
+Type: Unionable, Table: prospect_horizontal_100_ac2_av, Matcher: CL
+Employer -> Empl not found
+	Method Matches for Employer: ['FiN', 'AdL2', 'LaN']
+
+Type: Unionable, Table: prospect_horizontal_0_ac2_av, Matcher: CL
+LastName -> LaN not found
+	Method Matches for LastName: ['AdLi2', 'FiN', 'AdL1', 'PosC']
+
+Type: Unionable, Table: prospect_horizontal_100_ac2_ev, Matcher: CL
+NumberChildren -> NuChi not found
+	Method Matches for NumberChildren: ['NumCa']
+
+Type: Unionable, Table: prospect_horizontal_50_ec_av, Matcher: CL
+State -> State not found
+	Method Matches for State: ['FirstName', 'PostalCode', 'LastName', 'AddressLine1']
+
+Type: Unionable, Table: prospect_horizontal_0_ac3_av, Matcher: CL
+LastName -> lstnm not found
+	Method Matches for LastName: ['frstnm', 'ddrssln2', 'pstlcd', 'ddrssln1']
+
+Type: Unionable, Table: prospect_horizontal_0_ac3_av, Matcher: CL
+FirstName -> frstnm not found
+	Method Matches for FirstName: ['gncd', 'pstlcd', 'stt']
+
+Type: Unionable, Table: prospect_horizontal_0_ac4_av, Matcher: CL
+LastName -> prospect_LNa not found
+	Method Matches for LastName: ['prospect_FiN', 'prospect_AddrL1', 'prospect_AdL2']
+
+Type: Unionable, Table: prospect_horizontal_0_ac4_av, Matcher: CL
+FirstName -> prospect_FiN not found
+	Method Matches for FirstName: ['prospect_AgID']
+
+Type: Unionable, Table: prospect_horizontal_0_ac4_av, Matcher: CL
+PostalCode -> prospect_PosC not found
+	Method Matches for PostalCode: ['prospect_AgID', 'prospect_AdL2', 'prospect_AddrL1', 'prospect_FiN', 'prospect_LNa']
+
+Type: Unionable, Table: prospect_horizontal_100_ac4_ev, Matcher: CL
+NumberChildren -> prospect_NuChil not found
+	Method Matches for NumberChildren: ['prospect_NumC']
+
+Type: Unionable, Table: prospect_horizontal_0_ec_ev, Matcher: CL
+LastName -> LastName not found
+	Method Matches for LastName: ['FirstName', 'PostalCode', 'AddressLine2', 'AddressLine1']
+
+Type: Unionable, Table: prospect_horizontal_0_ac1_av, Matcher: CL
+LastName -> prospect_LastName not found
+	Method Matches for LastName: ['prospect_FirstName', 'prospect_PostalCode', 'prospect_AddressLine1']
+
+Type: Unionable, Table: prospect_horizontal_0_ac1_av, Matcher: CL
+FirstName -> prospect_FirstName not found
+	Method Matches for FirstName: ['prospect_AgencyID']
+
+Type: Unionable, Table: prospect_horizontal_0_ac5_av, Matcher: CL
+LastName -> prospect_lstnm not found
+	Method Matches for LastName: ['prospect_frstnm', 'prospect_ddrssln1', 'prospect_ddrssln2']
+
+Type: Unionable, Table: prospect_horizontal_0_ac5_av, Matcher: CL
+FirstName -> prospect_frstnm not found
+	Method Matches for FirstName: ['prospect_gncd']
+
+Type: Unionable, Table: prospect_horizontal_0_ac5_ev, Matcher: CL
+LastName -> prospect_lstnm not found
+	Method Matches for LastName: ['prospect_frstnm', 'prospect_ddrssln1', 'prospect_ddrssln2']
+
+Type: Unionable, Table: prospect_horizontal_0_ac5_ev, Matcher: CL
+FirstName -> prospect_frstnm not found
+	Method Matches for FirstName: ['prospect_gncd']
+
+Type: Unionable, Table: prospect_horizontal_100_ac5_av, Matcher: CL
+NumberCars -> prospect_nmbrcrs not found
+	Method Matches for NumberCars: ['prospect_nmbrcrdtcrds']
+
+Type: Unionable, Table: prospect_horizontal_100_ac5_av, Matcher: CL
+Employer -> prospect_mplr not found
+	Method Matches for Employer: ['prospect_frstnm', 'prospect_ddrssln1', 'prospect_lstnm', 'prospect_ddrssln2']
+
+Type: Unionable, Table: prospect_horizontal_0_ac1_ev, Matcher: CL
+LastName -> prospect_LastName not found
+	Method Matches for LastName: ['prospect_FirstName', 'prospect_PostalCode', 'prospect_AddressLine1']
+
+Type: Unionable, Table: prospect_horizontal_0_ac1_ev, Matcher: CL
+FirstName -> prospect_FirstName not found
+	Method Matches for FirstName: ['prospect_AgencyID']
+
+Type: Unionable, Table: prospect_horizontal_100_ac1_av, Matcher: CL
+City -> prospect_City not found
+	Method Matches for City: ['prospect_FirstName']
+
+Type: Unionable, Table: prospect_horizontal_50_ac3_av, Matcher: CL
+State -> stt not found
+	Method Matches for State: ['frstnm', 'gndr', 'pstlcd', 'gncd']
+
+Type: Unionable, Table: prospect_horizontal_50_ac3_av, Matcher: CL
+Country -> cntr not found
+	Method Matches for Country: ['frstnm']
+
+Type: Unionable, Table: prospect_horizontal_100_ec_av, Matcher: CL
+Country -> Country not found
+	Method Matches for Country: ['AddressLine1', 'FirstName']
+
+Type: Unionable, Table: prospect_horizontal_0_ac4_ev, Matcher: CL
+LastName -> prospect_LaNa not found
+	Method Matches for LastName: ['prospect_AdLi2', 'prospect_FiN', 'prospect_AddrL1']
+
+Type: Unionable, Table: prospect_horizontal_0_ac4_ev, Matcher: CL
+FirstName -> prospect_FiN not found
+	Method Matches for FirstName: ['prospect_AgeID']
+
+Type: Unionable, Table: prospect_horizontal_0_ac4_ev, Matcher: CL
+NumberChildren -> prospect_NumChi not found
+	Method Matches for NumberChildren: ['prospect_NumC']
+
+Type: Unionable, Table: prospect_horizontal_100_ac4_av, Matcher: CL
+State -> prospect_St not found
+	Method Matches for State: ['prospect_FirNa']

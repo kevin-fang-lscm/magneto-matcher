@@ -1,0 +1,1280 @@
+
+Type: View-Unionable, Table: miller2_both_0_70_ac3_av, Matcher: IndexedSimilarity
+Organisation ID -> rgnstnd not found
+	Method Matches for Organisation ID: ['sctnd']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac3_av, Matcher: IndexedSimilarity
+Section name -> sctnnm not found
+	Method Matches for Section name: ['sctnd', 'sctrnm']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac3_av, Matcher: IndexedSimilarity
+Sector name -> sctrnm not found
+	Method Matches for Sector name: ['cdbsnssdlvrmdl(ld)']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac2_ev, Matcher: IndexedSimilarity
+Fiscal year -> FiYe not found
+	Method Matches for Fiscal year: ['FSTCPe']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac2_ev, Matcher: IndexedSimilarity
+Fund centre name -> FuCenN not found
+	Method Matches for Fund centre name: ['FCeID']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac2_ev, Matcher: IndexedSimilarity
+Section name -> SecN not found
+	Method Matches for Section name: ['OrgS', 'SecID']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac2_av, Matcher: IndexedSimilarity
+Project number -> PrNu not found
+	Method Matches for Project number: ['DiID', 'BrID', 'SectID']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac2_av, Matcher: IndexedSimilarity
+Branch name -> BrN not found
+	Method Matches for Branch name: ['SectID']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac2_av, Matcher: IndexedSimilarity
+Organisation sub-class -> OrganiS not found
+	Method Matches for Organisation sub-class: ['OrgCl', 'OrgN']
+
+Type: View-Unionable, Table: miller2_both_0_30_ac4_ev, Matcher: IndexedSimilarity
+Branch name -> miller2_BrN not found
+	Method Matches for Branch name: ['Sector ID']
+
+Type: View-Unionable, Table: miller2_both_0_30_ac4_ev, Matcher: IndexedSimilarity
+Sector percent -> miller2_SecPer not found
+	Method Matches for Sector percent: ['Sector ID']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac2_ev, Matcher: IndexedSimilarity
+Organisation sub-class -> OrganS not found
+	Method Matches for Organisation sub-class: ['OrgaCl', 'SectN']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac2_ev, Matcher: IndexedSimilarity
+Division name -> DiNa not found
+	Method Matches for Division name: ['SectN', 'SectID']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac2_ev, Matcher: IndexedSimilarity
+Programming process (new) -> ProgrPro not found
+	Method Matches for Programming process (new): ['KnowlFoDevel']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac2_ev, Matcher: IndexedSimilarity
+Project number -> ProjNu not found
+	Method Matches for Project number: ['SecID', 'SectID']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac2_av, Matcher: IndexedSimilarity
+Organisation sub-class -> OrganiSu not found
+	Method Matches for Organisation sub-class: ['OrgCl', 'OrgaID']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac2_av, Matcher: IndexedSimilarity
+Project number -> ProjNu not found
+	Method Matches for Project number: ['SecID', 'BrID', 'OrgaID', 'SeID', 'FCeID']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac2_av, Matcher: IndexedSimilarity
+Section name -> SeN not found
+	Method Matches for Section name: ['SecID', 'OrgCl', 'OrgaID']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac2_av, Matcher: IndexedSimilarity
+Fund centre name -> FuCenN not found
+	Method Matches for Fund centre name: ['FCeID']
+
+Type: View-Unionable, Table: miller2_both_0_30_ac1_ev, Matcher: IndexedSimilarity
+FSTC percent -> miller2_FSTCPercent not found
+	Method Matches for FSTC percent: ['miller2_SectorPercent', 'miller2_IRTCPercent']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac3_av, Matcher: IndexedSimilarity
+Organisation ID -> rgnstnd not found
+	Method Matches for Organisation ID: ['sctnd']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac3_av, Matcher: IndexedSimilarity
+Organisation name -> rgnstnnm not found
+	Method Matches for Organisation name: ['sctnd', 'sctrnm', 'dvsnd']
+
+Type: View-Unionable, Table: miller2_both_0_30_ac5_ev, Matcher: IndexedSimilarity
+Status -> miller2_stts not found
+	Method Matches for Status: ['miller2_rgnstnd']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac3_ev, Matcher: IndexedSimilarity
+Fund centre name -> fndcntrnm not found
+	Method Matches for Fund centre name: ['fsclr']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac3_ev, Matcher: IndexedSimilarity
+Organisation name -> rgnstnnm not found
+	Method Matches for Organisation name: ['sctnd', 'dvsnd', 'sctnnm', 'sctrd', 'rgnstnsb-clss', 'fsclr', 'prgrmmngprcss(nw)', 'fndcntrnm', 'fstcprcnt', 'mntspnt']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac3_ev, Matcher: IndexedSimilarity
+Division name -> dvsnnm not found
+	Method Matches for Division name: ['dvsnd']
+
+Type: View-Unionable, Table: miller2_both_0_30_ac2_ev, Matcher: IndexedSimilarity
+Project number -> PrNum not found
+	Method Matches for Project number: ['SecID', 'OrgaID', 'SeID', 'TrDev']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac4_ev, Matcher: IndexedSimilarity
+Branch ID -> miller2_BraID not found
+	Method Matches for Branch ID: ['miller2_DiID', 'miller2_ContID', 'miller2_OrgaID']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac4_av, Matcher: IndexedSimilarity
+Sector ID -> miller2_SeID not found
+	Method Matches for Sector ID: ['Section ID']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac4_av, Matcher: IndexedSimilarity
+Organisation name -> miller2_OrgaNa not found
+	Method Matches for Organisation name: ['Section ID']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac4_av, Matcher: IndexedSimilarity
+Sector name -> miller2_SeN not found
+	Method Matches for Sector name: ['Section ID']
+
+Type: View-Unionable, Table: miller2_both_0_30_ac3_ev, Matcher: IndexedSimilarity
+Division name -> dvsnnm not found
+	Method Matches for Division name: ['cdbsnssdlvrmdl(ld)']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac5_ev, Matcher: IndexedSimilarity
+Division name -> miller2_dvsnnm not found
+	Method Matches for Division name: ['miller2_cdbsnssdlvrmdl(ld)']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac1_av, Matcher: IndexedSimilarity
+FSTC percent -> miller2_FSTCPercent not found
+	Method Matches for FSTC percent: ['miller2_SectorPercent']
+
+Type: View-Unionable, Table: miller2_both_0_30_ac3_av, Matcher: IndexedSimilarity
+Organisation name -> rgnstnnm not found
+	Method Matches for Organisation name: ['sctnd', 'sctrnm', 'cdbsnssdlvrmdl(ld)', 'rgnstnd', 'prjctnmbr', 'sctrd', 'rgnstnsb-clss', 'fsclr', 'cntrrgnd', 'mntspnt']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac5_av, Matcher: IndexedSimilarity
+Division name -> miller2_dvsnnm not found
+	Method Matches for Division name: ['miller2_cdbsnssdlvrmdl(ld)']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac5_av, Matcher: IndexedSimilarity
+Division ID -> miller2_dvsnd not found
+	Method Matches for Division ID: ['miller2_cdbsnssdlvrmdl(ld)']
+
+Type: View-Unionable, Table: miller2_both_0_50_ac1_ev, Matcher: IndexedSimilarity
+FSTC percent -> miller2_FSTCPercent not found
+	Method Matches for FSTC percent: ['miller2_SectorPercent', 'miller2_IRTCPercent']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac4_av, Matcher: IndexedSimilarity
+Division name -> miller2_DivNa not found
+	Method Matches for Division name: ['Sector name']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac4_av, Matcher: IndexedSimilarity
+Organisation type -> miller2_OrgaT not found
+	Method Matches for Organisation type: ['Sector name']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac4_av, Matcher: IndexedSimilarity
+Continent name -> miller2_ContN not found
+	Method Matches for Continent name: ['Sector name']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac4_av, Matcher: IndexedSimilarity
+Project number -> miller2_ProjNu not found
+	Method Matches for Project number: ['Sector name']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac4_av, Matcher: IndexedSimilarity
+Organisation name -> miller2_OrganNa not found
+	Method Matches for Organisation name: ['Sector name']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac4_av, Matcher: IndexedSimilarity
+Continent ID -> miller2_ConID not found
+	Method Matches for Continent ID: ['Sector name']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac4_av, Matcher: IndexedSimilarity
+CountryRegion name -> miller2_CounRegNa not found
+	Method Matches for CountryRegion name: ['Sector name']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac4_av, Matcher: IndexedSimilarity
+Sector ID -> miller2_SeID not found
+	Method Matches for Sector ID: ['Sector name']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac4_av, Matcher: IndexedSimilarity
+Section name -> miller2_SeN not found
+	Method Matches for Section name: ['Sector name']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac4_av, Matcher: IndexedSimilarity
+Sector percent -> miller2_SecPerc not found
+	Method Matches for Sector percent: ['Sector name']
+
+Type: View-Unionable, Table: miller2_both_0_70_ac4_av, Matcher: IndexedSimilarity
+Branch name -> miller2_BrNa not found
+	Method Matches for Branch name: ['Sector name']
+
+Type: Joinable, Table: miller2_both_50_30_ac3_ev, Matcher: IndexedSimilarity
+Section name -> sctnnm not found
+	Method Matches for Section name: ['sctrnm', 'fsclr', 'sctrd', 'rgnstnd']
+
+Type: Joinable, Table: miller2_both_50_70_ac5_ev, Matcher: IndexedSimilarity
+Division name -> miller2_dvsnnm not found
+	Method Matches for Division name: ['miller2_cdbsnssdlvrmdl(ld)']
+
+Type: Joinable, Table: miller2_vertical_50_ac4_ev, Matcher: IndexedSimilarity
+Section name -> miller2_SecN not found
+	Method Matches for Section name: ['miller2_SectID']
+
+Type: Joinable, Table: miller2_vertical_50_ac4_ev, Matcher: IndexedSimilarity
+Branch ID -> miller2_BraID not found
+	Method Matches for Branch ID: ['miller2_SectID', 'miller2_OrgID']
+
+Type: Joinable, Table: miller2_vertical_50_ac1_ev, Matcher: IndexedSimilarity
+FSTC percent -> miller2_FSTCPercent not found
+	Method Matches for FSTC percent: ['miller2_SectorPercent']
+
+Type: Joinable, Table: miller2_both_50_30_ac2_ev, Matcher: IndexedSimilarity
+Section name -> SecN not found
+	Method Matches for Section name: ['OrgN']
+
+Type: Joinable, Table: miller2_both_50_30_ac2_ev, Matcher: IndexedSimilarity
+Organisation sub-class -> OrganiS not found
+	Method Matches for Organisation sub-class: ['OrgN']
+
+Type: Joinable, Table: miller2_both_50_30_ac2_ev, Matcher: IndexedSimilarity
+Fund centre name -> FCeN not found
+	Method Matches for Fund centre name: ['FCeID']
+
+Type: Joinable, Table: miller2_both_50_70_ac4_ev, Matcher: IndexedSimilarity
+Division name -> miller2_DivNa not found
+	Method Matches for Division name: ['Sector ID']
+
+Type: Joinable, Table: miller2_both_50_70_ac4_ev, Matcher: IndexedSimilarity
+Section name -> miller2_SeN not found
+	Method Matches for Section name: ['Sector ID']
+
+Type: Joinable, Table: miller2_both_50_70_ac4_ev, Matcher: IndexedSimilarity
+Branch name -> miller2_BraNa not found
+	Method Matches for Branch name: ['Sector ID']
+
+Type: Joinable, Table: miller2_both_50_70_ac4_ev, Matcher: IndexedSimilarity
+Continent ID -> miller2_ContiID not found
+	Method Matches for Continent ID: ['Sector ID']
+
+Type: Joinable, Table: miller2_both_50_70_ac4_ev, Matcher: IndexedSimilarity
+Sector percent -> miller2_SePerc not found
+	Method Matches for Sector percent: ['Sector ID']
+
+Type: Joinable, Table: miller2_both_50_70_ac4_ev, Matcher: IndexedSimilarity
+Project number -> miller2_ProjNum not found
+	Method Matches for Project number: ['Sector ID']
+
+Type: Joinable, Table: miller2_vertical_70_ac1_ev, Matcher: IndexedSimilarity
+FSTC percent -> miller2_FSTCPercent not found
+	Method Matches for FSTC percent: ['miller2_SectorPercent', 'miller2_IRTCPercent']
+
+Type: Joinable, Table: miller2_vertical_30_ac2_ev, Matcher: IndexedSimilarity
+Organisation sub-class -> OrganSu not found
+	Method Matches for Organisation sub-class: ['OrgID', 'SectN']
+
+Type: Joinable, Table: miller2_vertical_30_ac2_ev, Matcher: IndexedSimilarity
+Programming process (new) -> PrograProc not found
+	Method Matches for Programming process (new): ['KnowlFoDev']
+
+Type: Joinable, Table: miller2_both_50_50_ac5_ev, Matcher: IndexedSimilarity
+Division name -> miller2_dvsnnm not found
+	Method Matches for Division name: ['miller2_cdbsnssdlvrmdl(ld)']
+
+Type: Joinable, Table: miller2_vertical_70_ac3_ev, Matcher: IndexedSimilarity
+Fiscal year -> fsclr not found
+	Method Matches for Fiscal year: ['fndcntrnm']
+
+Type: Joinable, Table: miller2_vertical_70_ac3_ev, Matcher: IndexedSimilarity
+Organisation ID -> rgnstnd not found
+	Method Matches for Organisation ID: ['sctnd', 'cdbsnssdlvrmdl(ld)']
+
+Type: Joinable, Table: miller2_vertical_70_ac3_ev, Matcher: IndexedSimilarity
+Sector ID -> sctrd not found
+	Method Matches for Sector ID: ['cdbsnssdlvrmdl(ld)']
+
+Type: Joinable, Table: miller2_vertical_70_ac3_ev, Matcher: IndexedSimilarity
+Division name -> dvsnnm not found
+	Method Matches for Division name: ['cdbsnssdlvrmdl(ld)', 'dvsnd', 'sctnd']
+
+Type: Joinable, Table: miller2_vertical_70_ac3_ev, Matcher: IndexedSimilarity
+Branch name -> brnchnm not found
+	Method Matches for Branch name: ['cdbsnssdlvrmdl(ld)']
+
+Type: Joinable, Table: miller2_both_50_50_ac2_ev, Matcher: IndexedSimilarity
+Fiscal year -> FisY not found
+	Method Matches for Fiscal year: ['FSTCPe']
+
+Type: Joinable, Table: miller2_both_50_50_ac2_ev, Matcher: IndexedSimilarity
+Organisation sub-class -> OrganiS not found
+	Method Matches for Organisation sub-class: ['OrgNa']
+
+Type: Joinable, Table: miller2_both_50_50_ac2_ev, Matcher: IndexedSimilarity
+Project number -> ProjNu not found
+	Method Matches for Project number: ['SecID', 'SeID']
+
+Type: Joinable, Table: miller2_both_50_50_ac2_ev, Matcher: IndexedSimilarity
+Branch ID -> BraID not found
+	Method Matches for Branch ID: ['SeID', 'SecID', 'ContID', 'OrganID', 'DiviID', 'CouRegID']
+
+Type: Joinable, Table: miller2_vertical_70_ac2_ev, Matcher: IndexedSimilarity
+Section name -> SeN not found
+	Method Matches for Section name: ['OrganN', 'SecID', 'OrgCl', 'OrgSu']
+
+Type: Joinable, Table: miller2_both_50_50_ac3_ev, Matcher: IndexedSimilarity
+Organisation name -> rgnstnnm not found
+	Method Matches for Organisation name: ['sctnd', 'cdbsnssdlvrmdl(ld)', 'dvsnd', 'rgnstnd', 'sctnnm', 'rgnstnsb-clss', 'fsclr', 'sctrprcnt', 'prgrmmngprcss(nw)', 'fstcprcnt']
+
+Type: Joinable, Table: miller2_both_50_50_ac3_ev, Matcher: IndexedSimilarity
+Division name -> dvsnnm not found
+	Method Matches for Division name: ['cdbsnssdlvrmdl(ld)', 'dvsnd', 'sctnd', 'dsrtfctn(mrkr)']
+
+Type: Joinable, Table: miller2_both_50_50_ac3_ev, Matcher: IndexedSimilarity
+Branch name -> brnchnm not found
+	Method Matches for Branch name: ['cdbsnssdlvrmdl(ld)']
+
+Type: Joinable, Table: miller2_both_50_70_ac3_ev, Matcher: IndexedSimilarity
+Fiscal year -> fsclr not found
+	Method Matches for Fiscal year: ['fndcntrnm']
+
+Type: Joinable, Table: miller2_both_50_70_ac3_ev, Matcher: IndexedSimilarity
+Section name -> sctnnm not found
+	Method Matches for Section name: ['sctnd', 'sctrnm', 'fsclr', 'sctrd']
+
+Type: Joinable, Table: miller2_both_50_70_ac3_ev, Matcher: IndexedSimilarity
+Organisation name -> rgnstnnm not found
+	Method Matches for Organisation name: ['sctnd', 'sctrnm', 'cdbsnssdlvrmdl(ld)', 'dvsnd', 'rgnstnd', 'prjctnmbr', 'sctrd', 'sctnnm', 'rgnstnsb-clss', 'prjctbrwsrcntrd']
+
+Type: Joinable, Table: miller2_both_50_70_ac3_ev, Matcher: IndexedSimilarity
+Organisation ID -> rgnstnd not found
+	Method Matches for Organisation ID: ['sctnd', 'cdbsnssdlvrmdl(ld)']
+
+Type: Joinable, Table: miller2_both_50_70_ac3_ev, Matcher: IndexedSimilarity
+Sector ID -> sctrd not found
+	Method Matches for Sector ID: ['cdbsnssdlvrmdl(ld)']
+
+Type: Joinable, Table: miller2_both_50_70_ac3_ev, Matcher: IndexedSimilarity
+Branch name -> brnchnm not found
+	Method Matches for Branch name: ['cdbsnssdlvrmdl(ld)']
+
+Type: Joinable, Table: miller2_vertical_50_ac2_ev, Matcher: IndexedSimilarity
+CountryRegion ID -> CouReID not found
+	Method Matches for CountryRegion ID: ['OrgID']
+
+Type: Joinable, Table: miller2_both_50_70_ac2_ev, Matcher: IndexedSimilarity
+Project number -> ProNu not found
+	Method Matches for Project number: ['BrID', 'SectID', 'DiviID']
+
+Type: Joinable, Table: miller2_both_50_70_ac2_ev, Matcher: IndexedSimilarity
+Organisation sub-class -> OrganiSu not found
+	Method Matches for Organisation sub-class: ['OrgT']
+
+Type: Joinable, Table: miller2_both_50_70_ac2_ev, Matcher: IndexedSimilarity
+Sector name -> SeNa not found
+	Method Matches for Sector name: ['SectID', 'CFLI']
+
+Type: Joinable, Table: miller2_both_50_70_ac2_ev, Matcher: IndexedSimilarity
+Branch name -> BraN not found
+	Method Matches for Branch name: ['SectID']
+
+Type: Joinable, Table: miller2_vertical_50_ac3_ev, Matcher: IndexedSimilarity
+Branch name -> brnchnm not found
+	Method Matches for Branch name: ['cdbsnssdlvrmdl(ld)']
+
+Type: Joinable, Table: miller2_vertical_50_ac3_ev, Matcher: IndexedSimilarity
+Division name -> dvsnnm not found
+	Method Matches for Division name: ['cdbsnssdlvrmdl(ld)', 'dvsnd', 'dsrtfctn(mrkr)']
+
+Type: Semantically-Joinable, Table: miller2_vertical_30_ac2_av, Matcher: IndexedSimilarity
+Continent ID -> ContID not found
+	Method Matches for Continent ID: ['SeID', 'Deserti', 'OrgID', 'CouRegID']
+
+Type: Semantically-Joinable, Table: miller2_vertical_30_ac2_av, Matcher: IndexedSimilarity
+Continent name -> ContiN not found
+	Method Matches for Continent name: ['Deserti']
+
+Type: Semantically-Joinable, Table: miller2_vertical_30_ac2_av, Matcher: IndexedSimilarity
+Organisation class -> OrganiCla not found
+	Method Matches for Organisation class: ['OrgID', 'OrgT', 'OrganN', 'OrganiS']
+
+Type: Semantically-Joinable, Table: miller2_both_50_50_ac5_av, Matcher: IndexedSimilarity
+Division ID -> miller2_dvsnd not found
+	Method Matches for Division ID: ['miller2_cdbsnssdlvrmdl(ld)']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac4_av, Matcher: IndexedSimilarity
+Continent ID -> miller2_ConID not found
+	Method Matches for Continent ID: ['Sector name']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac4_av, Matcher: IndexedSimilarity
+Branch ID -> miller2_BraID not found
+	Method Matches for Branch ID: ['Sector name', 'miller2_FCeID', 'miller2_OrgID']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac4_av, Matcher: IndexedSimilarity
+Section name -> miller2_SecN not found
+	Method Matches for Section name: ['Sector name']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac4_av, Matcher: IndexedSimilarity
+Continent name -> miller2_ContiNa not found
+	Method Matches for Continent name: ['Sector name']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac4_av, Matcher: IndexedSimilarity
+Branch name -> miller2_BrN not found
+	Method Matches for Branch name: ['Sector name']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac4_av, Matcher: IndexedSimilarity
+Sector percent -> miller2_SePe not found
+	Method Matches for Sector percent: ['Sector name']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac4_av, Matcher: IndexedSimilarity
+Project number -> miller2_ProjNum not found
+	Method Matches for Project number: ['Sector name']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac4_av, Matcher: IndexedSimilarity
+Organisation name -> miller2_OrgaNa not found
+	Method Matches for Organisation name: ['Sector name', 'miller2_OrgID']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac4_av, Matcher: IndexedSimilarity
+CountryRegion ID -> miller2_CouReID not found
+	Method Matches for CountryRegion ID: ['Sector name']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac4_av, Matcher: IndexedSimilarity
+Organisation type -> miller2_OrgaT not found
+	Method Matches for Organisation type: ['Sector name']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac4_av, Matcher: IndexedSimilarity
+CountryRegion name -> miller2_CouReNa not found
+	Method Matches for CountryRegion name: ['Sector name']
+
+Type: Semantically-Joinable, Table: miller2_vertical_30_ac3_av, Matcher: IndexedSimilarity
+Organisation ID -> rgnstnd not found
+	Method Matches for Organisation ID: ['prgrmmngprcss(nw)']
+
+Type: Semantically-Joinable, Table: miller2_both_50_50_ac4_av, Matcher: IndexedSimilarity
+Division name -> miller2_DiNa not found
+	Method Matches for Division name: ['miller2_SectN']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac1_av, Matcher: IndexedSimilarity
+FSTC percent -> miller2_FSTCPercent not found
+	Method Matches for FSTC percent: ['miller2_SectorPercent', 'miller2_IRTCPercent']
+
+Type: Semantically-Joinable, Table: miller2_both_50_70_ac1_av, Matcher: IndexedSimilarity
+FSTC percent -> miller2_FSTCPercent not found
+	Method Matches for FSTC percent: ['miller2_SectorPercent', 'miller2_IRTCPercent']
+
+Type: Semantically-Joinable, Table: miller2_both_50_30_ac3_av, Matcher: IndexedSimilarity
+Fiscal year -> fsclr not found
+	Method Matches for Fiscal year: ['fstcprcnt']
+
+Type: Semantically-Joinable, Table: miller2_vertical_50_ac4_av, Matcher: IndexedSimilarity
+Section name -> miller2_SectNa not found
+	Method Matches for Section name: ['miller2_SectID']
+
+Type: Semantically-Joinable, Table: miller2_vertical_50_ac3_av, Matcher: IndexedSimilarity
+Sector name -> sctrnm not found
+	Method Matches for Sector name: ['rtcprcnt']
+
+Type: Semantically-Joinable, Table: miller2_vertical_50_ac3_av, Matcher: IndexedSimilarity
+Fund centre name -> fndcntrnm not found
+	Method Matches for Fund centre name: ['fsclr']
+
+Type: Semantically-Joinable, Table: miller2_vertical_50_ac3_av, Matcher: IndexedSimilarity
+Division name -> dvsnnm not found
+	Method Matches for Division name: ['dvsnd', 'dsrtfctn(mrkr)']
+
+Type: Semantically-Joinable, Table: miller2_vertical_50_ac3_av, Matcher: IndexedSimilarity
+Organisation name -> rgnstnnm not found
+	Method Matches for Organisation name: ['sctrnm', 'dvsnd', 'rgnstnd', 'prjctnmbr', 'sctrd', 'fsclr', 'sctrprcnt', 'prgrmmngprcss(nw)', 'fndcntrnm', 'cntrrgnd']
+
+Type: Semantically-Joinable, Table: miller2_both_50_70_ac2_av, Matcher: IndexedSimilarity
+Fiscal year -> FisYe not found
+	Method Matches for Fiscal year: ['FSTCPe']
+
+Type: Semantically-Joinable, Table: miller2_both_50_70_ac2_av, Matcher: IndexedSimilarity
+Sector percent -> SePe not found
+	Method Matches for Sector percent: ['Sector ID']
+
+Type: Semantically-Joinable, Table: miller2_both_50_70_ac2_av, Matcher: IndexedSimilarity
+Branch name -> BraNa not found
+	Method Matches for Branch name: ['Sector ID']
+
+Type: Semantically-Joinable, Table: miller2_both_50_70_ac2_av, Matcher: IndexedSimilarity
+Section name -> SeNa not found
+	Method Matches for Section name: ['OrgNa', 'OrganID', 'Sector ID']
+
+Type: Semantically-Joinable, Table: miller2_both_50_70_ac2_av, Matcher: IndexedSimilarity
+Branch ID -> BraID not found
+	Method Matches for Branch ID: ['Sector ID', 'SeID', 'ContID', 'DiviID', 'OrganID', 'CouRegID']
+
+Type: Semantically-Joinable, Table: miller2_both_50_30_ac1_av, Matcher: IndexedSimilarity
+FSTC percent -> miller2_FSTCPercent not found
+	Method Matches for FSTC percent: ['miller2_SectorPercent']
+
+Type: Semantically-Joinable, Table: miller2_vertical_50_ac2_av, Matcher: IndexedSimilarity
+Project number -> PrNu not found
+	Method Matches for Project number: ['SecID', 'Sector ID', 'PrBroCoID']
+
+Type: Semantically-Joinable, Table: miller2_vertical_50_ac2_av, Matcher: IndexedSimilarity
+Section name -> SeN not found
+	Method Matches for Section name: ['SecID']
+
+Type: Semantically-Joinable, Table: miller2_both_50_70_ac3_av, Matcher: IndexedSimilarity
+Organisation name -> rgnstnnm not found
+	Method Matches for Organisation name: ['sctrnm', 'dvsnd', 'rgnstnd', 'prjctnmbr', 'sctnnm', 'sctrd', 'rgnstnsb-clss', 'fsclr', 'fndcntrnm', 'fstcprcnt']
+
+Type: Semantically-Joinable, Table: miller2_both_50_70_ac3_av, Matcher: IndexedSimilarity
+Fund centre name -> fndcntrnm not found
+	Method Matches for Fund centre name: ['fsclr']
+
+Type: Semantically-Joinable, Table: miller2_both_50_70_ac3_av, Matcher: IndexedSimilarity
+Sector name -> sctrnm not found
+	Method Matches for Sector name: ['rtcprcnt']
+
+Type: Semantically-Joinable, Table: miller2_both_50_50_ac3_av, Matcher: IndexedSimilarity
+Fiscal year -> fsclr not found
+	Method Matches for Fiscal year: ['fndcntrnm']
+
+Type: Semantically-Joinable, Table: miller2_both_50_50_ac3_av, Matcher: IndexedSimilarity
+Section name -> sctnnm not found
+	Method Matches for Section name: ['sctnd', 'sctrnm', 'fsclr', 'sctrd']
+
+Type: Semantically-Joinable, Table: miller2_both_50_50_ac3_av, Matcher: IndexedSimilarity
+Sector name -> sctrnm not found
+	Method Matches for Sector name: ['cdbsnssdlvrmdl(ld)']
+
+Type: Semantically-Joinable, Table: miller2_both_50_50_ac3_av, Matcher: IndexedSimilarity
+Sector ID -> sctrd not found
+	Method Matches for Sector ID: ['cdbsnssdlvrmdl(ld)']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac2_av, Matcher: IndexedSimilarity
+Fiscal year -> FiY not found
+	Method Matches for Fiscal year: ['FSTCPe']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac2_av, Matcher: IndexedSimilarity
+Division name -> DiviNa not found
+	Method Matches for Division name: ['DiID']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac2_av, Matcher: IndexedSimilarity
+Project number -> ProjNum not found
+	Method Matches for Project number: ['OrgID', 'Sector ID', 'DiID', 'SecID', 'BrID']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac2_av, Matcher: IndexedSimilarity
+Organisation class -> OrganiCla not found
+	Method Matches for Organisation class: ['OrgS', 'OrgID', 'OrgaN']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac2_av, Matcher: IndexedSimilarity
+Sector name -> SeNa not found
+	Method Matches for Sector name: ['Sector ID']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac2_av, Matcher: IndexedSimilarity
+Continent ID -> ContID not found
+	Method Matches for Continent ID: ['Sector ID', 'BrID', 'DiID', 'Deserti', 'OrgID']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac2_av, Matcher: IndexedSimilarity
+Sector percent -> SePe not found
+	Method Matches for Sector percent: ['Sector ID']
+
+Type: Semantically-Joinable, Table: miller2_both_50_50_ac2_av, Matcher: IndexedSimilarity
+Fiscal year -> FisYe not found
+	Method Matches for Fiscal year: ['FSTCPe']
+
+Type: Semantically-Joinable, Table: miller2_both_50_50_ac2_av, Matcher: IndexedSimilarity
+Sector percent -> SecPe not found
+	Method Matches for Sector percent: ['Sector name']
+
+Type: Semantically-Joinable, Table: miller2_both_50_50_ac2_av, Matcher: IndexedSimilarity
+Continent name -> ConNa not found
+	Method Matches for Continent name: ['Sector name']
+
+Type: Semantically-Joinable, Table: miller2_both_50_50_ac2_av, Matcher: IndexedSimilarity
+Project number -> PrNum not found
+	Method Matches for Project number: ['ConID', 'DiID', 'OrgaID', 'SecID']
+
+Type: Semantically-Joinable, Table: miller2_both_50_50_ac2_av, Matcher: IndexedSimilarity
+Section name -> SecNa not found
+	Method Matches for Section name: ['Sector name', 'SecID']
+
+Type: Semantically-Joinable, Table: miller2_both_50_50_ac2_av, Matcher: IndexedSimilarity
+Fund centre ID -> FuCenID not found
+	Method Matches for Fund centre ID: ['DiID', 'SecID', 'OrgaID', 'ConID', 'CounRegID', 'Sector name']
+
+Type: Semantically-Joinable, Table: miller2_both_50_50_ac2_av, Matcher: IndexedSimilarity
+Organisation class -> OrganCla not found
+	Method Matches for Organisation class: ['OrgaID', 'OrgTy', 'OrganiN']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac3_av, Matcher: IndexedSimilarity
+Fiscal year -> fsclr not found
+	Method Matches for Fiscal year: ['fstcprcnt', 'fndcntrnm']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac3_av, Matcher: IndexedSimilarity
+Organisation name -> rgnstnnm not found
+	Method Matches for Organisation name: ['cdbsnssdlvrmdl(ld)', 'sctnd', 'dvsnd', 'rgnstnd', 'rgnstnsb-clss', 'fsclr']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac3_av, Matcher: IndexedSimilarity
+Organisation ID -> rgnstnd not found
+	Method Matches for Organisation ID: ['cdbsnssdlvrmdl(ld)']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac3_av, Matcher: IndexedSimilarity
+Branch name -> brnchnm not found
+	Method Matches for Branch name: ['cdbsnssdlvrmdl(ld)']
+
+Type: Semantically-Joinable, Table: miller2_vertical_70_ac3_av, Matcher: IndexedSimilarity
+Division name -> dvsnnm not found
+	Method Matches for Division name: ['cdbsnssdlvrmdl(ld)', 'dvsnd']
+
+Type: Unionable, Table: miller2_horizontal_50_ac3_ev, Matcher: IndexedSimilarity
+Branch name -> brnchnm not found
+	Method Matches for Branch name: ['cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_50_ac3_ev, Matcher: IndexedSimilarity
+Division name -> dvsnnm not found
+	Method Matches for Division name: ['cdbsnssdlvrmdl(ld)', 'dvsnd', 'sctnd', 'dsrtfctn(mrkr)']
+
+Type: Unionable, Table: miller2_horizontal_50_ac3_ev, Matcher: IndexedSimilarity
+Fund centre name -> fndcntrnm not found
+	Method Matches for Fund centre name: ['fsclr']
+
+Type: Unionable, Table: miller2_horizontal_50_ac3_ev, Matcher: IndexedSimilarity
+Organisation ID -> rgnstnd not found
+	Method Matches for Organisation ID: ['cdbsnssdlvrmdl(ld)', 'sctnd', 'prgrmmngprcss(nw)']
+
+Type: Unionable, Table: miller2_horizontal_50_ac3_ev, Matcher: IndexedSimilarity
+Organisation name -> rgnstnnm not found
+	Method Matches for Organisation name: ['sctnd', 'cdbsnssdlvrmdl(ld)', 'sctrnm', 'dvsnd', 'prjctnmbr', 'sctnnm', 'prgrmmngprcss(nw)', 'fsclr']
+
+Type: Unionable, Table: miller2_horizontal_50_ac3_ev, Matcher: IndexedSimilarity
+Sector ID -> sctrd not found
+	Method Matches for Sector ID: ['cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_50_ac3_ev, Matcher: IndexedSimilarity
+Sector name -> sctrnm not found
+	Method Matches for Sector name: ['cdbsnssdlvrmdl(ld)', 'rtcprcnt']
+
+Type: Unionable, Table: miller2_horizontal_0_ac3_ev, Matcher: IndexedSimilarity
+Branch name -> brnchnm not found
+	Method Matches for Branch name: ['cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_0_ac3_ev, Matcher: IndexedSimilarity
+Division name -> dvsnnm not found
+	Method Matches for Division name: ['cdbsnssdlvrmdl(ld)', 'dvsnd', 'sctnd', 'dsrtfctn(mrkr)']
+
+Type: Unionable, Table: miller2_horizontal_0_ac3_ev, Matcher: IndexedSimilarity
+Fund centre name -> fndcntrnm not found
+	Method Matches for Fund centre name: ['fsclr']
+
+Type: Unionable, Table: miller2_horizontal_0_ac3_ev, Matcher: IndexedSimilarity
+Organisation ID -> rgnstnd not found
+	Method Matches for Organisation ID: ['cdbsnssdlvrmdl(ld)', 'sctnd', 'prgrmmngprcss(nw)']
+
+Type: Unionable, Table: miller2_horizontal_0_ac3_ev, Matcher: IndexedSimilarity
+Organisation name -> rgnstnnm not found
+	Method Matches for Organisation name: ['sctnd', 'cdbsnssdlvrmdl(ld)', 'sctrnm', 'dvsnd', 'prjctnmbr', 'sctnnm', 'prgrmmngprcss(nw)', 'fsclr']
+
+Type: Unionable, Table: miller2_horizontal_0_ac3_ev, Matcher: IndexedSimilarity
+Sector ID -> sctrd not found
+	Method Matches for Sector ID: ['cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_0_ac3_ev, Matcher: IndexedSimilarity
+Sector name -> sctrnm not found
+	Method Matches for Sector name: ['cdbsnssdlvrmdl(ld)', 'rtcprcnt']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_ev, Matcher: IndexedSimilarity
+Project number -> miller2_ProNum not found
+	Method Matches for Project number: ['Sector ID', 'Sector name']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_ev, Matcher: IndexedSimilarity
+Branch ID -> miller2_BraID not found
+	Method Matches for Branch ID: ['Sector ID', 'Sector name', 'miller2_OrgID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_ev, Matcher: IndexedSimilarity
+Branch name -> miller2_BrN not found
+	Method Matches for Branch name: ['Sector name', 'Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_ev, Matcher: IndexedSimilarity
+Division name -> miller2_DiNa not found
+	Method Matches for Division name: ['Sector name', 'Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_ev, Matcher: IndexedSimilarity
+Section name -> miller2_SecNa not found
+	Method Matches for Section name: ['Sector name', 'Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_ev, Matcher: IndexedSimilarity
+Fund centre name -> miller2_FuCenN not found
+	Method Matches for Fund centre name: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_ev, Matcher: IndexedSimilarity
+Organisation name -> miller2_OrgaNa not found
+	Method Matches for Organisation name: ['Sector name', 'miller2_OrgID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_ev, Matcher: IndexedSimilarity
+Organisation type -> miller2_OrgaT not found
+	Method Matches for Organisation type: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_ev, Matcher: IndexedSimilarity
+Continent ID -> miller2_ConID not found
+	Method Matches for Continent ID: ['Sector ID', 'Sector name']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_ev, Matcher: IndexedSimilarity
+Continent name -> miller2_ConNa not found
+	Method Matches for Continent name: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_ev, Matcher: IndexedSimilarity
+CountryRegion ID -> miller2_CoReID not found
+	Method Matches for CountryRegion ID: ['Sector ID', 'Sector name']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_ev, Matcher: IndexedSimilarity
+CountryRegion name -> miller2_CounRegN not found
+	Method Matches for CountryRegion name: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_ev, Matcher: IndexedSimilarity
+Sector percent -> miller2_SecPerc not found
+	Method Matches for Sector percent: ['Sector name', 'Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_ev, Matcher: IndexedSimilarity
+Fiscal year -> FisYe not found
+	Method Matches for Fiscal year: ['FSTCPe']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_ev, Matcher: IndexedSimilarity
+Project number -> ProNu not found
+	Method Matches for Project number: ['OrgID', 'Sector ID', 'BrID', 'ConID', 'SeID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_ev, Matcher: IndexedSimilarity
+Branch name -> BraNa not found
+	Method Matches for Branch name: ['Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_ev, Matcher: IndexedSimilarity
+Section name -> SecN not found
+	Method Matches for Section name: ['OrgID', 'Sector ID', 'DivNa']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_ev, Matcher: IndexedSimilarity
+Fund centre ID -> FuCenID not found
+	Method Matches for Fund centre ID: ['OrgID', 'SeID', 'Sector ID', 'DiviID', 'ConID', 'BrID', 'CounRegID', 'FSTCPe']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_ev, Matcher: IndexedSimilarity
+Organisation sub-class -> OrganiSu not found
+	Method Matches for Organisation sub-class: ['OrgID', 'OrgaCl']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_ev, Matcher: IndexedSimilarity
+CountryRegion ID -> CounRegID not found
+	Method Matches for CountryRegion ID: ['Sector ID', 'OrgID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_ev, Matcher: IndexedSimilarity
+Sector name -> SecNa not found
+	Method Matches for Sector name: ['Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_ev, Matcher: IndexedSimilarity
+Sector percent -> SePe not found
+	Method Matches for Sector percent: ['Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac5_ev, Matcher: IndexedSimilarity
+Division ID -> miller2_dvsnd not found
+	Method Matches for Division ID: ['miller2_cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_100_ac5_ev, Matcher: IndexedSimilarity
+Division name -> miller2_dvsnnm not found
+	Method Matches for Division name: ['miller2_cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_50_ac2_ev, Matcher: IndexedSimilarity
+Project number -> ProNu not found
+	Method Matches for Project number: ['ConID', 'SectID', 'SeID']
+
+Type: Unionable, Table: miller2_horizontal_50_ac2_ev, Matcher: IndexedSimilarity
+Branch name -> BraNa not found
+	Method Matches for Branch name: ['SectID']
+
+Type: Unionable, Table: miller2_horizontal_50_ac2_ev, Matcher: IndexedSimilarity
+Division name -> DiNa not found
+	Method Matches for Division name: ['SectID']
+
+Type: Unionable, Table: miller2_horizontal_50_ac2_ev, Matcher: IndexedSimilarity
+Section name -> SeN not found
+	Method Matches for Section name: ['SectID', 'OrgCl']
+
+Type: Unionable, Table: miller2_horizontal_50_ac2_ev, Matcher: IndexedSimilarity
+Organisation type -> OrgaTy not found
+	Method Matches for Organisation type: ['OrgCl', 'OrganSu', 'OrganiID', 'OrgaN', 'SectID']
+
+Type: Unionable, Table: miller2_horizontal_50_ac2_ev, Matcher: IndexedSimilarity
+Organisation sub-class -> OrganSu not found
+	Method Matches for Organisation sub-class: ['OrgCl']
+
+Type: Unionable, Table: miller2_horizontal_50_ac2_ev, Matcher: IndexedSimilarity
+Sector name -> SeNa not found
+	Method Matches for Sector name: ['SectID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac1_ev, Matcher: IndexedSimilarity
+FSTC percent -> miller2_FSTCPercent not found
+	Method Matches for FSTC percent: ['miller2_SectorPercent', 'miller2_IRTCPercent']
+
+Type: Unionable, Table: miller2_horizontal_100_ac1_av, Matcher: IndexedSimilarity
+FSTC percent -> miller2_FSTCPercent not found
+	Method Matches for FSTC percent: ['miller2_SectorPercent', 'miller2_IRTCPercent']
+
+Type: Unionable, Table: miller2_horizontal_50_ac2_av, Matcher: IndexedSimilarity
+Project number -> PrNu not found
+	Method Matches for Project number: ['BrID', 'SectID', 'ConID']
+
+Type: Unionable, Table: miller2_horizontal_50_ac2_av, Matcher: IndexedSimilarity
+Branch name -> BraN not found
+	Method Matches for Branch name: ['SectID', 'SectN']
+
+Type: Unionable, Table: miller2_horizontal_50_ac2_av, Matcher: IndexedSimilarity
+Organisation type -> OrgaT not found
+	Method Matches for Organisation type: ['OrgSu', 'SectN', 'OrganN', 'AmoSp', 'OrganiID', 'OrganCla', 'SectID']
+
+Type: Unionable, Table: miller2_horizontal_50_ac2_av, Matcher: IndexedSimilarity
+Organisation class -> OrganCla not found
+	Method Matches for Organisation class: ['OrgSu', 'OrganN', 'SectN']
+
+Type: Unionable, Table: miller2_horizontal_50_ac2_av, Matcher: IndexedSimilarity
+Sector name -> SeN not found
+	Method Matches for Sector name: ['SectID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_av, Matcher: IndexedSimilarity
+Fiscal year -> FisYe not found
+	Method Matches for Fiscal year: ['FCeN']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_av, Matcher: IndexedSimilarity
+Project number -> ProjNum not found
+	Method Matches for Project number: ['OrgID', 'DiID', 'SecID', 'Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_av, Matcher: IndexedSimilarity
+Branch name -> BraN not found
+	Method Matches for Branch name: ['SectN']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_av, Matcher: IndexedSimilarity
+Fund centre ID -> FuCenID not found
+	Method Matches for Fund centre ID: ['OrgID', 'DiID', 'SecID', 'Sector ID', 'PrBrCoID', 'ContID', 'CounRegID', 'FCeN']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_av, Matcher: IndexedSimilarity
+Organisation class -> OrgaCla not found
+	Method Matches for Organisation class: ['OrgID', 'SectN']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_av, Matcher: IndexedSimilarity
+Organisation sub-class -> OrganiS not found
+	Method Matches for Organisation sub-class: ['OrgID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_av, Matcher: IndexedSimilarity
+Continent ID -> ContID not found
+	Method Matches for Continent ID: ['Sector ID', 'DiID', 'OrgID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_av, Matcher: IndexedSimilarity
+CountryRegion ID -> CounRegID not found
+	Method Matches for CountryRegion ID: ['Sector ID', 'PrBrCoID', 'OrgID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_av, Matcher: IndexedSimilarity
+Sector name -> SecNa not found
+	Method Matches for Sector name: ['Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac2_av, Matcher: IndexedSimilarity
+Sector percent -> SePe not found
+	Method Matches for Sector percent: ['Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac5_av, Matcher: IndexedSimilarity
+Division ID -> miller2_dvsnd not found
+	Method Matches for Division ID: ['miller2_cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_100_ac5_av, Matcher: IndexedSimilarity
+Division name -> miller2_dvsnnm not found
+	Method Matches for Division name: ['miller2_cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_0_ac3_av, Matcher: IndexedSimilarity
+Branch name -> brnchnm not found
+	Method Matches for Branch name: ['cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_0_ac3_av, Matcher: IndexedSimilarity
+Division name -> dvsnnm not found
+	Method Matches for Division name: ['cdbsnssdlvrmdl(ld)', 'dvsnd', 'sctnd', 'dsrtfctn(mrkr)']
+
+Type: Unionable, Table: miller2_horizontal_0_ac3_av, Matcher: IndexedSimilarity
+Fund centre name -> fndcntrnm not found
+	Method Matches for Fund centre name: ['fsclr']
+
+Type: Unionable, Table: miller2_horizontal_0_ac3_av, Matcher: IndexedSimilarity
+Organisation ID -> rgnstnd not found
+	Method Matches for Organisation ID: ['cdbsnssdlvrmdl(ld)', 'sctnd', 'prgrmmngprcss(nw)']
+
+Type: Unionable, Table: miller2_horizontal_0_ac3_av, Matcher: IndexedSimilarity
+Organisation name -> rgnstnnm not found
+	Method Matches for Organisation name: ['sctnd', 'cdbsnssdlvrmdl(ld)', 'sctrnm', 'dvsnd', 'prjctnmbr', 'sctnnm', 'prgrmmngprcss(nw)', 'fsclr']
+
+Type: Unionable, Table: miller2_horizontal_0_ac3_av, Matcher: IndexedSimilarity
+Sector ID -> sctrd not found
+	Method Matches for Sector ID: ['cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_0_ac3_av, Matcher: IndexedSimilarity
+Sector name -> sctrnm not found
+	Method Matches for Sector name: ['cdbsnssdlvrmdl(ld)', 'rtcprcnt']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_av, Matcher: IndexedSimilarity
+Branch ID -> miller2_BraID not found
+	Method Matches for Branch ID: ['miller2_SectID', 'miller2_SecID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_av, Matcher: IndexedSimilarity
+Section name -> miller2_SecN not found
+	Method Matches for Section name: ['miller2_SectID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac4_av, Matcher: IndexedSimilarity
+Sector ID -> miller2_SecID not found
+	Method Matches for Sector ID: ['miller2_DiviID']
+
+Type: Unionable, Table: miller2_horizontal_50_ac3_av, Matcher: IndexedSimilarity
+Branch name -> brnchnm not found
+	Method Matches for Branch name: ['cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_50_ac3_av, Matcher: IndexedSimilarity
+Division name -> dvsnnm not found
+	Method Matches for Division name: ['cdbsnssdlvrmdl(ld)', 'dvsnd', 'sctnd', 'dsrtfctn(mrkr)']
+
+Type: Unionable, Table: miller2_horizontal_50_ac3_av, Matcher: IndexedSimilarity
+Fund centre name -> fndcntrnm not found
+	Method Matches for Fund centre name: ['fsclr']
+
+Type: Unionable, Table: miller2_horizontal_50_ac3_av, Matcher: IndexedSimilarity
+Organisation ID -> rgnstnd not found
+	Method Matches for Organisation ID: ['cdbsnssdlvrmdl(ld)', 'sctnd', 'prgrmmngprcss(nw)']
+
+Type: Unionable, Table: miller2_horizontal_50_ac3_av, Matcher: IndexedSimilarity
+Organisation name -> rgnstnnm not found
+	Method Matches for Organisation name: ['sctnd', 'cdbsnssdlvrmdl(ld)', 'sctrnm', 'dvsnd', 'prjctnmbr', 'sctnnm', 'prgrmmngprcss(nw)', 'fsclr']
+
+Type: Unionable, Table: miller2_horizontal_50_ac3_av, Matcher: IndexedSimilarity
+Sector ID -> sctrd not found
+	Method Matches for Sector ID: ['cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_50_ac3_av, Matcher: IndexedSimilarity
+Sector name -> sctrnm not found
+	Method Matches for Sector name: ['cdbsnssdlvrmdl(ld)', 'rtcprcnt']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_av, Matcher: IndexedSimilarity
+Project number -> miller2_ProNum not found
+	Method Matches for Project number: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_av, Matcher: IndexedSimilarity
+Branch ID -> miller2_BraID not found
+	Method Matches for Branch ID: ['Sector name', 'miller2_OrganID', 'miller2_SecID']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_av, Matcher: IndexedSimilarity
+Branch name -> miller2_BrN not found
+	Method Matches for Branch name: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_av, Matcher: IndexedSimilarity
+Division name -> miller2_DiviNa not found
+	Method Matches for Division name: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_av, Matcher: IndexedSimilarity
+Section name -> miller2_SeN not found
+	Method Matches for Section name: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_av, Matcher: IndexedSimilarity
+Fund centre name -> miller2_FuCeN not found
+	Method Matches for Fund centre name: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_av, Matcher: IndexedSimilarity
+Organisation name -> miller2_OrganNa not found
+	Method Matches for Organisation name: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_av, Matcher: IndexedSimilarity
+Organisation type -> miller2_OrgaTy not found
+	Method Matches for Organisation type: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_av, Matcher: IndexedSimilarity
+Continent ID -> miller2_ContID not found
+	Method Matches for Continent ID: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_av, Matcher: IndexedSimilarity
+Continent name -> miller2_ConNa not found
+	Method Matches for Continent name: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_av, Matcher: IndexedSimilarity
+CountryRegion ID -> miller2_CouRegID not found
+	Method Matches for CountryRegion ID: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_av, Matcher: IndexedSimilarity
+CountryRegion name -> miller2_CoRegNa not found
+	Method Matches for CountryRegion name: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_av, Matcher: IndexedSimilarity
+Sector ID -> miller2_SecID not found
+	Method Matches for Sector ID: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_av, Matcher: IndexedSimilarity
+Sector percent -> miller2_SecPer not found
+	Method Matches for Sector percent: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_0_ac4_av, Matcher: IndexedSimilarity
+Branch ID -> miller2_BraID not found
+	Method Matches for Branch ID: ['miller2_OrganID', 'miller2_FCeID', 'miller2_SecID', 'miller2_DiviID', 'miller2_ContID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac4_av, Matcher: IndexedSimilarity
+Sector ID -> miller2_SecID not found
+	Method Matches for Sector ID: ['miller2_DiviID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac3_av, Matcher: IndexedSimilarity
+Branch name -> brnchnm not found
+	Method Matches for Branch name: ['cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_100_ac3_av, Matcher: IndexedSimilarity
+Division name -> dvsnnm not found
+	Method Matches for Division name: ['cdbsnssdlvrmdl(ld)', 'dvsnd', 'sctnd', 'dsrtfctn(mrkr)']
+
+Type: Unionable, Table: miller2_horizontal_100_ac3_av, Matcher: IndexedSimilarity
+Fund centre name -> fndcntrnm not found
+	Method Matches for Fund centre name: ['fsclr']
+
+Type: Unionable, Table: miller2_horizontal_100_ac3_av, Matcher: IndexedSimilarity
+Organisation ID -> rgnstnd not found
+	Method Matches for Organisation ID: ['cdbsnssdlvrmdl(ld)', 'sctnd', 'prgrmmngprcss(nw)']
+
+Type: Unionable, Table: miller2_horizontal_100_ac3_av, Matcher: IndexedSimilarity
+Organisation name -> rgnstnnm not found
+	Method Matches for Organisation name: ['sctnd', 'cdbsnssdlvrmdl(ld)', 'sctrnm', 'dvsnd', 'prjctnmbr', 'sctnnm', 'prgrmmngprcss(nw)', 'fsclr']
+
+Type: Unionable, Table: miller2_horizontal_100_ac3_av, Matcher: IndexedSimilarity
+Sector ID -> sctrd not found
+	Method Matches for Sector ID: ['cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_100_ac3_av, Matcher: IndexedSimilarity
+Sector name -> sctrnm not found
+	Method Matches for Sector name: ['cdbsnssdlvrmdl(ld)', 'rtcprcnt']
+
+Type: Unionable, Table: miller2_horizontal_0_ac5_av, Matcher: IndexedSimilarity
+Division ID -> miller2_dvsnd not found
+	Method Matches for Division ID: ['miller2_cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_0_ac5_av, Matcher: IndexedSimilarity
+Division name -> miller2_dvsnnm not found
+	Method Matches for Division name: ['miller2_cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_av, Matcher: IndexedSimilarity
+Project number -> PrNu not found
+	Method Matches for Project number: ['OrgID', 'Sector ID', 'SeID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_av, Matcher: IndexedSimilarity
+Branch name -> BraN not found
+	Method Matches for Branch name: ['Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_av, Matcher: IndexedSimilarity
+Division name -> DiNa not found
+	Method Matches for Division name: ['Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_av, Matcher: IndexedSimilarity
+Section name -> SecN not found
+	Method Matches for Section name: ['OrgID', 'Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_av, Matcher: IndexedSimilarity
+Organisation class -> OrganCl not found
+	Method Matches for Organisation class: ['OrgID', 'OrganSu']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_av, Matcher: IndexedSimilarity
+Organisation sub-class -> OrganSu not found
+	Method Matches for Organisation sub-class: ['OrgID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_av, Matcher: IndexedSimilarity
+Continent name -> ContNa not found
+	Method Matches for Continent name: ['Desert']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_av, Matcher: IndexedSimilarity
+CountryRegion ID -> CounRegID not found
+	Method Matches for CountryRegion ID: ['Sector ID', 'PrBrCoID', 'OrgID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_av, Matcher: IndexedSimilarity
+Sector name -> SeNa not found
+	Method Matches for Sector name: ['Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_av, Matcher: IndexedSimilarity
+Sector percent -> SePe not found
+	Method Matches for Sector percent: ['Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_50_ac1_av, Matcher: IndexedSimilarity
+FSTC percent -> miller2_FSTCPercent not found
+	Method Matches for FSTC percent: ['miller2_SectorPercent', 'miller2_IRTCPercent']
+
+Type: Unionable, Table: miller2_horizontal_0_ac1_av, Matcher: IndexedSimilarity
+FSTC percent -> miller2_FSTCPercent not found
+	Method Matches for FSTC percent: ['miller2_SectorPercent', 'miller2_IRTCPercent']
+
+Type: Unionable, Table: miller2_horizontal_50_ac5_av, Matcher: IndexedSimilarity
+Division ID -> miller2_dvsnd not found
+	Method Matches for Division ID: ['miller2_cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_50_ac5_av, Matcher: IndexedSimilarity
+Division name -> miller2_dvsnnm not found
+	Method Matches for Division name: ['miller2_cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_0_ac1_ev, Matcher: IndexedSimilarity
+FSTC percent -> miller2_FSTCPercent not found
+	Method Matches for FSTC percent: ['miller2_SectorPercent', 'miller2_IRTCPercent']
+
+Type: Unionable, Table: miller2_horizontal_50_ac5_ev, Matcher: IndexedSimilarity
+Division ID -> miller2_dvsnd not found
+	Method Matches for Division ID: ['miller2_cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_50_ac5_ev, Matcher: IndexedSimilarity
+Division name -> miller2_dvsnnm not found
+	Method Matches for Division name: ['miller2_cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_0_ac5_ev, Matcher: IndexedSimilarity
+Division ID -> miller2_dvsnd not found
+	Method Matches for Division ID: ['miller2_cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_0_ac5_ev, Matcher: IndexedSimilarity
+Division name -> miller2_dvsnnm not found
+	Method Matches for Division name: ['miller2_cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_50_ac1_ev, Matcher: IndexedSimilarity
+FSTC percent -> miller2_FSTCPercent not found
+	Method Matches for FSTC percent: ['miller2_SectorPercent', 'miller2_IRTCPercent']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_ev, Matcher: IndexedSimilarity
+Project number -> PrNu not found
+	Method Matches for Project number: ['OrgID', 'SectID', 'SeID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_ev, Matcher: IndexedSimilarity
+Branch name -> BraNa not found
+	Method Matches for Branch name: ['SectID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_ev, Matcher: IndexedSimilarity
+Division name -> DiNa not found
+	Method Matches for Division name: ['SectID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_ev, Matcher: IndexedSimilarity
+Section name -> SeNa not found
+	Method Matches for Section name: ['SectID', 'OrgID', 'OrgCl']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_ev, Matcher: IndexedSimilarity
+Fund centre name -> FCenNa not found
+	Method Matches for Fund centre name: ['OrgID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_ev, Matcher: IndexedSimilarity
+Programming process (new) -> ProgrPro not found
+	Method Matches for Programming process (new): ['KnowlFoDevel']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_ev, Matcher: IndexedSimilarity
+Organisation type -> OrgaTy not found
+	Method Matches for Organisation type: ['OrgCl', 'OrgID', 'OrganS', 'SectID', 'OrganiNa']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_ev, Matcher: IndexedSimilarity
+Organisation sub-class -> OrganS not found
+	Method Matches for Organisation sub-class: ['OrgCl', 'OrgID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_ev, Matcher: IndexedSimilarity
+Continent name -> ConN not found
+	Method Matches for Continent name: ['Desert']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_ev, Matcher: IndexedSimilarity
+CountryRegion ID -> CounReID not found
+	Method Matches for CountryRegion ID: ['OrgID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac2_ev, Matcher: IndexedSimilarity
+Sector name -> SecN not found
+	Method Matches for Sector name: ['SectID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac4_ev, Matcher: IndexedSimilarity
+Project number -> miller2_PrNum not found
+	Method Matches for Project number: ['Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac4_ev, Matcher: IndexedSimilarity
+Status -> miller2_St not found
+	Method Matches for Status: ['miller2_Dese']
+
+Type: Unionable, Table: miller2_horizontal_0_ac4_ev, Matcher: IndexedSimilarity
+Branch name -> miller2_BraN not found
+	Method Matches for Branch name: ['Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac4_ev, Matcher: IndexedSimilarity
+Division name -> miller2_DiNa not found
+	Method Matches for Division name: ['Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac4_ev, Matcher: IndexedSimilarity
+Section name -> miller2_SecNa not found
+	Method Matches for Section name: ['Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac4_ev, Matcher: IndexedSimilarity
+Fund centre ID -> miller2_FuCenID not found
+	Method Matches for Fund centre ID: ['Sector ID', 'miller2_DiID', 'miller2_SecID', 'miller2_OrganiID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac4_ev, Matcher: IndexedSimilarity
+Organisation name -> miller2_OrganN not found
+	Method Matches for Organisation name: ['Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac4_ev, Matcher: IndexedSimilarity
+Continent ID -> miller2_ConID not found
+	Method Matches for Continent ID: ['Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac4_ev, Matcher: IndexedSimilarity
+CountryRegion ID -> miller2_CoRegID not found
+	Method Matches for CountryRegion ID: ['Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac4_ev, Matcher: IndexedSimilarity
+Sector name -> miller2_SecN not found
+	Method Matches for Sector name: ['Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_0_ac4_ev, Matcher: IndexedSimilarity
+Sector percent -> miller2_SecPerc not found
+	Method Matches for Sector percent: ['Sector ID']
+
+Type: Unionable, Table: miller2_horizontal_100_ac3_ev, Matcher: IndexedSimilarity
+Branch name -> brnchnm not found
+	Method Matches for Branch name: ['cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_100_ac3_ev, Matcher: IndexedSimilarity
+Division name -> dvsnnm not found
+	Method Matches for Division name: ['cdbsnssdlvrmdl(ld)', 'dvsnd', 'sctnd', 'dsrtfctn(mrkr)']
+
+Type: Unionable, Table: miller2_horizontal_100_ac3_ev, Matcher: IndexedSimilarity
+Fund centre name -> fndcntrnm not found
+	Method Matches for Fund centre name: ['fsclr']
+
+Type: Unionable, Table: miller2_horizontal_100_ac3_ev, Matcher: IndexedSimilarity
+Organisation ID -> rgnstnd not found
+	Method Matches for Organisation ID: ['cdbsnssdlvrmdl(ld)', 'sctnd', 'prgrmmngprcss(nw)']
+
+Type: Unionable, Table: miller2_horizontal_100_ac3_ev, Matcher: IndexedSimilarity
+Organisation name -> rgnstnnm not found
+	Method Matches for Organisation name: ['sctnd', 'cdbsnssdlvrmdl(ld)', 'sctrnm', 'dvsnd', 'prjctnmbr', 'sctnnm', 'prgrmmngprcss(nw)', 'fsclr']
+
+Type: Unionable, Table: miller2_horizontal_100_ac3_ev, Matcher: IndexedSimilarity
+Sector ID -> sctrd not found
+	Method Matches for Sector ID: ['cdbsnssdlvrmdl(ld)']
+
+Type: Unionable, Table: miller2_horizontal_100_ac3_ev, Matcher: IndexedSimilarity
+Sector name -> sctrnm not found
+	Method Matches for Sector name: ['cdbsnssdlvrmdl(ld)', 'rtcprcnt']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_ev, Matcher: IndexedSimilarity
+Project number -> miller2_ProNu not found
+	Method Matches for Project number: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_ev, Matcher: IndexedSimilarity
+Branch ID -> miller2_BraID not found
+	Method Matches for Branch ID: ['Sector name', 'miller2_SectID', 'miller2_DiID', 'miller2_FCeID', 'miller2_ProBrCoID', 'miller2_OrgID']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_ev, Matcher: IndexedSimilarity
+Branch name -> miller2_BraNa not found
+	Method Matches for Branch name: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_ev, Matcher: IndexedSimilarity
+Division name -> miller2_DiviN not found
+	Method Matches for Division name: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_ev, Matcher: IndexedSimilarity
+Section name -> miller2_SecN not found
+	Method Matches for Section name: ['Sector name', 'miller2_SectID']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_ev, Matcher: IndexedSimilarity
+Fund centre name -> miller2_FCeN not found
+	Method Matches for Fund centre name: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_ev, Matcher: IndexedSimilarity
+Organisation type -> miller2_OrganiTy not found
+	Method Matches for Organisation type: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_ev, Matcher: IndexedSimilarity
+Continent ID -> miller2_ContiID not found
+	Method Matches for Continent ID: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_ev, Matcher: IndexedSimilarity
+Continent name -> miller2_ContNa not found
+	Method Matches for Continent name: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_ev, Matcher: IndexedSimilarity
+CountryRegion ID -> miller2_CouRegID not found
+	Method Matches for CountryRegion ID: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_ev, Matcher: IndexedSimilarity
+CountryRegion name -> miller2_CouRegNa not found
+	Method Matches for CountryRegion name: ['Sector name']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_ev, Matcher: IndexedSimilarity
+Sector ID -> miller2_SeID not found
+	Method Matches for Sector ID: ['Sector name', 'miller2_DiID']
+
+Type: Unionable, Table: miller2_horizontal_50_ac4_ev, Matcher: IndexedSimilarity
+Sector percent -> miller2_SePe not found
+	Method Matches for Sector percent: ['Sector name']

@@ -1,0 +1,536 @@
+
+Type: View-Unionable, Table: prospect_both_0_50_ac3_av, Matcher: IndexedSimilarity
+Employer -> mplr not found
+	Method Matches for Employer: ['g', 'ncm']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac3_ev, Matcher: IndexedSimilarity
+State -> stt not found
+	Method Matches for State: ['ncm']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac3_ev, Matcher: IndexedSimilarity
+Employer -> mplr not found
+	Method Matches for Employer: ['ncm', 'g']
+
+Type: View-Unionable, Table: prospect_both_0_30_ac5_ev, Matcher: IndexedSimilarity
+AgencyID -> prospect_gncd not found
+	Method Matches for AgencyID: ['prospect_ddrssln1']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac2_ev, Matcher: IndexedSimilarity
+AddressLine2 -> AdLi2 not found
+	Method Matches for AddressLine2: ['AddrL1']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac2_ev, Matcher: IndexedSimilarity
+Employer -> Emp not found
+	Method Matches for Employer: ['Inc']
+
+Type: View-Unionable, Table: prospect_both_0_50_ac2_av, Matcher: IndexedSimilarity
+State -> Sta not found
+	Method Matches for State: ['Co']
+
+Type: View-Unionable, Table: prospect_both_0_50_ac2_av, Matcher: IndexedSimilarity
+MiddleInitial -> MidIn not found
+	Method Matches for MiddleInitial: ['Inc']
+
+Type: View-Unionable, Table: prospect_both_0_50_ac2_ev, Matcher: IndexedSimilarity
+MiddleInitial -> MidIni not found
+	Method Matches for MiddleInitial: ['Inc']
+
+Type: View-Unionable, Table: prospect_both_0_50_ac2_ev, Matcher: IndexedSimilarity
+Age -> A not found
+	Method Matches for Age: ['AgeID']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac2_av, Matcher: IndexedSimilarity
+State -> St not found
+	Method Matches for State: ['Co']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac2_av, Matcher: IndexedSimilarity
+AddressLine2 -> AdL2 not found
+	Method Matches for AddressLine2: ['AddrL1']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac2_av, Matcher: IndexedSimilarity
+MiddleInitial -> MiIni not found
+	Method Matches for MiddleInitial: ['Inc']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac2_av, Matcher: IndexedSimilarity
+NumberCars -> NumC not found
+	Method Matches for NumberCars: ['NumCreCar']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac3_av, Matcher: IndexedSimilarity
+Employer -> mplr not found
+	Method Matches for Employer: ['ncm', 'g']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac3_av, Matcher: IndexedSimilarity
+Gender -> gndr not found
+	Method Matches for Gender: ['g']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac3_av, Matcher: IndexedSimilarity
+State -> stt not found
+	Method Matches for State: ['ct', 'ncm']
+
+Type: View-Unionable, Table: prospect_both_0_50_ac3_ev, Matcher: IndexedSimilarity
+Employer -> mplr not found
+	Method Matches for Employer: ['ncm', 'g']
+
+Type: View-Unionable, Table: prospect_both_0_50_ac3_ev, Matcher: IndexedSimilarity
+Gender -> gndr not found
+	Method Matches for Gender: ['g']
+
+Type: View-Unionable, Table: prospect_both_0_50_ac3_ev, Matcher: IndexedSimilarity
+State -> stt not found
+	Method Matches for State: ['ncm']
+
+Type: View-Unionable, Table: prospect_both_0_50_ac4_ev, Matcher: IndexedSimilarity
+City -> prospect_C not found
+	Method Matches for City: ['prospect_St']
+
+Type: View-Unionable, Table: prospect_both_0_50_ac4_ev, Matcher: IndexedSimilarity
+Age -> prospect_Ag not found
+	Method Matches for Age: ['prospect_AgeID']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac4_av, Matcher: IndexedSimilarity
+City -> prospect_Ci not found
+	Method Matches for City: ['prospect_St']
+
+Type: View-Unionable, Table: prospect_both_0_30_ac3_av, Matcher: IndexedSimilarity
+Employer -> mplr not found
+	Method Matches for Employer: ['ncm', 'g']
+
+Type: View-Unionable, Table: prospect_both_0_30_ac3_av, Matcher: IndexedSimilarity
+Country -> cntr not found
+	Method Matches for Country: ['ncm']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac5_ev, Matcher: IndexedSimilarity
+AgencyID -> prospect_gncd not found
+	Method Matches for AgencyID: ['prospect_ddrssln1']
+
+Type: View-Unionable, Table: prospect_both_0_70_ac4_ev, Matcher: IndexedSimilarity
+Age -> prospect_Ag not found
+	Method Matches for Age: ['prospect_AgeID']
+
+Type: View-Unionable, Table: prospect_both_0_30_ac2_ev, Matcher: IndexedSimilarity
+Employer -> Empl not found
+	Method Matches for Employer: ['Inc', 'A']
+
+Type: Joinable, Table: prospect_vertical_70_ac4_ev, Matcher: IndexedSimilarity
+City -> prospect_Ci not found
+	Method Matches for City: ['prospect_St']
+
+Type: Joinable, Table: prospect_vertical_70_ac4_ev, Matcher: IndexedSimilarity
+NumberCars -> prospect_NuCa not found
+	Method Matches for NumberCars: ['prospect_NumCreCar']
+
+Type: Joinable, Table: prospect_both_50_50_ac2_ev, Matcher: IndexedSimilarity
+Gender -> Ge not found
+	Method Matches for Gender: ['A', 'Em']
+
+Type: Joinable, Table: prospect_vertical_70_ac5_ev, Matcher: IndexedSimilarity
+AgencyID -> prospect_gncd not found
+	Method Matches for AgencyID: ['prospect_ddrssln1']
+
+Type: Joinable, Table: prospect_vertical_30_ac3_ev, Matcher: IndexedSimilarity
+Gender -> gndr not found
+	Method Matches for Gender: ['g']
+
+Type: Joinable, Table: prospect_both_50_70_ac3_ev, Matcher: IndexedSimilarity
+Gender -> gndr not found
+	Method Matches for Gender: ['g']
+
+Type: Joinable, Table: prospect_both_50_70_ac3_ev, Matcher: IndexedSimilarity
+Employer -> mplr not found
+	Method Matches for Employer: ['ncm', 'g']
+
+Type: Joinable, Table: prospect_both_50_70_ac3_ev, Matcher: IndexedSimilarity
+Country -> cntr not found
+	Method Matches for Country: ['ncm', 'ct']
+
+Type: Joinable, Table: prospect_both_50_70_ac2_ev, Matcher: IndexedSimilarity
+MiddleInitial -> MiIn not found
+	Method Matches for MiddleInitial: ['Inc']
+
+Type: Joinable, Table: prospect_both_50_70_ac2_ev, Matcher: IndexedSimilarity
+Gender -> Ge not found
+	Method Matches for Gender: ['A']
+
+Type: Joinable, Table: prospect_both_50_70_ac2_ev, Matcher: IndexedSimilarity
+Country -> Coun not found
+	Method Matches for Country: ['LaNa']
+
+Type: Joinable, Table: prospect_vertical_50_ac4_ev, Matcher: IndexedSimilarity
+NumberCars -> prospect_NuCa not found
+	Method Matches for NumberCars: ['prospect_NumCrCar']
+
+Type: Joinable, Table: prospect_vertical_50_ac3_ev, Matcher: IndexedSimilarity
+Country -> cntr not found
+	Method Matches for Country: ['ncm']
+
+Type: Joinable, Table: prospect_vertical_50_ac3_ev, Matcher: IndexedSimilarity
+Employer -> mplr not found
+	Method Matches for Employer: ['ncm', 'g']
+
+Type: Joinable, Table: prospect_both_50_70_ac4_ev, Matcher: IndexedSimilarity
+Age -> prospect_Ag not found
+	Method Matches for Age: ['prospect_AgeID']
+
+Type: Joinable, Table: prospect_vertical_50_ac2_ev, Matcher: IndexedSimilarity
+Employer -> Em not found
+	Method Matches for Employer: ['Inc']
+
+Type: Joinable, Table: prospect_vertical_50_ac2_ev, Matcher: IndexedSimilarity
+Age -> Ag not found
+	Method Matches for Age: ['AgeID']
+
+Type: Joinable, Table: prospect_both_50_30_ac2_ev, Matcher: IndexedSimilarity
+Age -> A not found
+	Method Matches for Age: ['AgeID']
+
+Type: Joinable, Table: prospect_vertical_70_ac2_ev, Matcher: IndexedSimilarity
+LastName -> LaNa not found
+	Method Matches for LastName: ['MaSt']
+
+Type: Joinable, Table: prospect_vertical_70_ac2_ev, Matcher: IndexedSimilarity
+MiddleInitial -> MiInit not found
+	Method Matches for MiddleInitial: ['Inc']
+
+Type: Joinable, Table: prospect_vertical_70_ac2_ev, Matcher: IndexedSimilarity
+Employer -> Empl not found
+	Method Matches for Employer: ['Inc', 'A']
+
+Type: Joinable, Table: prospect_vertical_70_ac2_ev, Matcher: IndexedSimilarity
+Country -> Cou not found
+	Method Matches for Country: ['LaNa', 'Ci']
+
+Type: Joinable, Table: prospect_both_50_50_ac4_ev, Matcher: IndexedSimilarity
+Age -> prospect_A not found
+	Method Matches for Age: ['prospect_AgeID']
+
+Type: Joinable, Table: prospect_vertical_70_ac3_ev, Matcher: IndexedSimilarity
+Employer -> mplr not found
+	Method Matches for Employer: ['g', 'ncm']
+
+Type: Joinable, Table: prospect_both_50_50_ac5_ev, Matcher: IndexedSimilarity
+AgencyID -> prospect_gncd not found
+	Method Matches for AgencyID: ['prospect_ddrssln1']
+
+Type: Semantically-Joinable, Table: prospect_vertical_50_ac4_av, Matcher: IndexedSimilarity
+City -> prospect_C not found
+	Method Matches for City: ['prospect_MarSt']
+
+Type: Semantically-Joinable, Table: prospect_both_50_70_ac2_av, Matcher: IndexedSimilarity
+Age -> Ag not found
+	Method Matches for Age: ['AgeID']
+
+Type: Semantically-Joinable, Table: prospect_both_50_70_ac2_av, Matcher: IndexedSimilarity
+State -> Sta not found
+	Method Matches for State: ['MaSt']
+
+Type: Semantically-Joinable, Table: prospect_both_50_70_ac2_av, Matcher: IndexedSimilarity
+City -> C not found
+	Method Matches for City: ['Ag', 'MaSt']
+
+Type: Semantically-Joinable, Table: prospect_vertical_50_ac5_av, Matcher: IndexedSimilarity
+AgencyID -> prospect_gncd not found
+	Method Matches for AgencyID: ['prospect_ddrssln1']
+
+Type: Semantically-Joinable, Table: prospect_both_50_70_ac3_av, Matcher: IndexedSimilarity
+Country -> cntr not found
+	Method Matches for Country: ['ncm', 'ct']
+
+Type: Semantically-Joinable, Table: prospect_both_50_70_ac3_av, Matcher: IndexedSimilarity
+Gender -> gndr not found
+	Method Matches for Gender: ['g']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ac5_av, Matcher: IndexedSimilarity
+AgencyID -> prospect_gncd not found
+	Method Matches for AgencyID: ['prospect_ddrssln1']
+
+Type: Semantically-Joinable, Table: prospect_both_50_50_ac2_av, Matcher: IndexedSimilarity
+City -> C not found
+	Method Matches for City: ['MarSt']
+
+Type: Semantically-Joinable, Table: prospect_both_50_50_ac5_av, Matcher: IndexedSimilarity
+AgencyID -> prospect_gncd not found
+	Method Matches for AgencyID: ['prospect_ddrssln1']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ac3_av, Matcher: IndexedSimilarity
+Gender -> gndr not found
+	Method Matches for Gender: ['g']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ac3_av, Matcher: IndexedSimilarity
+Country -> cntr not found
+	Method Matches for Country: ['ncm', 'ct']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ac3_av, Matcher: IndexedSimilarity
+State -> stt not found
+	Method Matches for State: ['ct', 'ncm']
+
+Type: Semantically-Joinable, Table: prospect_both_50_50_ac4_av, Matcher: IndexedSimilarity
+Age -> prospect_Ag not found
+	Method Matches for Age: ['prospect_AgeID']
+
+Type: Semantically-Joinable, Table: prospect_both_50_50_ac4_av, Matcher: IndexedSimilarity
+NumberCars -> prospect_NuCa not found
+	Method Matches for NumberCars: ['prospect_NumCreCar']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ac2_av, Matcher: IndexedSimilarity
+State -> Sta not found
+	Method Matches for State: ['MaSt']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ac2_av, Matcher: IndexedSimilarity
+City -> C not found
+	Method Matches for City: ['Ag', 'MaSt']
+
+Type: Semantically-Joinable, Table: prospect_vertical_70_ac2_av, Matcher: IndexedSimilarity
+Age -> Ag not found
+	Method Matches for Age: ['AgeID']
+
+Type: Semantically-Joinable, Table: prospect_vertical_50_ac2_av, Matcher: IndexedSimilarity
+NumberCars -> NumCa not found
+	Method Matches for NumberCars: ['NumCrCar']
+
+Type: Semantically-Joinable, Table: prospect_both_50_70_ac4_av, Matcher: IndexedSimilarity
+Age -> prospect_A not found
+	Method Matches for Age: ['prospect_AgeID']
+
+Type: Semantically-Joinable, Table: prospect_both_50_70_ac4_av, Matcher: IndexedSimilarity
+NumberCars -> prospect_NumCa not found
+	Method Matches for NumberCars: ['prospect_NuCrCar']
+
+Type: Semantically-Joinable, Table: prospect_both_50_70_ac4_av, Matcher: IndexedSimilarity
+PostalCode -> prospect_PosC not found
+	Method Matches for PostalCode: ['prospect_MarSt']
+
+Type: Semantically-Joinable, Table: prospect_both_50_30_ac2_av, Matcher: IndexedSimilarity
+City -> C not found
+	Method Matches for City: ['Ag']
+
+Type: Semantically-Joinable, Table: prospect_both_50_70_ac5_av, Matcher: IndexedSimilarity
+AgencyID -> prospect_gncd not found
+	Method Matches for AgencyID: ['prospect_ddrssln1']
+
+Type: Unionable, Table: prospect_horizontal_100_ac3_av, Matcher: IndexedSimilarity
+Gender -> gndr not found
+	Method Matches for Gender: ['g']
+
+Type: Unionable, Table: prospect_horizontal_100_ac3_av, Matcher: IndexedSimilarity
+State -> stt not found
+	Method Matches for State: ['ct', 'ncm']
+
+Type: Unionable, Table: prospect_horizontal_100_ac3_av, Matcher: IndexedSimilarity
+Country -> cntr not found
+	Method Matches for Country: ['ncm', 'ct']
+
+Type: Unionable, Table: prospect_horizontal_100_ac3_av, Matcher: IndexedSimilarity
+Employer -> mplr not found
+	Method Matches for Employer: ['ncm', 'g']
+
+Type: Unionable, Table: prospect_horizontal_50_ac4_av, Matcher: IndexedSimilarity
+Age -> prospect_Ag not found
+	Method Matches for Age: ['prospect_AgeID']
+
+Type: Unionable, Table: prospect_horizontal_50_ac5_av, Matcher: IndexedSimilarity
+AgencyID -> prospect_gncd not found
+	Method Matches for AgencyID: ['prospect_ddrssln1']
+
+Type: Unionable, Table: prospect_horizontal_0_ac2_ev, Matcher: IndexedSimilarity
+LastName -> LN not found
+	Method Matches for LastName: ['Gen']
+
+Type: Unionable, Table: prospect_horizontal_0_ac2_ev, Matcher: IndexedSimilarity
+AddressLine2 -> AdLi2 not found
+	Method Matches for AddressLine2: ['AddrL1']
+
+Type: Unionable, Table: prospect_horizontal_0_ac2_ev, Matcher: IndexedSimilarity
+State -> Sta not found
+	Method Matches for State: ['MiIn', 'Ag']
+
+Type: Unionable, Table: prospect_horizontal_0_ac2_ev, Matcher: IndexedSimilarity
+Country -> Cou not found
+	Method Matches for Country: ['Ci']
+
+Type: Unionable, Table: prospect_horizontal_0_ac2_ev, Matcher: IndexedSimilarity
+Age -> Ag not found
+	Method Matches for Age: ['Gen']
+
+Type: Unionable, Table: prospect_horizontal_100_ac2_av, Matcher: IndexedSimilarity
+LastName -> LaN not found
+	Method Matches for LastName: ['Gen']
+
+Type: Unionable, Table: prospect_horizontal_100_ac2_av, Matcher: IndexedSimilarity
+MiddleInitial -> MiInit not found
+	Method Matches for MiddleInitial: ['Inc']
+
+Type: Unionable, Table: prospect_horizontal_100_ac2_av, Matcher: IndexedSimilarity
+City -> C not found
+	Method Matches for City: ['Co']
+
+Type: Unionable, Table: prospect_horizontal_100_ac2_av, Matcher: IndexedSimilarity
+State -> Sta not found
+	Method Matches for State: ['Co']
+
+Type: Unionable, Table: prospect_horizontal_100_ac2_av, Matcher: IndexedSimilarity
+Age -> A not found
+	Method Matches for Age: ['AgeID', 'Gen']
+
+Type: Unionable, Table: prospect_horizontal_100_ac2_av, Matcher: IndexedSimilarity
+Employer -> Empl not found
+	Method Matches for Employer: ['Inc', 'A', 'NWor']
+
+Type: Unionable, Table: prospect_horizontal_0_ac2_av, Matcher: IndexedSimilarity
+MiddleInitial -> MidInit not found
+	Method Matches for MiddleInitial: ['Inc']
+
+Type: Unionable, Table: prospect_horizontal_0_ac2_av, Matcher: IndexedSimilarity
+Age -> Ag not found
+	Method Matches for Age: ['AgeID']
+
+Type: Unionable, Table: prospect_horizontal_100_ac2_ev, Matcher: IndexedSimilarity
+MiddleInitial -> MidInit not found
+	Method Matches for MiddleInitial: ['Inc']
+
+Type: Unionable, Table: prospect_horizontal_100_ac2_ev, Matcher: IndexedSimilarity
+City -> C not found
+	Method Matches for City: ['MariSt', 'Ag']
+
+Type: Unionable, Table: prospect_horizontal_100_ac2_ev, Matcher: IndexedSimilarity
+Country -> Coun not found
+	Method Matches for Country: ['LaNa']
+
+Type: Unionable, Table: prospect_horizontal_100_ac2_ev, Matcher: IndexedSimilarity
+NumberCars -> NumCa not found
+	Method Matches for NumberCars: ['NumCrCar']
+
+Type: Unionable, Table: prospect_horizontal_100_ac2_ev, Matcher: IndexedSimilarity
+Age -> Ag not found
+	Method Matches for Age: ['AgeID', 'Gen']
+
+Type: Unionable, Table: prospect_horizontal_50_ac5_ev, Matcher: IndexedSimilarity
+AgencyID -> prospect_gncd not found
+	Method Matches for AgencyID: ['prospect_ddrssln1']
+
+Type: Unionable, Table: prospect_horizontal_50_ac4_ev, Matcher: IndexedSimilarity
+PostalCode -> prospect_PosCo not found
+	Method Matches for PostalCode: ['prospect_MarSt']
+
+Type: Unionable, Table: prospect_horizontal_50_ac4_ev, Matcher: IndexedSimilarity
+City -> prospect_Ci not found
+	Method Matches for City: ['prospect_MarSt', 'prospect_St']
+
+Type: Unionable, Table: prospect_horizontal_0_ac3_av, Matcher: IndexedSimilarity
+Gender -> gndr not found
+	Method Matches for Gender: ['g']
+
+Type: Unionable, Table: prospect_horizontal_0_ac3_av, Matcher: IndexedSimilarity
+State -> stt not found
+	Method Matches for State: ['ct', 'ncm']
+
+Type: Unionable, Table: prospect_horizontal_0_ac3_av, Matcher: IndexedSimilarity
+Country -> cntr not found
+	Method Matches for Country: ['ncm', 'ct']
+
+Type: Unionable, Table: prospect_horizontal_0_ac3_av, Matcher: IndexedSimilarity
+Employer -> mplr not found
+	Method Matches for Employer: ['ncm', 'g']
+
+Type: Unionable, Table: prospect_horizontal_100_ac3_ev, Matcher: IndexedSimilarity
+Gender -> gndr not found
+	Method Matches for Gender: ['g']
+
+Type: Unionable, Table: prospect_horizontal_100_ac3_ev, Matcher: IndexedSimilarity
+State -> stt not found
+	Method Matches for State: ['ct', 'ncm']
+
+Type: Unionable, Table: prospect_horizontal_100_ac3_ev, Matcher: IndexedSimilarity
+Country -> cntr not found
+	Method Matches for Country: ['ncm', 'ct']
+
+Type: Unionable, Table: prospect_horizontal_100_ac3_ev, Matcher: IndexedSimilarity
+Employer -> mplr not found
+	Method Matches for Employer: ['ncm', 'g']
+
+Type: Unionable, Table: prospect_horizontal_0_ac4_av, Matcher: IndexedSimilarity
+City -> prospect_Ci not found
+	Method Matches for City: ['prospect_St']
+
+Type: Unionable, Table: prospect_horizontal_100_ac4_ev, Matcher: IndexedSimilarity
+NumberCars -> prospect_NumC not found
+	Method Matches for NumberCars: ['prospect_NuCrCar']
+
+Type: Unionable, Table: prospect_horizontal_100_ac4_ev, Matcher: IndexedSimilarity
+Age -> prospect_Ag not found
+	Method Matches for Age: ['prospect_AgeID']
+
+Type: Unionable, Table: prospect_horizontal_50_ac3_ev, Matcher: IndexedSimilarity
+Gender -> gndr not found
+	Method Matches for Gender: ['g']
+
+Type: Unionable, Table: prospect_horizontal_50_ac3_ev, Matcher: IndexedSimilarity
+State -> stt not found
+	Method Matches for State: ['ct', 'ncm']
+
+Type: Unionable, Table: prospect_horizontal_50_ac3_ev, Matcher: IndexedSimilarity
+Country -> cntr not found
+	Method Matches for Country: ['ncm', 'ct']
+
+Type: Unionable, Table: prospect_horizontal_50_ac3_ev, Matcher: IndexedSimilarity
+Employer -> mplr not found
+	Method Matches for Employer: ['ncm', 'g']
+
+Type: Unionable, Table: prospect_horizontal_50_ac2_ev, Matcher: IndexedSimilarity
+MiddleInitial -> MiIn not found
+	Method Matches for MiddleInitial: ['Inc']
+
+Type: Unionable, Table: prospect_horizontal_50_ac2_ev, Matcher: IndexedSimilarity
+Gender -> Ge not found
+	Method Matches for Gender: ['Em']
+
+Type: Unionable, Table: prospect_horizontal_50_ac2_ev, Matcher: IndexedSimilarity
+State -> St not found
+	Method Matches for State: ['MiIn', 'Co', 'Ag']
+
+Type: Unionable, Table: prospect_horizontal_0_ac5_av, Matcher: IndexedSimilarity
+AgencyID -> prospect_gncd not found
+	Method Matches for AgencyID: ['prospect_ddrssln1']
+
+Type: Unionable, Table: prospect_horizontal_100_ac5_ev, Matcher: IndexedSimilarity
+AgencyID -> prospect_gncd not found
+	Method Matches for AgencyID: ['prospect_ddrssln1']
+
+Type: Unionable, Table: prospect_horizontal_0_ac5_ev, Matcher: IndexedSimilarity
+AgencyID -> prospect_gncd not found
+	Method Matches for AgencyID: ['prospect_ddrssln1']
+
+Type: Unionable, Table: prospect_horizontal_100_ac5_av, Matcher: IndexedSimilarity
+AgencyID -> prospect_gncd not found
+	Method Matches for AgencyID: ['prospect_ddrssln1']
+
+Type: Unionable, Table: prospect_horizontal_50_ac3_av, Matcher: IndexedSimilarity
+Gender -> gndr not found
+	Method Matches for Gender: ['g']
+
+Type: Unionable, Table: prospect_horizontal_50_ac3_av, Matcher: IndexedSimilarity
+State -> stt not found
+	Method Matches for State: ['ct', 'ncm']
+
+Type: Unionable, Table: prospect_horizontal_50_ac3_av, Matcher: IndexedSimilarity
+Country -> cntr not found
+	Method Matches for Country: ['ncm', 'ct']
+
+Type: Unionable, Table: prospect_horizontal_50_ac3_av, Matcher: IndexedSimilarity
+Employer -> mplr not found
+	Method Matches for Employer: ['ncm', 'g']
+
+Type: Unionable, Table: prospect_horizontal_0_ac4_ev, Matcher: IndexedSimilarity
+City -> prospect_C not found
+	Method Matches for City: ['prospect_St']
+
+Type: Unionable, Table: prospect_horizontal_0_ac4_ev, Matcher: IndexedSimilarity
+Age -> prospect_A not found
+	Method Matches for Age: ['prospect_AgeID']
+
+Type: Unionable, Table: prospect_horizontal_100_ac4_av, Matcher: IndexedSimilarity
+City -> prospect_Ci not found
+	Method Matches for City: ['prospect_St']
+
+Type: Unionable, Table: prospect_horizontal_100_ac4_av, Matcher: IndexedSimilarity
+Age -> prospect_A not found
+	Method Matches for Age: ['prospect_AgeID']
