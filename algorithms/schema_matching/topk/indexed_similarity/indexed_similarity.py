@@ -203,17 +203,17 @@ class IndexedSimilarityMatcher(BaseMatcher):
             categorical_cols_target = type2cols_target['categorical']
 
             if len(categorical_colnames_input) > 0 and len(categorical_cols_target) > 0:
-                # print("Matching categorical columns")
+                print("Matching categorical columns")
                 ranked_column_similarity_map = self._column_value_matching(
                     input[categorical_colnames_input], target[categorical_cols_target])
                 all_matches.update(ranked_column_similarity_map)
 
-            numerical_colnames_input = type2cols_input['numerical']
-            numerical_cols_target = type2cols_target['numerical']
+            numerical_colnames_input = type2cols_input['numeric']
+            numerical_cols_target = type2cols_target['numeric']
 
             if len(numerical_colnames_input) > 0 and len(numerical_cols_target) > 0:
-                # print("Matching numerical columns")
-                ranked_column_similarity_map = self._column_value_matching(
+                print("Matching numerical columns")
+                ranked_column_similarity_map = self._column_name_matching(
                     input[numerical_colnames_input], target[numerical_cols_target])
                 all_matches.update(ranked_column_similarity_map)
             
@@ -222,7 +222,7 @@ class IndexedSimilarityMatcher(BaseMatcher):
 
             if len(binary_colnames_input) > 0 and len(binary_cols_target) > 0:
                 # print("Matching binary columns")
-                ranked_column_similarity_map = self._column_value_matching(
+                ranked_column_similarity_map = self._column_name_matching(
                     input[binary_colnames_input], target[binary_cols_target])
                 all_matches.update(ranked_column_similarity_map)
 

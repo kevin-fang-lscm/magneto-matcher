@@ -17,6 +17,7 @@ project_path = os.path.dirname(os.path.dirname(
 sys.path.append(os.path.join(project_path))
 
 import algorithms.schema_matching.topk.indexed_similarity.indexed_similarity as indexed_similarity
+import algorithms.schema_matching.topk.indexed_similarity_new.indexed_similarity_new as indexed_similarity_new
 import algorithms.schema_matching.topk.cl.cl as cl
 from experiments.schema_matching.benchmarks.utils import compute_mean_ranking_reciprocal, compute_mean_ranking_reciprocal_detail, create_result_file, record_result
 
@@ -39,6 +40,8 @@ def get_matcher(method):
         return Coma(use_instances=True, java_xmx="10096m")
     elif method == 'IndexedSimilarity':
         return indexed_similarity.IndexedSimilarityMatcher()
+    elif method == 'IndexedSimilarityNew':
+        return indexed_similarity_new.IndexedSimilarityMatcherNew()
     elif method == 'IndexedSimilarityInst':
         return indexed_similarity.IndexedSimilarityMatcher(use_instances=True)
     elif method == 'CL':
@@ -50,7 +53,7 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
     Run the valentine benchmark for one level of the dataset (Magelan and Wikidata)
     '''
 
-    HEADER = ['benchmark', 'dataset', 'source_table', 'target_table','ncols_src','ncols_tgt','nrows_src','nrows_tgt','method', 'runtime', 'mrr',  'All_Precision', 'All_F1Score', 'All_Recall', 'All_PrecisionTop10Percent', 'All_RecallAtSizeofGroundTruth',
+    HEADER = ['benchmark', 'dataset', 'source_table', 'target_table','ncols_src','ncols_tgt','nrows_src','nrows_tgt','nmatches','method', 'runtime', 'mrr',  'All_Precision', 'All_F1Score', 'All_Recall', 'All_PrecisionTop10Percent', 'All_RecallAtSizeofGroundTruth',
               'One2One_Precision', 'One2One_F1Score', 'One2One_Recall', 'One2One_PrecisionTop10Percent', 'One2One_RecallAtSizeofGroundTruth']
 
     results_dir = os.path.join(
@@ -77,13 +80,15 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
         nrows_src = str(df_source.shape[0])
         nrows_tgt = str(df_target.shape[0])
 
+        nmatches = len(ground_truth)
+
         # print(ground_truth)
 
         if len(ground_truth) == 0:
             continue
 
-        matchers = ["Coma", "ComaInst", "IndexedSimilarity", "IndexedSimilarityInst", "CL"]
-        matchers = [ "CL"]
+        matchers = [ "IndexedSimilarityNew", "Coma"]
+        
 
         for matcher in matchers:
 
@@ -99,6 +104,7 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
             except Exception as e:
                 print(f"Not able to run the matcher because of exception: {e}")
                 matches = matcher_results.MatcherResults({})
+            # matches = valentine_match(df_source, df_target, matcher)
 
             end_time = time.time()
             runtime = end_time - start_time
@@ -109,6 +115,8 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
             detail = f"Type: {type}, Table: {folder}, Matcher: {method_name}"
             mrr_score = compute_mean_ranking_reciprocal_detail(matches, ground_truth, detail)
 
+            # print("MRR Score: ", mrr_score)
+
             all_metrics = matches.get_metrics(ground_truth)
 
             matches = matches.one_to_one()
@@ -117,7 +125,7 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
             source_file = source_file.split('/')[-1]
             target_file = target_file.split('/')[-1]
 
-            result = [BENCHMARK, DATASET, source_file, target_file, ncols_src, ncols_tgt, nrows_src, nrows_tgt, method_name, runtime, mrr_score, all_metrics['Precision'], all_metrics['F1Score'], all_metrics['Recall'], all_metrics['PrecisionTop10Percent'], all_metrics['RecallAtSizeofGroundTruth'],
+            result = [BENCHMARK, DATASET, source_file, target_file, ncols_src, ncols_tgt, nrows_src, nrows_tgt,nmatches, method_name, runtime, mrr_score, all_metrics['Precision'], all_metrics['F1Score'], all_metrics['Recall'], all_metrics['PrecisionTop10Percent'], all_metrics['RecallAtSizeofGroundTruth'],
                       one2one_metrics['Precision'], one2one_metrics['F1Score'], one2one_metrics['Recall'], one2one_metrics['PrecisionTop10Percent'], one2one_metrics['RecallAtSizeofGroundTruth']]
 
             record_result(result_file, result)
@@ -171,7 +179,8 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
 
             # matchers = ["Coma", "ComaInst", "IndexedSimilarity", "IndexedSimilarityInst", "CL"]
 
-            matchers = ["Coma"]
+            # matchers = ["IndexedSimilarity", "IndexedSimilarityNew"]
+            matchers = [ "IndexedSimilarityNew", "Coma"]
 
             for matcher in matchers:
                 print("Matcher: ", matcher)
@@ -187,6 +196,7 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
                     print(
                         f"Not able to run the matcher because of exception: {e}")
                     matches = matcher_results.MatcherResults({})
+                # matches = valentine_match(df_source, df_target, matcher)
 
                 end_time = time.time()
                 runtime = end_time - start_time
@@ -195,6 +205,8 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
                 # mrr_score = compute_mean_ranking_reciprocal(matches, ground_truth)
                 detail = f"Type: {type}, Table: {table_folder}, Matcher: {method_name}"
                 mrr_score = compute_mean_ranking_reciprocal_detail(matches, ground_truth, detail)
+
+                # print("MRR Score: ", mrr_score)
 
                 all_metrics = matches.get_metrics(ground_truth)
 
@@ -209,20 +221,24 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
 
                 record_result(result_file, result)
 
+            # break
+        # break   
+    
+
 
 if __name__ == '__main__':
     BENCHMARK = 'valentine'
 
     # WIKIDATA musicians
-    # run_valentine_benchmark_one_level()
+    run_valentine_benchmark_one_level()
 
-    # Magellan
+    # # Magellan
     # DATASET='Magellan'
     # ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema Matching Benchmarks/Valentine-datasets/Magellan'
     # run_valentine_benchmark_one_level(BENCHMARK, DATASET, ROOT)
 
     # OpenData
-    run_valentine_benchmark_three_levels()
+    # run_valentine_benchmark_three_levels()
 
     # ChEMBL
     # DATASET='ChEMBL'

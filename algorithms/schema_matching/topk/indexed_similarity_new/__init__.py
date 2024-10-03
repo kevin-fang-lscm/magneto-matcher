@@ -1,1 +1,1 @@
-from .indexed_similarity import IndexedSimilarityMatcher
+from .indexed_similarity_new import IndexedSimilarityMatcherNew

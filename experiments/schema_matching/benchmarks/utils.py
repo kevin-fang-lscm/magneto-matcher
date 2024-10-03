@@ -1,7 +1,7 @@
 
 import os
 import csv
-
+import json
 
 def sort_matches(matches):
 
@@ -13,10 +13,19 @@ def sort_matches(matches):
     #     print(key, ' ', sorted_matches[key])
     return sorted_matches
 
+def extract_matchings(json_data):
+
+    data = json.loads(json_data)
+
+    matchings = [(match['source_column'], match['target_column'])
+                 for match in data['matches']]
+    return matchings
 
 def compute_mean_ranking_reciprocal(matches, ground_truth):
     # print("Matches: ", matches)
     # print("Ground Truth: ", ground_truth)
+
+
 
 
 
@@ -43,6 +52,17 @@ def compute_mean_ranking_reciprocal(matches, ground_truth):
     final_score = total_score / len(ground_truth)
     return final_score
 
+
+
+def sort_matches(matches):
+
+    sorted_matches = {entry[0][1]: [] for entry in matches}
+    for entry in matches:
+        sorted_matches[entry[0][1]] .append((entry[1][1], matches[entry]))
+
+    # for key in sorted_matches:
+    #     print(key, ' ', sorted_matches[key])
+    return sorted_matches
 
 def compute_mean_ranking_reciprocal_detail(matches, ground_truth, details):
     # print("Matches: ", matches)

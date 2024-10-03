@@ -8,13 +8,13 @@ from transformers import AutoTokenizer, AutoModel
 from valentine.algorithms.base_matcher import BaseMatcher
 from valentine.data_sources.base_table import BaseTable
 from valentine.algorithms.match import Match
-from .preprocessing import clean_df, get_type2columns_map, clean_column_name
+from .preprocessing import clean_df, get_type2columns_map, clean_column_name,common_prefix,alignment_score
 from .embedding_utils import compute_cosine_similarity, compute_cosine_similarity_simple
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
-class IndexedSimilarityMatcher(BaseMatcher):
+class IndexedSimilarityMatcherNew(BaseMatcher):
 
     def __init__(self, config=None, use_instances=False):
 
@@ -24,6 +24,7 @@ class IndexedSimilarityMatcher(BaseMatcher):
                 'column_name': {
                     'top_k': 10,
                     'minimum_similarity': 0.4,
+                    'alignment_score_threshold': 0.95
                 },
                 'column_value': {
                     'top_k_sim_values': 30,
@@ -52,8 +53,69 @@ class IndexedSimilarityMatcher(BaseMatcher):
                 outputs = self.model(**inputs)
             embeddings.append(outputs.last_hidden_state.mean(dim=1))
         return torch.cat(embeddings)
+    
+    def _basic_matching(self, input_colnames, target_colnames):
+
+        column_similarity_map = {}
+
+        prefix_s1 = common_prefix(input_colnames)
+        prefix_s2 = common_prefix(target_colnames)
+        
+        matches_input = []
+        matches_target = []
+        
+        for from_string in input_colnames:
+            for to_string in target_colnames:
+
+                fs = from_string.replace(prefix_s1, "")
+                ts = to_string.replace(prefix_s2, "")
+                result = alignment_score(fs, ts)
+                if result > self.params['column_name']['alignment_score_threshold']:
+                    matches_input.append(from_string)
+                    matches_target.append(to_string)
+
+                    column_similarity_map[from_string][to_string] = result
+        
+        input_colnames = input_colnames - set(matches_input)
+        target_colnames = target_colnames - set(matches_target)
+
+    def sort_similarity_map(self, column_similarity_map):
+        ranked_column_similarity_map = {}
+        for original_input_col, matches in column_similarity_map.items():
+            ranked_column_similarity_map[original_input_col] = dict(
+                sorted(matches.items(), key=lambda item: item[1], reverse=True))
+            
+        return ranked_column_similarity_map
 
     def _column_name_matching(self, input_colnames, target_colnames):
+
+        
+        
+        column_similarity_map = {}
+        for input_col in input_colnames:
+            column_similarity_map[input_col] = {}
+
+        ## basic matching
+        prefix_s1 = common_prefix(list(input_colnames))
+        prefix_s2 = common_prefix(list(target_colnames))
+
+        input_remove= set()
+        target_remove = set()
+        for from_string in input_colnames:
+            for to_string in target_colnames:
+                align_score = alignment_score(from_string.replace(prefix_s1, ""), to_string.replace(prefix_s2, ""))
+                if align_score > self.params['column_name']['alignment_score_threshold']:
+                    column_similarity_map[from_string][to_string] = align_score
+                    input_remove.add(from_string)
+                    target_remove.add(to_string)
+
+        input_colnames = list(set(input_colnames) - input_remove)
+        target_colnames = list(set(target_colnames) - target_remove)
+        
+        # transforming column names and then performing the embedding based matching
+
+        if len(input_colnames) == 0 or len(target_colnames) == 0:
+            return self.sort_similarity_map(column_similarity_map)
         
         input_colnames_dict = {clean_column_name(col): col for col in input_colnames}
         target_colnames_dict = {clean_column_name(col): col for col in target_colnames}
@@ -72,10 +134,10 @@ class IndexedSimilarityMatcher(BaseMatcher):
             embeddings_input, embeddings_target, top_k)
         
         
-        column_similarity_map = {}
+        # column_similarity_map = {}
         for i, cleaned_input_col in enumerate(cleaned_input_colnames):
             original_input_col = input_colnames_dict[cleaned_input_col]
-            column_similarity_map[original_input_col] = {}
+            # column_similarity_map[original_input_col] = {}
             
             for j in range(top_k):
                 cleaned_target_col = cleaned_target_colnames[topk_indices[i, j]]
@@ -85,12 +147,7 @@ class IndexedSimilarityMatcher(BaseMatcher):
                 if similarity >= self.params['column_name']['minimum_similarity']:
                     column_similarity_map[original_input_col][original_target_col] = similarity
         
-        ranked_column_similarity_map = {}
-        for original_input_col, matches in column_similarity_map.items():
-            ranked_column_similarity_map[original_input_col] = dict(
-                sorted(matches.items(), key=lambda item: item[1], reverse=True))
-        
-        return ranked_column_similarity_map
+        return self.sort_similarity_map(column_similarity_map)
 
 
     def _create_column_value_embedding_dict(self, df):
@@ -229,6 +286,8 @@ class IndexedSimilarityMatcher(BaseMatcher):
         else:
             colnames_input = input.columns
             colnames_target = target.columns
+
+
 
             if len(colnames_input) > 0 and len(colnames_target) > 0:
                     # print(f"Matching {type} columns")

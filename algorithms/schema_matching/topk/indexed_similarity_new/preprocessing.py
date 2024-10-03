@@ -1,10 +1,56 @@
 
 from .constants import NULL_REPRESENTATIONS, BINARY_VALUES
 import numpy as np
-import tqdm
 import pandas as pd
 import re
 
+
+def common_prefix(strings):
+    if not strings:
+        return ""
+    
+    # Sort the list, the common prefix of the whole list would be the common prefix of the first and last string
+    strings.sort()
+    first = strings[0]
+    last = strings[-1]
+    
+    i = 0
+    while i < len(first) and i < len(last) and first[i] == last[i]:
+        i += 1
+    
+    return first[:i]
+
+
+
+def preprocess_string(s):
+    # Remove non-alphanumeric characters and convert to lowercase
+    return re.sub(r'[^a-zA-Z0-9]', '', s).lower()
+
+def alignment_score(str1, str2):
+    # Preprocess strings
+    str1 = preprocess_string(str1)
+    str2 = preprocess_string(str2)
+    
+    # Determine shorter and longer strings
+    if len(str1) <= len(str2):
+        shorter, longer = str1, str2
+    else:
+        shorter, longer = str2, str1
+    
+    matches = 0
+    last_index = -1
+    
+    # Find matches for each letter in the shorter string
+    for char in shorter:
+        for i in range(last_index + 1, len(longer)):
+            if longer[i] == char:
+                matches += 1
+                last_index = i
+                break
+    
+    # Calculate score
+    score = matches / len(shorter)
+    return score
 
 def is_null_value(value):
     if isinstance(value, str):
