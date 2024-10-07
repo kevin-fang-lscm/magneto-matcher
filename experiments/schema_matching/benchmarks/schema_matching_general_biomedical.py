@@ -15,6 +15,7 @@ sys.path.append(os.path.join(project_path))
 import algorithms.schema_matching.topk.indexed_similarity.indexed_similarity as indexed_similarity
 import algorithms.schema_matching.topk.indexed_similarity_new.indexed_similarity_new as indexed_similarity_new
 import algorithms.schema_matching.topk.cl.cl as cl
+import algorithms.schema_matching.topk.harmonizer.harmonizer as hm
 from experiments.schema_matching.benchmarks.utils import compute_mean_ranking_reciprocal, compute_mean_ranking_reciprocal_detail, create_result_file, record_result,extract_matchings
 
 # from algorithms.schema_matching.topk.indexed_similarity import IndexedSimilarityMatcher
@@ -36,7 +37,6 @@ pp = pprint.PrettyPrinter(indent=4, sort_dicts=True)
 
 
 
-
 def get_matcher(method):
     if method == 'Coma':
         return Coma()
@@ -46,6 +46,10 @@ def get_matcher(method):
         return indexed_similarity.IndexedSimilarityMatcher()
     elif method == 'IndexedSimilarityNew':
         return indexed_similarity_new.IndexedSimilarityMatcherNew()
+    elif method == 'Harmonizer':
+        return hm.Harmonizer()
+    elif method == 'HarmonizerInstance':
+        return hm.Harmonizer(use_instances=True)
     elif method == 'IndexedSimilarityInst':
         return indexed_similarity.IndexedSimilarityMatcher(use_instances=True)
     elif method == 'CL':
@@ -62,35 +66,35 @@ def run_dou_pair():
     gt_df.dropna(inplace=True)
     ground_truth = list(gt_df.itertuples(index=False, name=None))
 
-    # matchers = [ IndexedSimilarityMatcher(),  JaccardDistanceMatcher(), Coma()]
-    matchers = [cl.CLMatcher(), Coma(
-        use_instances=True, java_xmx="10096m")]
+    # print(ground_truth)
 
-    # matchers = [isimnew.IndexedSimilarityMatcherNew(), isim.IndexedSimilarityMatcher(use_instances=True), Coma(), Coma(use_instances=True)]
-    # matchers = [ isim.IndexedSimilarityMatcher(use_instances=True)]
+    matchers = [  "Harmonizer"]
 
     for matcher in matchers:
-        print("Matcher: ", matcher)
+
+        method_name = matcher
+        matcher = get_matcher(matcher)    
+        print("Matcher: ", method_name)
 
         start_time = time.time()
 
         matches = valentine_match(gdc_input_df, gdc_target_df, matcher)
-        metrics = matches.get_metrics(ground_truth)
+        all_metrics = matches.get_metrics(ground_truth)
 
         end_time = time.time()
         runtime = end_time - start_time
         print(f"Runtime for valentine_match: {runtime:.4f} seconds")
 
-        score = compute_mean_ranking_reciprocal(matches, ground_truth)
-        print("Mean Ranking Reciprocal Score: ", score)
+        mrr_score = compute_mean_ranking_reciprocal(matches, ground_truth)
+        print("Mean Ranking Reciprocal Score: ", mrr_score)
 
         print("Normal Metrics:")
-        pp.pprint(metrics)
+        pp.pprint(all_metrics)
 
         matches = matches.one_to_one()
-        metrics = matches.get_metrics(ground_truth)
+        one2one_metrics = matches.get_metrics(ground_truth)
         print("One2One Metrics:")
-        pp.pprint(metrics)
+        pp.pprint(one2one_metrics)
         print("\n\n")
 
         ncols_src = str(gdc_input_df.shape[1])
@@ -99,8 +103,11 @@ def run_dou_pair():
         nrows_tgt = str(gdc_target_df.shape[0])
         nmatches = len(ground_truth)
 
-        
+        result = ['gdc_studies', 'gdc_studies', 'Dou-ucec-discovery', 'Dou-ucec-confirmatory', ncols_src, ncols_tgt, nrows_src, nrows_tgt,nmatches, method_name, runtime, mrr_score, all_metrics['Precision'], all_metrics['F1Score'], all_metrics['Recall'], all_metrics['PrecisionTop10Percent'], all_metrics['RecallAtSizeofGroundTruth'],
+                      one2one_metrics['Precision'], one2one_metrics['F1Score'], one2one_metrics['Recall'], one2one_metrics['PrecisionTop10Percent'], one2one_metrics['RecallAtSizeofGroundTruth']]
 
+        
+        print(result)
 
 
 def run_gdc_studies(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema Matching Benchmarks/gdc'):
@@ -118,7 +125,8 @@ def run_gdc_studies(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users
 
     create_result_file(results_dir, result_file, HEADER)
 
-    target_file = os.path.join(ROOT, 'target-tables', 'gdc_table.csv')
+    # target_file = os.path.join(ROOT, 'target-tables', 'gdc_table.csv')
+    target_file = os.path.join(ROOT, 'target-tables', 'gdc_full.csv')
     df_target = pd.read_csv(target_file)
 
     studies_path = os.path.join(ROOT, 'source-tables')
@@ -127,6 +135,9 @@ def run_gdc_studies(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users
     for gt_file in os.listdir(gt_path):
         if gt_file.endswith('.csv'):
 
+            # if gt_file != 'Krug.csv':
+            #     continue
+
             source_file = os.path.join(studies_path, gt_file)
             df_source = pd.read_csv(source_file)
 
@@ -134,11 +145,13 @@ def run_gdc_studies(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users
             gt_df.dropna(inplace=True)
             ground_truth = list(gt_df.itertuples(index=False, name=None))
 
-            matchers = [  "CL"]
+            # matchers = [ "Harmonizer", "CL", "Coma"]
+            matchers = [ "Harmonizer", "HarmonizerInstance", "Coma", "ComaInst", "CL"]
+
         
 
             for matcher in matchers:
-                print(f"Matcher: {matcher}, Source: {source_file}, Target: {target_file}")
+                # print(f"Matcher: {matcher}, Source: {source_file}, Target: {target_file}")
 
                 method_name = matcher
                 matcher = get_matcher(matcher)    
@@ -146,18 +159,24 @@ def run_gdc_studies(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users
                 start_time = time.time()
 
                 matches = valentine_match(df_source, df_target, matcher)
+
+                # pp.pprint(matches)
                 
 
                 end_time = time.time()
                 runtime = end_time - start_time
-                print(f"Runtime for valentine_match: {runtime:.4f} seconds")
+                # print(f"Runtime for valentine_match: {runtime:.4f} seconds")
 
                 mrr_score = compute_mean_ranking_reciprocal(matches, ground_truth)
-                print("Mean Ranking Reciprocal Score: ", mrr_score)
+                # print("Mean Ranking Reciprocal Score: ", mrr_score)
 
                 
 
                 all_metrics = matches.get_metrics(ground_truth)
+
+                recallAtGT = all_metrics['RecallAtSizeofGroundTruth']
+
+                print(method_name, " with MRR Score: ", mrr_score, " and RecallAtGT: ", recallAtGT)
 
                 matches = matches.one_to_one()
                 one2one_metrics = matches.get_metrics(ground_truth)
@@ -173,13 +192,12 @@ def run_gdc_studies(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users
                       one2one_metrics['Precision'], one2one_metrics['F1Score'], one2one_metrics['Recall'], one2one_metrics['PrecisionTop10Percent'], one2one_metrics['RecallAtSizeofGroundTruth']]
 
                 record_result(result_file, result)
-
+        print("\n")
 
 
 
 
 if __name__ == '__main__':
     run_gdc_studies()
-    # run_for_santos_benchmark()
-
+    
     # run_dou_pair()

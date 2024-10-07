@@ -73,33 +73,33 @@ class ContrastiveLearningAPI:
 
         l_features = self._load_table_tokens(table)
 
-        df_hash = hash_dataframe(gdc_ds)
-        df_hash_file = os.path.join(DEFAULT_CACHE_PATH, df_hash)
-        r_features = None
+        # df_hash = hash_dataframe(gdc_ds)
+        # df_hash_file = os.path.join(DEFAULT_CACHE_PATH, df_hash)
+        # r_features = None
 
-        # r_features = self._load_table_tokens(gdc_ds)
+        r_features = self._load_table_tokens(gdc_ds)
         # with open(df_hash_file, "w") as file:
         #     file.write('\n'.join([','.join(map(str, vec))
         #                 for vec in r_features]))
 
-        if not os.path.isfile(df_hash_file):
+        # if not os.path.isfile(df_hash_file):
 
-            r_features = self._load_table_tokens(gdc_ds)
-            with open(df_hash_file, "w") as file:
-                file.write('\n'.join([','.join(map(str, vec))
-                           for vec in r_features]))
-        else:
-            try:
-                with open(df_hash_file, "r") as file:
-                    r_features = [[float(val) for val in vec.split(',')]
-                                  for vec in file.read().split('\n')]
-                    if len(r_features) != len(gdc_ds.columns):
-                        raise Exception("Hash file corrupted")
-            except:
-                r_features = self._load_table_tokens(gdc_ds)
-                with open(df_hash_file, "w") as file:
-                    file.write(
-                        '\n'.join([','.join(map(str, vec)) for vec in r_features]))
+        #     r_features = self._load_table_tokens(gdc_ds)
+        #     with open(df_hash_file, "w") as file:
+        #         file.write('\n'.join([','.join(map(str, vec))
+        #                    for vec in r_features]))
+        # else:
+        #     try:
+        #         with open(df_hash_file, "r") as file:
+        #             r_features = [[float(val) for val in vec.split(',')]
+        #                           for vec in file.read().split('\n')]
+        #             if len(r_features) != len(gdc_ds.columns):
+        #                 raise Exception("Hash file corrupted")
+        #     except:
+        #         r_features = self._load_table_tokens(gdc_ds)
+        #         with open(df_hash_file, "w") as file:
+        #             file.write(
+        #                 '\n'.join([','.join(map(str, vec)) for vec in r_features]))
 
         # cached_cosine_similarity = memory.cache(cosine_similarity)
 

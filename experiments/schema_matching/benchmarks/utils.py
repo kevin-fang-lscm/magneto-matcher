@@ -41,10 +41,13 @@ def compute_mean_ranking_reciprocal(matches, ground_truth):
             if target_col in ordered_matches_list:
                 position = ordered_matches_list.index(target_col)
                 score = 1/(position + 1)
-            else:
-                print(f"1- Mapping {input_col} -> {target_col} not found")
-                for entry in ordered_matches[input_col]:
-                    print(entry)
+            #     print(f"Mapping {input_col} -> {target_col} found at position {position}")
+            #     if position > 5:
+            #         print(f"Other matches for {input_col}: {ordered_matches_list}")
+            # else:
+            #     print(f"1- Mapping {input_col} -> {target_col} not found")
+            #     for entry in ordered_matches[input_col]:
+            #         print(entry)
         # else:
             # print(f"2- Mapping {input_col} -> {target_col} not found")
         total_score += score
@@ -83,9 +86,9 @@ def compute_mean_ranking_reciprocal_detail(matches, ground_truth, details):
                 position = ordered_matches_list.index(target_col)
                 score = 1/(position + 1)
             else:
-                print(f"1- Mapping {input_col} -> {target_col} not found")
-                for entry in ordered_matches[input_col]:
-                    print(entry)
+                # print(f"1- Mapping {input_col} -> {target_col} not found")
+                # for entry in ordered_matches[input_col]:
+                #     print(entry)
 
                 s = "\n" + details 
                 s += f"\n{input_col} -> {target_col} not found"

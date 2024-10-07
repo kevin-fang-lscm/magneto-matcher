@@ -19,6 +19,7 @@ sys.path.append(os.path.join(project_path))
 import algorithms.schema_matching.topk.indexed_similarity.indexed_similarity as indexed_similarity
 import algorithms.schema_matching.topk.indexed_similarity_new.indexed_similarity_new as indexed_similarity_new
 import algorithms.schema_matching.topk.cl.cl as cl
+import algorithms.schema_matching.topk.harmonizer.harmonizer as hm
 from experiments.schema_matching.benchmarks.utils import compute_mean_ranking_reciprocal, compute_mean_ranking_reciprocal_detail, create_result_file, record_result
 
 import pprint
@@ -42,6 +43,10 @@ def get_matcher(method):
         return indexed_similarity.IndexedSimilarityMatcher()
     elif method == 'IndexedSimilarityNew':
         return indexed_similarity_new.IndexedSimilarityMatcherNew()
+    elif method == 'Harmonizer':
+        return hm.Harmonizer()
+    elif method == 'HarmonizerInstance':
+        return hm.Harmonizer(use_instances=True)
     elif method == 'IndexedSimilarityInst':
         return indexed_similarity.IndexedSimilarityMatcher(use_instances=True)
     elif method == 'CL':
@@ -87,12 +92,13 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
         if len(ground_truth) == 0:
             continue
 
-        matchers = [ "IndexedSimilarityNew", "Coma"]
+        # matchers = [ "IndexedSimilarityNew", "Coma"]
+        matchers = [ "Harmonizer", "HarmonizerInstance", "Coma", "ComaInst", "CL"]
         
 
         for matcher in matchers:
 
-            print("Matcher: ", matcher)
+            # print("Matcher: ", matcher)
 
             method_name = matcher
             matcher = get_matcher(matcher)    
@@ -108,16 +114,21 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
 
             end_time = time.time()
             runtime = end_time - start_time
-            print(f"Runtime for valentine_match: {runtime:.4f} seconds")
+            # print(f"Runtime for valentine_match: {runtime:.4f} seconds")
 
             # mrr_score = compute_mean_ranking_reciprocal(
             #     matches, ground_truth)
-            detail = f"Type: {type}, Table: {folder}, Matcher: {method_name}"
-            mrr_score = compute_mean_ranking_reciprocal_detail(matches, ground_truth, detail)
+            # detail = f"Type: {type}, Table: {folder}, Matcher: {method_name}"
+            # mrr_score = compute_mean_ranking_reciprocal_detail(matches, ground_truth, detail)
+            mrr_score = compute_mean_ranking_reciprocal(matches, ground_truth)
 
-            # print("MRR Score: ", mrr_score)
+            
 
             all_metrics = matches.get_metrics(ground_truth)
+
+            recallAtGT = all_metrics['RecallAtSizeofGroundTruth']
+
+            print(method_name, " with MRR Score: ", mrr_score, " and RecallAtGT: ", recallAtGT)
 
             matches = matches.one_to_one()
             one2one_metrics = matches.get_metrics(ground_truth)
@@ -156,6 +167,8 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
             if table_folder == '.DS_Store':
                 continue
 
+            # print("Table: ", table_folder)  
+
             source_file = os.path.join(
                 ROOT, type, table_folder, table_folder+'_source.csv')
             target_file = os.path.join(
@@ -163,15 +176,21 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
             mapping_file = os.path.join(
                 ROOT, type, table_folder, table_folder+'_mapping.json')
 
+            ground_truth = extract_matchings(open(mapping_file).read())
+
+            if len(ground_truth) < 2:
+                continue
+
             df_source = pd.read_csv(source_file)
             df_target = pd.read_csv(target_file)
-            ground_truth = extract_matchings(open(mapping_file).read())
+            
+
+            # print(ground_truth)
 
             ncols_src = str(df_source.shape[1])
             ncols_tgt = str(df_target.shape[1])
             nrows_src = str(df_source.shape[0])
             nrows_tgt = str(df_target.shape[0])
-
             nmatches = len(ground_truth)
 
             if len(ground_truth) == 0:
@@ -180,10 +199,11 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
             # matchers = ["Coma", "ComaInst", "IndexedSimilarity", "IndexedSimilarityInst", "CL"]
 
             # matchers = ["IndexedSimilarity", "IndexedSimilarityNew"]
-            matchers = [ "IndexedSimilarityNew", "Coma"]
+            # matchers = [ "Harmonizer", "Coma", "CL",  "ComaInst"]
+            matchers = [ "Harmonizer", "HarmonizerInstance", "Coma", "ComaInst", "CL"]
 
             for matcher in matchers:
-                print("Matcher: ", matcher)
+                # print("Matcher: ", matcher)
 
                 method_name = matcher
                 matcher = get_matcher(matcher)    
@@ -200,15 +220,20 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
 
                 end_time = time.time()
                 runtime = end_time - start_time
-                print(f"Runtime for valentine_match: {runtime:.4f} seconds")
+                # print(f"Runtime for valentine_match: {runtime:.4f} seconds")
 
                 # mrr_score = compute_mean_ranking_reciprocal(matches, ground_truth)
                 detail = f"Type: {type}, Table: {table_folder}, Matcher: {method_name}"
                 mrr_score = compute_mean_ranking_reciprocal_detail(matches, ground_truth, detail)
 
-                # print("MRR Score: ", mrr_score)
+                
 
                 all_metrics = matches.get_metrics(ground_truth)
+
+                recallAtGT = all_metrics['RecallAtSizeofGroundTruth']
+
+                print(method_name, " with MRR Score: ", mrr_score, " and RecallAtGT: ", recallAtGT)
+
 
                 matches = matches.one_to_one()
                 one2one_metrics = matches.get_metrics(ground_truth)
@@ -222,6 +247,7 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
                 record_result(result_file, result)
 
             # break
+            print("\n")
         # break   
     
 
@@ -230,9 +256,9 @@ if __name__ == '__main__':
     BENCHMARK = 'valentine'
 
     # WIKIDATA musicians
-    run_valentine_benchmark_one_level()
+    # run_valentine_benchmark_one_level()
 
-    # # Magellan
+    # Magellan
     # DATASET='Magellan'
     # ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema Matching Benchmarks/Valentine-datasets/Magellan'
     # run_valentine_benchmark_one_level(BENCHMARK, DATASET, ROOT)
@@ -242,10 +268,10 @@ if __name__ == '__main__':
 
     # ChEMBL
     # DATASET='ChEMBL'
-    # ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema matching data/Valentine-datasets/ChEMBL/'
+    # ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema Matching Benchmarks/Valentine-datasets/ChEMBL/'
     # run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)
 
     # TPC-DI
-    # DATASET='TPC-DI'
-    # ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema Matching Benchmarks/Valentine-datasets/TPC-DI/'
-    # run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)
+    DATASET='TPC-DI'
+    ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema Matching Benchmarks/Valentine-datasets/TPC-DI/'
+    run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)
