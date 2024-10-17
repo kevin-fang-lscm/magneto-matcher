@@ -16,8 +16,13 @@ from fuzzywuzzy import fuzz
 class ValueSimilarityRanker:
     def __init__(self, model_name='sentence-transformers/all-mpnet-base-v2',
                  topk=30, embedding_sim_threshold=0.5):
-
+        
+        if model_name is None:
+            model_name = 'sentence-transformers/all-mpnet-base-v2'
+        
         self.model_name = model_name
+
+        print(f"Loading model {self.model_name}")
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         self.model = AutoModel.from_pretrained(self.model_name)
         self.topk = topk
@@ -33,6 +38,29 @@ class ValueSimilarityRanker:
                 outputs = self.model(**inputs)
             embeddings.append(outputs.last_hidden_state.mean(dim=1))
         return torch.cat(embeddings)
+    
+    def _encode(self, col_name, col_values, mode='OnlyValues'):
+        if mode == 'OnlyValues':
+            return col_values
+
+        if mode == 'ColumnNameAndValue':
+            return [col_name + ": " + str(val) for val in col_values]
+
+        if mode == 'ColumnNameAndMultipleValues':
+            # Sort the values first
+            sorted_values = sorted(col_values)
+
+            # Group them in sets of four and concatenate with the column name
+            result = []
+            for i in range(0, len(sorted_values), 4):
+                group = sorted_values[i:i + 4]  # Get the next group (even if it's less than 4)
+                group_str = ", ".join(map(str, group))  # Convert the group to string
+                result.append(f"{col_name}: {group_str}")
+
+            return result    
+        else:
+            raise ValueError(f"Invalid mode: {mode}")
+
 
     def _create_column_value_embedding_dict(self, df):
 
@@ -40,6 +68,12 @@ class ValueSimilarityRanker:
 
         def process_column(column):
             col_values = df[column].dropna().unique().tolist()
+
+            col_values = self._encode(column, col_values, mode='ColumnNameAndValue')
+
+  
+
+
             return column, col_values, self._get_embeddings(col_values)
 
         with concurrent.futures.ThreadPoolExecutor() as executor:

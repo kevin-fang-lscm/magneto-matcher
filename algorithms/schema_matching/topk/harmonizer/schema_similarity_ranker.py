@@ -14,7 +14,11 @@ class SchemaSimilarityRanker:
     def __init__(self, model_name='sentence-transformers/all-mpnet-base-v2',
                  topk=5, embedding_threshold=0.5, alignment_threshold=0.95, fuzzy_similarity_threshold=0.4):
 
+        if model_name is None:
+            model_name = 'sentence-transformers/all-mpnet-base-v2'
+            
         self.model_name = model_name
+        print(f"Loading model {self.model_name}")
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         self.model = AutoModel.from_pretrained(self.model_name)
         self.topk = topk

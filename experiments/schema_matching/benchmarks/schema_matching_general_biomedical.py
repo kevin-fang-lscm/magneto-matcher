@@ -48,6 +48,12 @@ def get_matcher(method):
         return indexed_similarity_new.IndexedSimilarityMatcherNew()
     elif method == 'Harmonizer':
         return hm.Harmonizer()
+    elif method == 'HarmonizerFine':
+        #return hm.Harmonizer('./my_fine_tuned_model')
+        #return hm.Harmonizer('sentence-transformers/all-mpnet-base-v2')
+        return hm.Harmonizer('sentence-transformers/all-mpnet-base-v2')
+    
+    
     elif method == 'HarmonizerInstance':
         return hm.Harmonizer(use_instances=True)
     elif method == 'IndexedSimilarityInst':
@@ -135,8 +141,8 @@ def run_gdc_studies(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users
     for gt_file in os.listdir(gt_path):
         if gt_file.endswith('.csv'):
 
-            # if gt_file != 'Krug.csv':
-            #     continue
+            if gt_file != 'Krug.csv':
+                continue
 
             source_file = os.path.join(studies_path, gt_file)
             df_source = pd.read_csv(source_file)
@@ -145,8 +151,8 @@ def run_gdc_studies(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users
             gt_df.dropna(inplace=True)
             ground_truth = list(gt_df.itertuples(index=False, name=None))
 
-            # matchers = [ "Harmonizer", "CL", "Coma"]
-            matchers = [ "Harmonizer", "HarmonizerInstance", "Coma", "ComaInst", "CL"]
+            matchers = [ "HarmonizerFine"]
+            # matchers = [ "Harmonizer", "HarmonizerInstance", "Coma", "ComaInst", "CL"]
 
         
 

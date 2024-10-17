@@ -13,10 +13,12 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 class Harmonizer(BaseMatcher):
 
-    def __init__(self, topk=10, use_instances=False):
+    def __init__(self,  columnheader_model_name=None, value_model_name=None, topk=10, use_instances=False,):
 
         self.use_instances = use_instances
         self.topk = topk
+        self.columnheader_model_name = columnheader_model_name
+        self.value_model_name = value_model_name
 
   
 
@@ -36,34 +38,35 @@ class Harmonizer(BaseMatcher):
         # Initialize the input similarity map
         self.input_sim_map = {col: {} for col in self.df_source.columns}
 
-        schemaSimRanker = SchemaSimilarityRanker()
+
+        # schemaSimRanker = SchemaSimilarityRanker(model_name=self.columnheader_model_name)
 
         # SCHEMA-Based Matches with string similarity and alignment
-        strBasicSimilarities = schemaSimRanker.get_str_similarity_candidates(self.df_source.columns,  self.df_target.columns)
-        for (col_source, col_target), score in strBasicSimilarities.items():
-            self.input_sim_map[col_source][col_target] = score
+        # strBasicSimilarities = schemaSimRanker.get_str_similarity_candidates(self.df_source.columns,  self.df_target.columns)
+        # for (col_source, col_target), score in strBasicSimilarities.items():
+        #     self.input_sim_map[col_source][col_target] = score
 
         # SCHEMA-Based Matches with LM embeddings
-        strEmbeddingSimilarities = schemaSimRanker.get_embedding_similarity_candidates(self.df_source.columns,  self.df_target.columns)
-        for (col_source, col_target), score in strEmbeddingSimilarities.items():
-            self.input_sim_map[col_source][col_target] = score
+        # strEmbeddingSimilarities = schemaSimRanker.get_embedding_similarity_candidates(self.df_source.columns,  self.df_target.columns)
+        # for (col_source, col_target), score in strEmbeddingSimilarities.items():
+        #     self.input_sim_map[col_source][col_target] = score
 
         # # # # # Instance-Based Matches
         if self.use_instances:
-            valueSimRanker = ValueSimilarityRanker()
+            valueSimRanker = ValueSimilarityRanker(self.value_model_name)
             valueSimilarities = valueSimRanker.get_type_and_value_based_candidates(self.df_source, self.df_target)
 
             for (col_source, col_target), score in valueSimilarities.items():
                 self.input_sim_map[col_source][col_target] = score
 
 
-        ## just add the exact matches on top
-        for source_col in self.df_source.columns:
-            cand_source = remove_invalid_characters(source_col.strip().lower())
-            for target_col in  self.df_target.columns:
-                cand_target = remove_invalid_characters(target_col.strip().lower())
-                if cand_source == cand_target:
-                    self.input_sim_map[source_col][target_col] = 1.0
+        # ## just add the exact matches on top
+        # for source_col in self.df_source.columns:
+        #     cand_source = remove_invalid_characters(source_col.strip().lower())
+        #     for target_col in  self.df_target.columns:
+        #         cand_target = remove_invalid_characters(target_col.strip().lower())
+        #         if cand_source == cand_target:
+        #             self.input_sim_map[source_col][target_col] = 1.0
 
 
         # Keep only the top-k entries for each column in input_sim_map

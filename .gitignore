@@ -9,12 +9,17 @@ models/
 checkpoints/
 mlruns/
 model/
+models/
+my_fine_tuned_model/
 other_tests/
 journal/
 results/
 
 # C extensions
 *.so
+
+# Config files
+*.ini
 
 # json files
 *.json
