@@ -13,9 +13,11 @@ sys.path.append(os.path.join(project_path))
 
 
 import algorithms.schema_matching.topk.indexed_similarity.indexed_similarity as indexed_similarity
-import algorithms.schema_matching.topk.indexed_similarity_new.indexed_similarity_new as indexed_similarity_new
 import algorithms.schema_matching.topk.cl.cl as cl
 import algorithms.schema_matching.topk.harmonizer.harmonizer as hm
+import algorithms.schema_matching.topk.harmonizer.match_reranker as mr
+
+import algorithms.schema_matching.topk.retrieve_match.retrieve_match as rema
 from experiments.schema_matching.benchmarks.utils import compute_mean_ranking_reciprocal, compute_mean_ranking_reciprocal_detail, create_result_file, record_result,extract_matchings
 
 # from algorithms.schema_matching.topk.indexed_similarity import IndexedSimilarityMatcher
@@ -44,8 +46,8 @@ def get_matcher(method):
         return Coma(use_instances=True, java_xmx="10096m")
     elif method == 'IndexedSimilarity':
         return indexed_similarity.IndexedSimilarityMatcher()
-    elif method == 'IndexedSimilarityNew':
-        return indexed_similarity_new.IndexedSimilarityMatcherNew()
+    elif method == 'Rema':
+        return rema.RetrieveMatch('arctic',None, 'header_values_default', 'gpt-4o-mini')
     elif method == 'Harmonizer':
         return hm.Harmonizer()
     elif method == 'HarmonizerFine':
@@ -56,6 +58,11 @@ def get_matcher(method):
     
     elif method == 'HarmonizerInstance':
         return hm.Harmonizer(use_instances=True)
+    
+    elif method == 'HarmonizerMatcher':
+        return mr.MatchReranker(use_instances=False)
+
+    
     elif method == 'IndexedSimilarityInst':
         return indexed_similarity.IndexedSimilarityMatcher(use_instances=True)
     elif method == 'CL':
@@ -141,8 +148,8 @@ def run_gdc_studies(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users
     for gt_file in os.listdir(gt_path):
         if gt_file.endswith('.csv'):
 
-            if gt_file != 'Krug.csv':
-                continue
+            # if gt_file != 'Krug.csv':
+            #     continue
 
             source_file = os.path.join(studies_path, gt_file)
             df_source = pd.read_csv(source_file)
@@ -151,8 +158,10 @@ def run_gdc_studies(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users
             gt_df.dropna(inplace=True)
             ground_truth = list(gt_df.itertuples(index=False, name=None))
 
-            matchers = [ "HarmonizerFine"]
+            # matchers = ["Harmonizer",  "HarmonizerInstance", "Rema" ]
             # matchers = [ "Harmonizer", "HarmonizerInstance", "Coma", "ComaInst", "CL"]
+            # matchers = [ "Rema", "Harmonizer", "HarmonizerInstance"]
+            matchers = [   "Harmonizer", "HarmonizerMatcher" ]
 
         
 

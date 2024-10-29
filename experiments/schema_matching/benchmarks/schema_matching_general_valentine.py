@@ -17,10 +17,13 @@ project_path = os.path.dirname(os.path.dirname(
 sys.path.append(os.path.join(project_path))
 
 import algorithms.schema_matching.topk.indexed_similarity.indexed_similarity as indexed_similarity
-import algorithms.schema_matching.topk.indexed_similarity_new.indexed_similarity_new as indexed_similarity_new
+import algorithms.schema_matching.topk.retrieve_match.retrieve_match as rema
+import algorithms.schema_matching.topk.retrieve_match.retrieve_match_simpler as rema_simpler
 import algorithms.schema_matching.topk.cl.cl as cl
 import algorithms.schema_matching.topk.harmonizer.harmonizer as hm
 from experiments.schema_matching.benchmarks.utils import compute_mean_ranking_reciprocal, compute_mean_ranking_reciprocal_detail, create_result_file, record_result
+
+import algorithms.schema_matching.topk.harmonizer.match_reranker as mr
 
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
@@ -39,18 +42,24 @@ def get_matcher(method):
         return Coma()
     elif method == 'ComaInst':
         return Coma(use_instances=True, java_xmx="10096m")
-    elif method == 'IndexedSimilarity':
-        return indexed_similarity.IndexedSimilarityMatcher()
-    elif method == 'IndexedSimilarityNew':
-        return indexed_similarity_new.IndexedSimilarityMatcherNew()
     elif method == 'Harmonizer':
         return hm.Harmonizer()
     elif method == 'HarmonizerInstance':
         return hm.Harmonizer(use_instances=True)
     elif method == 'IndexedSimilarityInst':
         return indexed_similarity.IndexedSimilarityMatcher(use_instances=True)
+    elif method == 'Rema':
+        return rema.RetrieveMatch('arctic',None, 'header_values_default', 'gpt-4o-mini')
+    elif method == 'RemaSimpler':
+        return rema_simpler.RetrieveMatchSimpler('arctic',None, 'header_values_default', 'gpt-4o-mini')
+    elif method == 'RemaBipartite':
+        return rema_simpler.RetrieveMatchSimpler('arctic',None, 'header_values_default', 'gpt-4o-mini', True)
+    elif method == 'Rema-BP+Basic':
+        return rema_simpler.RetrieveMatchSimpler('arctic',None, 'header_values_default', 'gpt-4o-mini', True, True)
     elif method == 'CL':
         return cl.CLMatcher()
+    elif method == 'HarmonizerMatcher':
+        return mr.MatchReranker(use_instances=True)
 
 
 def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians', ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema Matching Benchmarks/Valentine-datasets/Wikidata/Musicians'):
@@ -93,7 +102,8 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
             continue
 
         # matchers = [ "IndexedSimilarityNew", "Coma"]
-        matchers = [ "Harmonizer", "HarmonizerInstance", "Coma", "ComaInst", "CL"]
+        # matchers = [ "Harmonizer", "HarmonizerInstance", "Coma", "ComaInst", "CL"]
+        matchers = [ "HarmonizerInstance", "HarmonizerMatcher", "RemaSimpler", "RemaBipartite", "Rema"]
         
 
         for matcher in matchers:
@@ -178,12 +188,17 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
 
             ground_truth = extract_matchings(open(mapping_file).read())
 
-            if len(ground_truth) < 2:
-                continue
+            # if len(ground_truth) < 2:
+            #     continue
 
             df_source = pd.read_csv(source_file)
             df_target = pd.read_csv(target_file)
-            
+
+         
+            print("GroundTruth")
+            for gt in ground_truth:
+                print(gt)
+            print("\n")
 
             # print(ground_truth)
 
@@ -196,11 +211,15 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
             if len(ground_truth) == 0:
                 continue
 
-            # matchers = ["Coma", "ComaInst", "IndexedSimilarity", "IndexedSimilarityInst", "CL"]
 
-            # matchers = ["IndexedSimilarity", "IndexedSimilarityNew"]
-            # matchers = [ "Harmonizer", "Coma", "CL",  "ComaInst"]
-            matchers = [ "Harmonizer", "HarmonizerInstance", "Coma", "ComaInst", "CL"]
+            # matchers = [ "Rema"]#, "HarmonizerInstance", "Coma", "ComaInst", "CL"]
+            # matchers = ["HarmonizerInstance", "HarmonizerMatcher"] #"HarmonizerInstance", "Rema"] # , "HarmonizerMatcher"]
+            #matchers = [ "HarmonizerInstance", "HarmonizerMatcher", "RemaSimpler", "RemaBipartite", "Rema"]
+            # matchers = [  "RemaSimpler", "RemaBipartite", "Rema-BP+Basic"]
+            matchers = [  "Rema-BP+Basic"]
+
+            
+
 
             for matcher in matchers:
                 # print("Matcher: ", matcher)
@@ -217,6 +236,9 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
                         f"Not able to run the matcher because of exception: {e}")
                     matches = matcher_results.MatcherResults({})
                 # matches = valentine_match(df_source, df_target, matcher)
+
+                # print("Matches: ", matches)
+                
 
                 end_time = time.time()
                 runtime = end_time - start_time
@@ -245,10 +267,12 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
                           one2one_metrics['Precision'], one2one_metrics['F1Score'], one2one_metrics['Recall'], one2one_metrics['PrecisionTop10Percent'], one2one_metrics['RecallAtSizeofGroundTruth']]
 
                 record_result(result_file, result)
+                # print("\n")
 
             # break
-            print("\n")
-        # break   
+            
+        # break  x 
+    # break
     
 
 
@@ -267,11 +291,11 @@ if __name__ == '__main__':
     # run_valentine_benchmark_three_levels()
 
     # ChEMBL
-    # DATASET='ChEMBL'
-    # ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema Matching Benchmarks/Valentine-datasets/ChEMBL/'
-    # run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)
+    DATASET='ChEMBL'
+    ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema Matching Benchmarks/Valentine-datasets/ChEMBL/'
+    run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)
 
     # TPC-DI
-    DATASET='TPC-DI'
-    ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema Matching Benchmarks/Valentine-datasets/TPC-DI/'
-    run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)
+    # DATASET='TPC-DI'
+    # ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema Matching Benchmarks/Valentine-datasets/TPC-DI/'
+    # run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)

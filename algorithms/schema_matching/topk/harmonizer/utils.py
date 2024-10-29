@@ -204,5 +204,17 @@ def get_type2columns_map(df):
 
     return types2columns_map
 
+def get_samples(values, n=15, random=True):
+    unique_values = values.dropna()#.unique()
+    if random:
+        tokens = np.random.choice(
+            unique_values, min(15, len(unique_values)), replace=False
+        )
+    else:
+        value_counts = values.dropna().value_counts()
+        most_frequent_values = value_counts.head(n)
+        tokens = most_frequent_values.index.tolist()
+    return [str(token) for token in tokens]
+
 
 

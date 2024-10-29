@@ -15,6 +15,7 @@ class SchemaSimilarityRanker:
                  topk=5, embedding_threshold=0.5, alignment_threshold=0.95, fuzzy_similarity_threshold=0.4):
 
         if model_name is None:
+            #model_name = 'sentence-transformers/all-mpnet-base-v2'
             model_name = 'sentence-transformers/all-mpnet-base-v2'
             
         self.model_name = model_name

@@ -39,17 +39,17 @@ class Harmonizer(BaseMatcher):
         self.input_sim_map = {col: {} for col in self.df_source.columns}
 
 
-        # schemaSimRanker = SchemaSimilarityRanker(model_name=self.columnheader_model_name)
+        schemaSimRanker = SchemaSimilarityRanker(model_name=self.columnheader_model_name)
 
         # SCHEMA-Based Matches with string similarity and alignment
-        # strBasicSimilarities = schemaSimRanker.get_str_similarity_candidates(self.df_source.columns,  self.df_target.columns)
-        # for (col_source, col_target), score in strBasicSimilarities.items():
-        #     self.input_sim_map[col_source][col_target] = score
+        strBasicSimilarities = schemaSimRanker.get_str_similarity_candidates(self.df_source.columns,  self.df_target.columns)
+        for (col_source, col_target), score in strBasicSimilarities.items():
+            self.input_sim_map[col_source][col_target] = score
 
         # SCHEMA-Based Matches with LM embeddings
-        # strEmbeddingSimilarities = schemaSimRanker.get_embedding_similarity_candidates(self.df_source.columns,  self.df_target.columns)
-        # for (col_source, col_target), score in strEmbeddingSimilarities.items():
-        #     self.input_sim_map[col_source][col_target] = score
+        strEmbeddingSimilarities = schemaSimRanker.get_embedding_similarity_candidates(self.df_source.columns,  self.df_target.columns)
+        for (col_source, col_target), score in strEmbeddingSimilarities.items():
+            self.input_sim_map[col_source][col_target] = score
 
         # # # # # Instance-Based Matches
         if self.use_instances:
@@ -61,12 +61,12 @@ class Harmonizer(BaseMatcher):
 
 
         # ## just add the exact matches on top
-        # for source_col in self.df_source.columns:
-        #     cand_source = remove_invalid_characters(source_col.strip().lower())
-        #     for target_col in  self.df_target.columns:
-        #         cand_target = remove_invalid_characters(target_col.strip().lower())
-        #         if cand_source == cand_target:
-        #             self.input_sim_map[source_col][target_col] = 1.0
+        for source_col in self.df_source.columns:
+            cand_source = remove_invalid_characters(source_col.strip().lower())
+            for target_col in  self.df_target.columns:
+                cand_target = remove_invalid_characters(target_col.strip().lower())
+                if cand_source == cand_target:
+                    self.input_sim_map[source_col][target_col] = 1.0
 
 
         # Keep only the top-k entries for each column in input_sim_map
@@ -82,6 +82,7 @@ class Harmonizer(BaseMatcher):
                 match = Match(target_table.name, col_target,
                               source_table.name, col_input, score).to_dict
                 matches.update(match)
+                # print(match)
 
         return matches
 
