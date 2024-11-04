@@ -4,6 +4,11 @@ import pandas as pd
 import time
 import datetime
 
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
+from fuzzywuzzy import fuzz
+import numpy as np
+
 
 project_path = os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -36,12 +41,115 @@ pp = pprint.PrettyPrinter(indent=4, sort_dicts=True)
 
 
 
+# Load a pre-trained embedding model
+model = SentenceTransformer('all-MiniLM-L6-v2')  # Or any other SentenceTransformer model
+
+def lsh_cosine_similarity(source, target, threshold=0.5):
+    # Convert columns to unique values and drop NaNs
+    source_values = source.dropna().astype(str).unique()
+    target_values = target.dropna().astype(str).unique()
+
+    # Check if either source or target is empty to avoid errors
+    if len(source_values) == 0 or len(target_values) == 0:
+        return 0.0, None
+
+    # Encode the source and target values using Sentence-BERT
+    source_embeddings = model.encode(source_values, convert_to_tensor=True)
+    target_embeddings = model.encode(target_values, convert_to_tensor=True)
+
+    # Move tensors to CPU if they are on a GPU
+    source_embeddings = source_embeddings.cpu()
+    target_embeddings = target_embeddings.cpu()
+
+    # Compute cosine similarity between the source and target embeddings
+    cosine_scores = cosine_similarity(source_embeddings, target_embeddings)
+
+    # Calculate mean similarity, optionally apply a threshold
+    mean_similarity = np.mean(cosine_scores > threshold)  # Proportion of pairs above the threshold
+    return mean_similarity
 
 
+def normalize_binary(column):
+    """Convert binary columns to a standard 1/0 format."""
+    binary_map = {
+        "yes": 1, "no": 0,
+        "present": 1, "absent": 0,
+        "y": 1, "n": 0,
+        "1": 1, "0": 0,
+        True: 1, False: 0
+    }
+    return column.map(lambda x: binary_map.get(str(x).lower(), x))
 
+def preprocess_text(column):
+    """Lowercase and remove extra spaces. Expand acronyms if necessary."""
+    column = column.str.lower().str.strip()
+    acronym_map = {
+        "dept": "department",
+        "mgr": "manager",
+        # Add other known acronyms here if needed
+    }
+    column = column.replace(acronym_map, regex=True)
+    return column
 
+def fuzzy_column_similarity(source, target, threshold=80):
+    """Calculate fuzzy similarity by checking close matches between unique values."""
+    source_values = source.dropna().unique()
+    target_values = target.dropna().unique()
+    
+    matches = 0
+    for s in source_values:
+        for t in target_values:
+            if fuzz.ratio(s, t) >= threshold:
+                matches += 1
+                break  # Stop at the first match
 
+    return matches / max(len(source_values), len(target_values))
 
+def generate_embeddings(column):
+    """Generate embeddings for each unique value in a column."""
+    unique_values = column.dropna().astype(str).unique()
+    embeddings = model.encode(unique_values, convert_to_tensor=True)
+    return dict(zip(unique_values, embeddings))
+
+def embedding_similarity(source, target):
+    """Calculate embedding-based similarity using cosine similarity."""
+    source_embeddings = generate_embeddings(source)
+    target_embeddings = generate_embeddings(target)
+    
+    similarities = []
+    for source_val, source_emb in source_embeddings.items():
+        for target_val, target_emb in target_embeddings.items():
+            # Move embeddings to CPU before converting to numpy
+            source_emb_cpu = source_emb.cpu().numpy().reshape(1, -1)
+            target_emb_cpu = target_emb.cpu().numpy().reshape(1, -1)
+            similarity = cosine_similarity(source_emb_cpu, target_emb_cpu)[0][0]
+            similarities.append(similarity)
+    
+    return np.mean(similarities)
+
+def content_similarity(source, target):
+    # Step 1: Normalize binary values
+    source = normalize_binary(source)
+    target = normalize_binary(target)
+
+    # Step 2: Preprocess text values
+    source = preprocess_text(source.astype(str))
+    target = preprocess_text(target.astype(str))
+
+    # # Step 3: Calculate Jaccard similarity for exact matches
+    # source_values = set(source.dropna().unique())
+    # target_values = set(target.dropna().unique())
+    # jaccard_similarity = len(source_values.intersection(target_values)) / len(source_values.union(target_values))
+
+    # Step 4: Calculate fuzzy similarity for approximate matches
+    fuzzy_similarity = fuzzy_column_similarity(source, target)
+
+    # Step 5: Calculate embedding similarity for semantic similarity
+    embedding_based_similarity = embedding_similarity(source, target)
+
+    # Step 6: Combine all similarity scores (adjust weights as needed)
+    combined_similarity =  (0.4 * fuzzy_similarity) + (0.6 * embedding_based_similarity)
+    return combined_similarity
 
 def get_matcher(method):
     if method == 'Coma':
@@ -84,67 +192,12 @@ def get_matcher(method):
         return indexed_similarity.IndexedSimilarityMatcher(use_instances=True)
     elif method == 'CL':
         return cl.CLMatcher()
-    elif method == 'MatchMakerGPT':
-        return mm.MatchMaker(use_instances=False, use_gpt=True)
 
 
 
-def run_dou_pair():
-    print(project_path)
-    gdc_input_df = pd.read_csv(project_path+'/data/gdc_alt/Dou-ucec-discovery.csv')
-    gdc_target_df = pd.read_csv(project_path+'/data/gdc_alt/Dou-ucec-confirmatory.csv')
-
-    gt_df = pd.read_csv(project_path+'/data/gdc_alt/gt.csv')
-    gt_df.dropna(inplace=True)
-    ground_truth = list(gt_df.itertuples(index=False, name=None))
-
-    # print(ground_truth)
-
-    matchers = [  "Harmonizer"]
-
-    for matcher in matchers:
-
-        method_name = matcher
-        matcher = get_matcher(matcher)    
-        print("Matcher: ", method_name)
-
-        start_time = time.time()
-
-        matches = valentine_match(gdc_input_df, gdc_target_df, matcher)
-        all_metrics = matches.get_metrics(ground_truth)
-
-        end_time = time.time()
-        runtime = end_time - start_time
-        print(f"Runtime for valentine_match: {runtime:.4f} seconds")
-
-        mrr_score = compute_mean_ranking_reciprocal(matches, ground_truth)
-        print("Mean Ranking Reciprocal Score: ", mrr_score)
-
-        print("Normal Metrics:")
-        pp.pprint(all_metrics)
-
-        matches = matches.one_to_one()
-        one2one_metrics = matches.get_metrics(ground_truth)
-        print("One2One Metrics:")
-        pp.pprint(one2one_metrics)
-        print("\n\n")
-
-        ncols_src = str(gdc_input_df.shape[1])
-        ncols_tgt = str(gdc_target_df.shape[1])
-        nrows_src = str(gdc_input_df.shape[0])
-        nrows_tgt = str(gdc_target_df.shape[0])
-        nmatches = len(ground_truth)
-
-        result = ['gdc_studies', 'gdc_studies', 'Dou-ucec-discovery', 'Dou-ucec-confirmatory', ncols_src, ncols_tgt, nrows_src, nrows_tgt,nmatches, method_name, runtime, mrr_score, all_metrics['Precision'], all_metrics['F1Score'], all_metrics['Recall'], all_metrics['PrecisionTop10Percent'], all_metrics['RecallAtSizeofGroundTruth'],
-                      one2one_metrics['Precision'], one2one_metrics['F1Score'], one2one_metrics['Recall'], one2one_metrics['PrecisionTop10Percent'], one2one_metrics['RecallAtSizeofGroundTruth']]
-
-        
-        print(result)
 
 
 def run_gdc_studies(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema Matching Benchmarks/gdc'):
-
-
 
 
     HEADER = ['benchmark', 'dataset', 'source_table', 'target_table','ncols_src','ncols_tgt','nrows_src','nrows_tgt','nmatches','method', 'runtime', 'mrr',  'All_Precision', 'All_F1Score', 'All_Recall', 'All_PrecisionTop10Percent', 'All_RecallAtSizeofGroundTruth',
@@ -180,63 +233,15 @@ def run_gdc_studies(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users
             gt_df.dropna(inplace=True)
             ground_truth = list(gt_df.itertuples(index=False, name=None))
 
-            # matchers = ["Harmonizer",  "HarmonizerInstance", "Rema" ]
-            # matchers = [ "Harmonizer", "HarmonizerInstance", "Coma", "ComaInst", "CL"]
-            # matchers = [ "Rema", "Harmonizer", "HarmonizerInstance"]
-            #matchers = [ "HarmonizerInstance", "HarmonizerMatcher", "RemaSimpler", "RemaBipartite", "Rema"]
+            for source_col, target_col in ground_truth:
+                
+                similarity = lsh_cosine_similarity(df_source[source_col], df_target[target_col])
+                print('Source:', source_col, 'Target:', target_col, ' Similarity:', similarity)
+            print('\n')
+
             
-            # matchers = [  "MatchMaker", "RemaSimpler", "Rema-BP+Basic",  "RemaBipartite", "Rema" ]
-            # matchers = [  "Harmonizer"]
 
-            # matchers = [ "MatchMaker",  "MatchMakerInstance"]
-            # matchers = [  "RemaSimpler"]
-            matchers = [ "MatchMaker",  "MatchMakerGPT", "MatchMakerInstance"]
-
-        
-
-            for matcher in matchers:
-                # print(f"Matcher: {matcher}, Source: {source_file}, Target: {target_file}")
-
-                method_name = matcher
-                matcher = get_matcher(matcher)    
-
-                start_time = time.time()
-
-                matches = valentine_match(df_source, df_target, matcher)
-
-                # pp.pprint(matches)
-                
-
-                end_time = time.time()
-                runtime = end_time - start_time
-                # print(f"Runtime for valentine_match: {runtime:.4f} seconds")
-
-                mrr_score = compute_mean_ranking_reciprocal(matches, ground_truth)
-                # print("Mean Ranking Reciprocal Score: ", mrr_score)
-
-                
-
-                all_metrics = matches.get_metrics(ground_truth)
-
-                recallAtGT = all_metrics['RecallAtSizeofGroundTruth']
-
-                print('File: ' , gt_file, ' and ', method_name, " with MRR Score: ", mrr_score, " and RecallAtGT: ", recallAtGT)
-
-                matches = matches.one_to_one()
-                one2one_metrics = matches.get_metrics(ground_truth)
-
-                ncols_src = str(df_source.shape[1])
-                ncols_tgt = str(df_target.shape[1])
-                nrows_src = str(df_source.shape[0])
-                nrows_tgt = str(df_target.shape[0])
-
-                nmatches = len(ground_truth)
-
-                result = [BENCHMARK, DATASET, 'gdc_table', gt_file, ncols_src, ncols_tgt, nrows_src, nrows_tgt,nmatches, method_name, runtime, mrr_score, all_metrics['Precision'], all_metrics['F1Score'], all_metrics['Recall'], all_metrics['PrecisionTop10Percent'], all_metrics['RecallAtSizeofGroundTruth'],
-                      one2one_metrics['Precision'], one2one_metrics['F1Score'], one2one_metrics['Recall'], one2one_metrics['PrecisionTop10Percent'], one2one_metrics['RecallAtSizeofGroundTruth']]
-
-                record_result(result_file, result)
-            print("\n")
+          
 
 
 
@@ -244,4 +249,4 @@ def run_gdc_studies(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users
 if __name__ == '__main__':
     run_gdc_studies()
     
-    # run_dou_pair()
+

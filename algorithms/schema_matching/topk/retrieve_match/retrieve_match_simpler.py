@@ -6,7 +6,7 @@ import json
 
 from .retriever import ColumnRetriever
 from .matcher import ColumnMatcher
-from .utils import get_dataset_paths, process_tables, get_samples, default_converter,common_prefix
+from .utils import get_dataset_paths, process_tables, get_samples, default_converter, common_prefix
 from .evaluation import evaluate_matches, convert_to_valentine_format
 
 from valentine.algorithms.base_matcher import BaseMatcher
@@ -73,17 +73,17 @@ class RetrieveMatchSimpler(BaseMatcher):
             target_col = target_idx_to_col[target_idx]
             filtered_matches[((source_table.name, source_col), (target_table.name,
                               target_col))] = score_matrix[source_idx, target_idx]
-            
-
 
         # print("Filtered Matches:", filtered_matches)
         return filtered_matches
-    
+
     def stability_score(self, initial_matches, filtered_matches):
-        
-        filtered_matches_sorted = {key: score for key, score in sorted(filtered_matches.items(), key=lambda item: item[1], reverse=True)}
+
+        filtered_matches_sorted = {key: score for key, score in sorted(
+            filtered_matches.items(), key=lambda item: item[1], reverse=True)}
         filtered_matches_list = list(filtered_matches_sorted.keys())
-        initial_scores_sorted = {key: score for key, score in sorted(initial_matches.items(), key=lambda item: item[1], reverse=True)}
+        initial_scores_sorted = {key: score for key, score in sorted(
+            initial_matches.items(), key=lambda item: item[1], reverse=True)}
         initial_scores_list = list(initial_scores_sorted.keys())
 
         # for match in initial_scores_list:
@@ -98,35 +98,37 @@ class RetrieveMatchSimpler(BaseMatcher):
             if key in initial_scores_list:
                 initial_rank = initial_scores_list.index(key)
                 filtered_rank = idx
-                rank_intersection = 1 - abs(initial_rank - filtered_rank) / len(initial_scores_list)
+                rank_intersection = 1 - \
+                    abs(initial_rank - filtered_rank) / \
+                    len(initial_scores_list)
                 stability_score += rank_intersection
-            
-            
+
         stability_score = stability_score / len(filtered_matches_list)
 
         return stability_score
-    
+
     def update_for_basic_matches(self, matched_columns, source_table, target_table):
         source_cols = set(source_table.get_df().columns)
         target_cols = set(target_table.get_df().columns)
-        
-        # Helper function to normalize text
+
         def normalize_text(text):
             # Convert to lowercase and remove punctuation
             translator = str.maketrans('', '', string.punctuation)
             return text.lower().translate(translator).strip()
-        
-        # Step 1: Normalize column names
-        normalized_source_cols = {normalize_text(col): col for col in source_cols}
-        normalized_target_cols = {normalize_text(col): col for col in target_cols}
-        
+
+        #  Normalize column names
+        normalized_source_cols = {normalize_text(
+            col): col for col in source_cols}
+        normalized_target_cols = {normalize_text(
+            col): col for col in target_cols}
+
         for source_col in normalized_source_cols.keys():
             for target_col in normalized_target_cols.keys():
-                # Step 2: Check for exact match (ignoring case and punctuation)
+                #  Check for exact match (ignoring case and punctuation)
                 if source_col == target_col:
                     original_source_col = normalized_source_cols[source_col]
                     original_target_col = normalized_target_cols[target_col]
-                    
+
                     # Add or update the exact match in matched_columns for source_col
                     if original_source_col in matched_columns:
                         # Filter out the target_col if it already exists with a different score
@@ -135,11 +137,13 @@ class RetrieveMatchSimpler(BaseMatcher):
                             if tgt != original_target_col
                         ]
                         # Add the exact match at the top of the list
-                        matched_columns[original_source_col].insert(0, (original_target_col, 1.0))
+                        matched_columns[original_source_col].insert(
+                            0, (original_target_col, 1.0))
                     else:
                         # If the source_col is not in matched_columns, add it with the exact match
-                        matched_columns[original_source_col] = [(original_target_col, 1.0)]
-                    
+                        matched_columns[original_source_col].insert(
+                            0, (original_target_col, 1.0))
+
                     # Remove target_col from all other entries in matched_columns
                     for other_source, matches in matched_columns.items():
                         if other_source != original_source_col:
@@ -147,15 +151,12 @@ class RetrieveMatchSimpler(BaseMatcher):
                                 (tgt, sim) for tgt, sim in matches if tgt != original_target_col
                             ]
 
-        
         return matched_columns
-                    
 
     def match(self, source_table, target_table,  top_k, cand_k):
         orig_source_table, orig_target_table = source_table, target_table
         source_table = source_table.get_df()
         target_table = target_table.get_df()
-
 
         # if self.include_basic_matches:
         #     prefix_source = common_prefix(list(source_table.columns))
@@ -165,7 +166,6 @@ class RetrieveMatchSimpler(BaseMatcher):
         #         source_table.columns = [col.replace(prefix_source, "") for col in source_table.columns]
         #     if prefix_target != "":
         #         target_table.columns = [col.replace(prefix_target, "") for col in target_table.columns]
-
 
         # print(orig_source_table.name,
         #     orig_target_table.name)
@@ -180,7 +180,7 @@ class RetrieveMatchSimpler(BaseMatcher):
         matched_columns = self.retriever.find_matches(
             source_table, target_table, source_values, target_values, top_k
         )
-        # print("Matched Columns:", matched_columns)
+        print("Matched Columns:", matched_columns)
 
         # if cand_k > 1:
         #     matched_columns = self.matcher.rematch(
@@ -194,17 +194,15 @@ class RetrieveMatchSimpler(BaseMatcher):
         #     )
         # print("Refined Matches:", matched_columns)
 
-        for col, candidates in matched_columns.items():
-            print(col, " -> ",candidates)
-        print("\n")
-
-
+        # for col, candidates in matched_columns.items():
+        #     print(col, " -> ",candidates)
+        # print
 
         if self.include_basic_matches:
-            self.update_for_basic_matches(matched_columns, orig_source_table, orig_target_table)
+            self.update_for_basic_matches(
+                matched_columns, orig_source_table, orig_target_table)
 
         # print("Matched Columns:", matched_columns)
-            
 
         if self.filter:
             matched_columns = convert_to_valentine_format(
@@ -213,22 +211,18 @@ class RetrieveMatchSimpler(BaseMatcher):
                 orig_target_table.name,
             )
 
-     
-
             filtered_matches = self.bipartite_filtering(
                 matched_columns, orig_source_table, orig_target_table)
-            
+
             # Compute confidence scores for the filtered matches
-            confidence_score = np.mean(list(filtered_matches.values()))
-            print("Confidence Score:", confidence_score)
+            # confidence_score = np.mean(list(filtered_matches.values()))
+            # print("Confidence Score:", confidence_score)
             # min, max = np.min(list(filtered_matches.values())), np.max(list(filtered_matches.values()))
             # print("Confidence Score:", confidence_score, min, max)
 
-            stability_score = self.stability_score(matched_columns, filtered_matches)
-            print("Stability Score:", stability_score)
-
-        
-
+            # stability_score = self.stability_score(
+            #     matched_columns, filtered_matches)
+            # print("Stability Score:", stability_score)
 
             # Step 1: Remove all filtered_matches entries from initial_matches
             for key in filtered_matches.keys():

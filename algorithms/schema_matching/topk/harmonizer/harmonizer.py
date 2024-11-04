@@ -41,10 +41,10 @@ class Harmonizer(BaseMatcher):
 
         schemaSimRanker = SchemaSimilarityRanker(model_name=self.columnheader_model_name)
 
-        # SCHEMA-Based Matches with string similarity and alignment
-        strBasicSimilarities = schemaSimRanker.get_str_similarity_candidates(self.df_source.columns,  self.df_target.columns)
-        for (col_source, col_target), score in strBasicSimilarities.items():
-            self.input_sim_map[col_source][col_target] = score
+        # # SCHEMA-Based Matches with string similarity and alignment
+        # strBasicSimilarities = schemaSimRanker.get_str_similarity_candidates(self.df_source.columns,  self.df_target.columns)
+        # for (col_source, col_target), score in strBasicSimilarities.items():
+        #     self.input_sim_map[col_source][col_target] = score
 
         # SCHEMA-Based Matches with LM embeddings
         strEmbeddingSimilarities = schemaSimRanker.get_embedding_similarity_candidates(self.df_source.columns,  self.df_target.columns)
@@ -52,28 +52,28 @@ class Harmonizer(BaseMatcher):
             self.input_sim_map[col_source][col_target] = score
 
         # # # # # Instance-Based Matches
-        if self.use_instances:
-            valueSimRanker = ValueSimilarityRanker(self.value_model_name)
-            valueSimilarities = valueSimRanker.get_type_and_value_based_candidates(self.df_source, self.df_target)
+        # if self.use_instances:
+        #     valueSimRanker = ValueSimilarityRanker(self.value_model_name)
+        #     valueSimilarities = valueSimRanker.get_type_and_value_based_candidates(self.df_source, self.df_target)
 
-            for (col_source, col_target), score in valueSimilarities.items():
-                self.input_sim_map[col_source][col_target] = score
+        #     for (col_source, col_target), score in valueSimilarities.items():
+        #         self.input_sim_map[col_source][col_target] = score
 
 
         # ## just add the exact matches on top
-        for source_col in self.df_source.columns:
-            cand_source = remove_invalid_characters(source_col.strip().lower())
-            for target_col in  self.df_target.columns:
-                cand_target = remove_invalid_characters(target_col.strip().lower())
-                if cand_source == cand_target:
-                    self.input_sim_map[source_col][target_col] = 1.0
+        # for source_col in self.df_source.columns:
+        #     cand_source = remove_invalid_characters(source_col.strip().lower())
+        #     for target_col in  self.df_target.columns:
+        #         cand_target = remove_invalid_characters(target_col.strip().lower())
+        #         if cand_source == cand_target:
+        #             self.input_sim_map[source_col][target_col] = 1.0
 
 
-        # Keep only the top-k entries for each column in input_sim_map
-        for col_source in self.input_sim_map:
-            sorted_matches = sorted(self.input_sim_map[col_source].items(), key=lambda item: item[1], reverse=True)
-            top_k_matches = sorted_matches[:self.topk]
-            self.input_sim_map[col_source] = dict(top_k_matches)
+        # # Keep only the top-k entries for each column in input_sim_map
+        # for col_source in self.input_sim_map:
+        #     sorted_matches = sorted(self.input_sim_map[col_source].items(), key=lambda item: item[1], reverse=True)
+        #     top_k_matches = sorted_matches[:self.topk]
+        #     self.input_sim_map[col_source] = dict(top_k_matches)
 
         # Wraps the matches into Valentine format
         matches = {}
