@@ -133,10 +133,7 @@ def clean_column_name(col_name):
     col_name = re.sub(r'\s+', ' ', col_name)
     return col_name
 
-
-def clean_df(df):
-
-    def clean_element(x):
+def clean_element(x):
         if is_null_value(x):
             return None
         if isinstance(x, str):
@@ -149,6 +146,7 @@ def clean_df(df):
                 return None
         return x
 
+def clean_df(df):
     df = df.apply(lambda col: col.apply(clean_element))
 
     return df
