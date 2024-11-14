@@ -69,7 +69,7 @@ def run_benchmark(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users/p
             ground_truth = list(gt_df.itertuples(index=False, name=None))
 
 
-            matchers = [  "MatchMakerFT"]
+            matchers = [ "MatchMaker",  "MatchMakerFT"]
 
             for matcher in matchers:
                 # print(f"Matcher: {matcher}, Source: {source_file}, Target: {target_file}")

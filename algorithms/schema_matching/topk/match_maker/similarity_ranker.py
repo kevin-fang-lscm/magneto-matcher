@@ -23,6 +23,7 @@ class SimilarityRanker:
             # Load the fine-tuned SentenceTransformer model on the CPU
             model = SentenceTransformer("sentence-transformers/all-mpnet-base-v2")
             model.load_state_dict(torch.load(fine_tune_path, map_location=self.device, weights_only=True))
+            # model.load_state_dict(torch.load(fine_tune_path, map_location=self.device))
 
             # Access the first module's transformer model (AutoModel) and tokenizer
             transformer_model = model._first_module().auto_model
