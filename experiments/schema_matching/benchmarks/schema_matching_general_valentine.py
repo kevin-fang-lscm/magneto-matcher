@@ -228,7 +228,7 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
             # matchers = [ "RemaBipartite",  "Rema-BP+Basic"]
             # matchers = [  "MatchMaker", "RemaSimpler", "Rema-BP+Basic",  "RemaBipartite"]
             # matchers = [ "MatchMaker",  "MatchMakerInstance"]
-            matchers = [ "MatchMaker",  "MatchMakerGPT"]
+            matchers = [ "MatchMaker"]
             # matchers = [ "MatchMakerGPT"]
 
             

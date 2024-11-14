@@ -84,7 +84,7 @@ Target Schemas: \
 Column: WorkerID, Sample values: [100, 101, 102] \
 Column: EmpCode, Sample values: [001, 002, 003] \
 Column: StaffName, Sample values: ['Alice', 'Bob', 'Charlie']\n \
-Response: WorkerID(0.95); EmpCode(0.30); StaffNumber(0.05)\n\n \
+Response: WorkerID(0.95); EmpCode(0.30); StaffName(0.05)\n\n \
 Candidate Column:"
             + cand
             + "\n\nTarget Schemas:\n"

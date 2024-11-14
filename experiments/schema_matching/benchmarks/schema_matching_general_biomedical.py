@@ -190,7 +190,7 @@ def run_gdc_studies(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users
 
             # matchers = [ "MatchMaker",  "MatchMakerInstance"]
             # matchers = [  "RemaSimpler"]
-            matchers = [ "MatchMaker",  "MatchMakerGPT", "MatchMakerInstance"]
+            matchers = [ "MatchMaker"]
 
         
 

@@ -60,11 +60,11 @@ class MatchMaker(BaseMatcher):
             valueSimilarities = valueSimRanker.get_type_and_value_based_candidates(self.df_source, self.df_target)
 
             for (col_source, col_target), score in valueSimilarities.items():
-                if col_source in self.input_sim_map and col_target in self.input_sim_map[col_source]:
+                # if col_source in self.input_sim_map and col_target in self.input_sim_map[col_source]:
                 #     self.input_sim_map[col_source][col_target] = max(
                 #         self.input_sim_map[col_source][col_target], score)
                 # else:
-                    self.input_sim_map[col_source][col_target] = score
+                self.input_sim_map[col_source][col_target] = score
                 #self.input_sim_map[col_source][col_target] = score
 
         

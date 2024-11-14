@@ -132,37 +132,37 @@ class SimilarityRanker:
         # source_column_names = source_df.columns
         # target_column_names = target_df.columns
 
-        # input_colnames_dict = {clean_column_name(
+        # input_col_repr_dict = {clean_column_name(
         #     col): col for col in source_column_names}
-        # target_colnames_dict = {clean_column_name(
+        # target_col_repr_dict = {clean_column_name(
         #     col): col for col in target_column_names}
 
-        input_colnames_dict = {self.encode(source_df,
+        input_col_repr_dict = {self.encode(source_df,
                                            col): col for col in source_df.columns}
-        target_colnames_dict = {self.encode(target_df,
+        target_col_repr_dict = {self.encode(target_df,
                                             col): col for col in target_df.columns}
 
-        # print(input_colnames_dict)
-        # print(target_colnames_dict)
+        # print(input_col_repr_dict)
+        # print(target_col_repr_dict)
 
-        cleaned_input_colnames = list(input_colnames_dict.keys())
-        cleaned_target_colnames = list(target_colnames_dict.keys())
+        cleaned_input_col_repr = list(input_col_repr_dict.keys())
+        cleaned_target_col_repr = list(target_col_repr_dict.keys())
 
-        embeddings_input = self._get_embeddings(cleaned_input_colnames)
-        embeddings_target = self._get_embeddings(cleaned_target_colnames)
+        embeddings_input = self._get_embeddings(cleaned_input_col_repr)
+        embeddings_target = self._get_embeddings(cleaned_target_col_repr)
 
-        top_k = min(self.topk, len(cleaned_target_colnames))
+        top_k = min(self.topk, len(cleaned_target_col_repr))
         topk_similarity, topk_indices = compute_cosine_similarity_simple(
             embeddings_input, embeddings_target, top_k)
 
         candidates = {}
         # avg_similarity = 0
-        for i, cleaned_input_col in enumerate(cleaned_input_colnames):
-            original_input_col = input_colnames_dict[cleaned_input_col]
+        for i, cleaned_input_col in enumerate(cleaned_input_col_repr):
+            original_input_col = input_col_repr_dict[cleaned_input_col]
 
             for j in range(top_k):
-                cleaned_target_col = cleaned_target_colnames[topk_indices[i, j]]
-                original_target_col = target_colnames_dict[cleaned_target_col]
+                cleaned_target_col = cleaned_target_col_repr[topk_indices[i, j]]
+                original_target_col = target_col_repr_dict[cleaned_target_col]
                 similarity = topk_similarity[i, j].item()
                 # print(similarity)
 
@@ -174,7 +174,7 @@ class SimilarityRanker:
                     candidates[(original_input_col,
                                 original_target_col)] = similarity
             
-        # avg_similarity /= len(cleaned_input_colnames) * top_k
+        # avg_similarity /= len(cleaned_input_col_repr) * top_k
 
         # print(f"Average similarity: {avg_similarity}")
         # print(candidates)
@@ -182,28 +182,28 @@ class SimilarityRanker:
 
     # def get_embedding_similarity_candidates(self, source_column_names, target_column_names):
 
-    #     input_colnames_dict = {clean_column_name(
+    #     input_col_repr_dict = {clean_column_name(
     #         col): col for col in source_column_names}
-    #     target_colnames_dict = {clean_column_name(
+    #     target_col_repr_dict = {clean_column_name(
     #         col): col for col in target_column_names}
 
-    #     cleaned_input_colnames = list(input_colnames_dict.keys())
-    #     cleaned_target_colnames = list(target_colnames_dict.keys())
+    #     cleaned_input_col_repr = list(input_col_repr_dict.keys())
+    #     cleaned_target_col_repr = list(target_col_repr_dict.keys())
 
-    #     embeddings_input = self._get_embeddings(cleaned_input_colnames)
-    #     embeddings_target = self._get_embeddings(cleaned_target_colnames)
+    #     embeddings_input = self._get_embeddings(cleaned_input_col_repr)
+    #     embeddings_target = self._get_embeddings(cleaned_target_col_repr)
 
-    #     top_k = min(self.topk, len(cleaned_target_colnames))
+    #     top_k = min(self.topk, len(cleaned_target_col_repr))
     #     topk_similarity, topk_indices = compute_cosine_similarity_simple(
     #         embeddings_input, embeddings_target, top_k)
 
     #     candidates = {}
-    #     for i, cleaned_input_col in enumerate(cleaned_input_colnames):
-    #         original_input_col = input_colnames_dict[cleaned_input_col]
+    #     for i, cleaned_input_col in enumerate(cleaned_input_col_repr):
+    #         original_input_col = input_col_repr_dict[cleaned_input_col]
 
     #         for j in range(top_k):
-    #             cleaned_target_col = cleaned_target_colnames[topk_indices[i, j]]
-    #             original_target_col = target_colnames_dict[cleaned_target_col]
+    #             cleaned_target_col = cleaned_target_col_repr[topk_indices[i, j]]
+    #             original_target_col = target_col_repr_dict[cleaned_target_col]
     #             similarity = topk_similarity[i, j].item()
 
     #             print(similarity)

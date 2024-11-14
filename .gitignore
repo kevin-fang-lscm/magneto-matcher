@@ -27,6 +27,8 @@ results/
 # csv files
 *.csv
 
+log.txt
+
 # large files
 *.zip
 *.gz
