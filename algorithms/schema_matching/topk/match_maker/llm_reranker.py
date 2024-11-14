@@ -1,13 +1,11 @@
 from openai import OpenAI
 import tiktoken
 import re
-import ollama
-# from config import API_KEY, OLLAMA_HOST
 import os
 from dotenv import load_dotenv
 
 
-class ColumnMatcher:
+class LLMReranker:
     def __init__(self, llm_model="gpt-4o-mini"):
         self.llm_model = llm_model
         self.client = self._load_client()
@@ -170,23 +168,4 @@ Candidate Column:"
 
         return matched_columns
 
-    # def _get_matches(self, cand, targets, k, model="gpt-4-turbo-preview"):
-    #         messages = [
-    #             {"role": "system", "content": "You are an assistant for schema matching.",},
-    #             {
-    #                 "role": "user",
-    #                 "content": """ Please select the top """
-    #                 + str(k)
-    #                 + """ schemas from """
-    #                 + targets
-    #                 + """ which best matches the candidate column, which is defined by the column name followed by its respective values. Please respond only with the name of the classes separated by semicolon.
-    #                     \n CONTEXT: """
-    #                 + cand
-    #                 + """ \n RESPONSE: \n""",
-    #             },
-    #         ]
-    #         col_type = self.client.chat.completions.create(
-    #             model=model, messages=messages, temperature=0.3,
-    #         )
-    #         col_type_content = col_type.choices[0].message.content
-    #         return col_type_content
+

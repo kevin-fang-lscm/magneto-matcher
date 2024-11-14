@@ -22,7 +22,7 @@ import algorithms.schema_matching.topk.retrieve_match.retrieve_match_simpler as 
 import algorithms.schema_matching.topk.cl.cl as cl
 import algorithms.schema_matching.topk.harmonizer.harmonizer as hm
 import algorithms.schema_matching.topk.match_maker.match_maker as mm
-from experiments.schema_matching.benchmarks.utils import compute_mean_ranking_reciprocal, compute_mean_ranking_reciprocal_detail, create_result_file, record_result
+from experiments.benchmarks.utils import compute_mean_ranking_reciprocal, compute_mean_ranking_reciprocal_detail, create_result_file, record_result
 
 import algorithms.schema_matching.topk.harmonizer.match_reranker as mr
 

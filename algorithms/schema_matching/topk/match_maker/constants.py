@@ -55,8 +55,8 @@ KEY_REPRESENTATIONS = [
     "serial",      # Can represent a serial number or code
     "code",        # General code used for identification
     "hash",        # Hash-based unique identifier
-    "primary_key", # Common in databases
-    "foreign_key", # Reference to a primary key in another table
+    "primary_key",  # Common in databases
+    "foreign_key",  # Reference to a primary key in another table
     "access_key",  # Common in APIs
     "unique_id",   # Explicitly stating uniqueness
     "slug",        # URL-friendly identifier often used in web contexts
@@ -65,7 +65,6 @@ KEY_REPRESENTATIONS = [
     "object_id",   # Frequently used in object-oriented databases
     "record_id"    # General identifier for records in a dataset
 ]
-
 
 BINARY_VALUES = {
     "yes", "no",
