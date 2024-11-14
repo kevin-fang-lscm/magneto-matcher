@@ -30,9 +30,9 @@ def get_matcher(method):
         return mm.MatchMaker()
     elif method == 'MatchMakerFT':
         model_path = os.path.join(os.path.expanduser("~"), 'models', 'mpnet-gdc-exact_semantic.pth')
-        return mm.MatchMaker(fine_tune_path=model_path)
+        return mm.MatchMaker(finetuned_model_path=model_path)
     elif method == 'MatchMakerGPT':
-        return mm.MatchMaker(use_instances=False, use_gpt=True)
+        return mm.MatchMaker(use_gpt=True)
 
 
 def run_benchmark(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users/pena/Library/CloudStorage/GoogleDrive-em5487@nyu.edu/My Drive/NYU - GDrive/arpah/Schema Matching Benchmarks/gdc'):
@@ -69,7 +69,8 @@ def run_benchmark(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users/p
             ground_truth = list(gt_df.itertuples(index=False, name=None))
 
 
-            matchers = [ "MatchMaker",  "MatchMakerFT"]
+            # matchers = [  "MatchMaker",  "MatchMakerFT"]
+            matchers = [  "MatchMakerFT"]
 
             for matcher in matchers:
                 # print(f"Matcher: {matcher}, Source: {source_file}, Target: {target_file}")

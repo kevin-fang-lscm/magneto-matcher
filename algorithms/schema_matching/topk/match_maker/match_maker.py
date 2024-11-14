@@ -17,9 +17,9 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 class MatchMaker(BaseMatcher):
 
-    def __init__(self, topk=20, fine_tune_path=None,  use_gpt=False):
+    def __init__(self, topk=20, finetuned_model_path=None,  use_gpt=False):
         self.topk = topk
-        self.fine_tune_path = fine_tune_path
+        self.finetuned_model_path = finetuned_model_path
         self.use_gpt = use_gpt
 
     def get_matches(self, source_table: BaseTable, target_table: BaseTable) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
@@ -33,7 +33,8 @@ class MatchMaker(BaseMatcher):
         # Input similarity map
         self.input_sim_map = {col: {} for col in self.df_source.columns}
 
-        schemaSimRanker = SimilarityRanker(self.fine_tune_path, self.topk)
+        schemaSimRanker = SimilarityRanker( self.topk)
+
 
         # SCHEMA-Based Matches with string similarity and alignment
         strBasicSimilarities = schemaSimRanker.get_str_similarity_candidates(
@@ -41,11 +42,16 @@ class MatchMaker(BaseMatcher):
         for (col_source, col_target), score in strBasicSimilarities.items():
             self.input_sim_map[col_source][col_target] = score
 
-        # # # SCHEMA-Based Matches with LM embeddings
-        strEmbeddingSimilarities = schemaSimRanker.get_embedding_similarity_candidates(
-            self.df_source,  self.df_target)
-        for (col_source, col_target), score in strEmbeddingSimilarities.items():
-            self.input_sim_map[col_source][col_target] = score
+        if self.finetuned_model_path is not None:
+            print("Using Fine-Tuned Model for Embeddings")
+
+        
+        else:
+            #  SCHEMA-Based Matches with LM embeddings
+            strEmbeddingSimilarities = schemaSimRanker.get_embedding_similarity_candidates(
+                self.df_source,  self.df_target)
+            for (col_source, col_target), score in strEmbeddingSimilarities.items():
+                self.input_sim_map[col_source][col_target] = score
 
         # # ## just add the exact matches on top
         for source_col in self.df_source.columns:

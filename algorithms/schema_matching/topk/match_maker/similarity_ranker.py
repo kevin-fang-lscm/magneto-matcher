@@ -9,54 +9,42 @@ from .embedding_utils import compute_cosine_similarity_simple
 
 
 class SimilarityRanker:
-    def __init__(self, fine_tune_path=None, topk=20, embedding_threshold=0.65, alignment_threshold=0.95, fuzzy_similarity_threshold=0.4):
+    def __init__(self,  topk=20, embedding_threshold=0.65, alignment_threshold=0.95, fuzzy_similarity_threshold=0.4):
+
+        self.embedding_threshold = embedding_threshold
+        self.topk = topk
+        self.alignment_threshold = alignment_threshold
+        self.fuzzy_similarity_threshold = fuzzy_similarity_threshold
 
         self.device = torch.device("cpu")
         # print("Using CPU for model inference.")
-        
-        if fine_tune_path is None:
-            self.model_name = 'sentence-transformers/all-mpnet-base-v2'
-            self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-            self.model = AutoModel.from_pretrained(self.model_name).to(self.device)
-            print(f"Loaded ZeroShot Model on {self.device}")
-        else:
-            # Load the fine-tuned SentenceTransformer model on the CPU
-            model = SentenceTransformer("sentence-transformers/all-mpnet-base-v2")
-            model.load_state_dict(torch.load(fine_tune_path, map_location=self.device, weights_only=True))
-            # model.load_state_dict(torch.load(fine_tune_path, map_location=self.device))
 
-            # Access the first module's transformer model (AutoModel) and tokenizer
-            transformer_model = model._first_module().auto_model
-            transformer_tokenizer = model._first_module().tokenizer
-
-            # Set the tokenizer and model to use the CPU
-            self.model_name = transformer_model.config._name_or_path
-            self.tokenizer = transformer_tokenizer
-            self.model = transformer_model.to(self.device)
-            
-            print(f"Loaded FineTuned Model {fine_tune_path} on {self.device}")
+        # if fine_tune_path is None:
+        self.model_name = 'sentence-transformers/all-mpnet-base-v2'
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+        self.model = AutoModel.from_pretrained(self.model_name).to(self.device)
+        print(f"Loaded ZeroShot Model on {self.device}")
         # else:
-        #     # Load the fine-tuned SentenceTransformer model using the SentenceTransformer.load method
-        #     model = SentenceTransformer(fine_tune_path)
+        #     # Load the fine-tuned SentenceTransformer model on the CPU
 
-        #     # Access the model's underlying transformer model and tokenizer
-        #     transformer_model = model._first_module().auto_model
-        #     transformer_tokenizer = model._first_module().tokenizer
+        #     self.model = SentenceTransformer("sentence-transformers/all-mpnet-base-v2")
+        #     self.model.load_state_dict(torch.load(fine_tune_path, map_location=self.device))
+        #     # self.model.load_state_dict(torch.load(fine_tune_path, map_location=self.device, weights_only=True))
 
-        #     # Set the tokenizer and model to use the CPU
-        #     self.model_name = transformer_model.config._name_or_path
-        #     self.tokenizer = transformer_tokenizer
-        #     self.model = transformer_model.to(self.device)
-            
+        #     self.tokenizer = AutoTokenizer.from_pretrained("sentence-transformers/all-mpnet-base-v2")
+
+        #     # Access the first module's transformer model (AutoModel) and tokenizer
+        #     # transformer_model = model._first_module().auto_model
+        #     # transformer_tokenizer = model._first_module().tokenizer
+
+        #     # # Set the tokenizer and model to use the CPU
+        #     # self.model_name = transformer_model.config._name_or_path
+        #     # self.tokenizer = transformer_tokenizer
+        #     # self.model = transformer_model.to(self.device)
+
+        #     # self.embedding_threshold = 0.75
+
         #     print(f"Loaded FineTuned Model {fine_tune_path} on {self.device}")
-
-        
-        self.embedding_threshold = embedding_threshold
-
-        self.topk = topk
-
-        self.alignment_threshold = alignment_threshold
-        self.fuzzy_similarity_threshold = fuzzy_similarity_threshold
 
     def get_str_similarity_candidates(self, source_column_names, target_column_names):
 
@@ -111,7 +99,19 @@ class SimilarityRanker:
             + self.tokenizer.sep_token
             + self.tokenizer.eos_token  # End-of-sequence token
         )
+
+        # text = (
+        #     self.tokenizer.cls_token
+        #     + "" + header
+        #     + self.tokenizer.sep_token
+        #     + "" + data_type
+        #     + self.tokenizer.sep_token
+        #     + "" + self.tokenizer.sep_token.join(tokens)
+        #     + self.tokenizer.sep_token
+        #     + self.tokenizer.eos_token  # End-of-sequence token
+        # )
         # print(text)
+        # text = f"{self.tokenizer.cls_token}{header}{self.tokenizer.sep_token}{data_type}{self.tokenizer.sep_token}{','.join(map(str, tokens))}"
 
         return text
 
