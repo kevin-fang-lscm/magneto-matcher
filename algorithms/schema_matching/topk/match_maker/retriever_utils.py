@@ -5,7 +5,7 @@ import numpy as np
 import warnings
 import re
 
-from constants import NULL_REPRESENTATIONS, BINARY_VALUES, KEY_REPRESENTATIONS
+from .constants import NULL_REPRESENTATIONS, BINARY_VALUES, KEY_REPRESENTATIONS
 
 lm_map = {
     "roberta": "roberta-base",
@@ -82,6 +82,18 @@ def get_samples(values, n=15, random=False):
     return [str(token) for token in tokens]
 
 
+def get_samples_2(values, n=15, random=False):
+    unique_values = values.dropna().unique()
+    if random:
+        tokens = np.random.choice(
+            unique_values, min(15, len(unique_values)), replace=False
+        )
+    else:
+        value_counts = values.dropna().value_counts()
+        most_frequent_values = value_counts.head(n)
+        tokens = most_frequent_values.index.tolist()
+    return [str(token) for token in tokens]
+
 def infer_column_dtype(column, datetime_threshold=0.9):
     if column.isnull().all():
         return "unknown"
@@ -147,7 +159,7 @@ def detect_column_type(col, key_threshold=0.8, numeric_threshold=0.90):
         return "key"
 
     if len(unique_values) == 0:
-        return "Unknown"
+        return "unknown"
 
     col_name = col.name.lower()
     if any(

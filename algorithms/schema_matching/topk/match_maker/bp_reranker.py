@@ -2,7 +2,7 @@ import numpy as np
 from scipy.optimize import linear_sum_assignment
 
 
-def bipartite_filtering(initial_matches, source_table, target_table):
+def bipartite_filtering(initial_matches, source_table_name, source_table, target_table, target_table_name):
 
     source_cols = set()
     target_cols = set()
@@ -44,15 +44,15 @@ def bipartite_filtering(initial_matches, source_table, target_table):
     for source_idx, target_idx in assignment:
         source_col = source_idx_to_col[source_idx]
         target_col = target_idx_to_col[target_idx]
-        filtered_matches[((source_table.name, source_col), (target_table.name,
+        filtered_matches[((source_table_name, source_col), (target_table_name,
                           target_col))] = score_matrix[source_idx, target_idx]
 
     return filtered_matches
 
 
-def arrange_bipartite_matches( initial_matches, source_table, target_table):
+def arrange_bipartite_matches( initial_matches, source_table,source_table_name, target_table, target_table_name):
 
-    filtered_matches = bipartite_filtering(initial_matches, source_table, target_table)
+    filtered_matches = bipartite_filtering(initial_matches, source_table_name, source_table, target_table, target_table_name)
 
     # Step 1: Remove all filtered_matches entries from initial_matches
     for key in filtered_matches.keys():

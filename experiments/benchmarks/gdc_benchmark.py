@@ -29,8 +29,9 @@ def get_matcher(method):
     elif method == 'MatchMaker':
         return mm.MatchMaker()
     elif method == 'MatchMakerFT':
-        model_path = os.path.join(os.path.expanduser("~"), 'models', 'mpnet-gdc-exact_semantic.pth')
-        return mm.MatchMaker(finetuned_model_path=model_path)
+        model_path = os.path.join(project_path, 'models', 'mpnet-gdc-header_values_repeat-exact_semantic-64-0.5.pth')
+        # return mm.MatchMaker(embedding_model=model_path, include_strsim_matches=False, include_embedding_matches=True, include_equal_matches=False, use_bp_reranker=False, use_gpt_reranker=False)
+        return mm.MatchMaker(embedding_model=model_path)
     elif method == 'MatchMakerGPT':
         return mm.MatchMaker(use_gpt=True)
 
@@ -49,7 +50,7 @@ def run_benchmark(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users/p
 
     target_file = os.path.join(ROOT, 'target-tables', 'gdc_unique_columns_concat_values.csv')
     
-    df_target = pd.read_csv(target_file)
+    df_target = pd.read_csv(target_file, low_memory=False)
 
     studies_path = os.path.join(ROOT, 'source-tables')
     gt_path = os.path.join(ROOT, 'ground-truth')
@@ -59,8 +60,9 @@ def run_benchmark(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users/p
 
             print(f"Processing {gt_file}")
 
-            # if gt_file != 'Krug.csv':
-            #     continue
+            if gt_file != 'Huang.csv':
+                continue
+
             source_file = os.path.join(studies_path, gt_file)
             df_source = pd.read_csv(source_file)
 
@@ -69,8 +71,8 @@ def run_benchmark(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='/Users/p
             ground_truth = list(gt_df.itertuples(index=False, name=None))
 
 
-            # matchers = [  "MatchMaker",  "MatchMakerFT"]
-            matchers = [  "MatchMakerFT"]
+            matchers = [  "MatchMaker",  "MatchMakerFT"]
+            # matchers = [  "MatchMaker"]
 
             for matcher in matchers:
                 # print(f"Matcher: {matcher}, Source: {source_file}, Target: {target_file}")

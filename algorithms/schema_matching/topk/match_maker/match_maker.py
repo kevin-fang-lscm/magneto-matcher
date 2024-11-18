@@ -1,92 +1,114 @@
-import os
-import numpy as np
 from typing import Dict, Tuple
+import os
 
-
-from valentine.algorithms.base_matcher import BaseMatcher
-from valentine.data_sources.base_table import BaseTable
 from valentine.algorithms.match import Match
+from valentine.data_sources.base_table import BaseTable
+from valentine.algorithms.base_matcher import BaseMatcher
 
-from .utils import clean_df, remove_invalid_characters, get_samples, convert_to_valentine_format
-from .similarity_ranker import SimilarityRanker
-from .llm_reranker import LLMReranker
+from .embedding_matcher import DEFAULT_MODELS, EmbeddingMatcher
+from .basic_matcher import get_str_similarity_candidates
+from .utils import clean_df, remove_invalid_characters, convert_simmap_to_valentine_format, convert_to_valentine_format, get_samples
+
 from .bp_reranker import arrange_bipartite_matches
+from .llm_reranker import LLMReranker
+
+from .retriever import Retriever
+from .retriever_utils import get_samples_2
+
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 class MatchMaker(BaseMatcher):
+    ## attention
+    ## for ablation experiments, make sure to have the default set correcly
+    DEFAULT_PARAMS = {
+        'embedding_model': "sentence-transformers/all-mpnet-base-v2",
+        'encoding_mode': "header_values_repeat",
+        "sampling_mode": "mixed",
+        "sampling_size": 10,
+        'topk': 20,
+        'include_strsim_matches': False,
+        'include_embedding_matches': True,
+        'embedding_threshold': 0.4,
+        'include_equal_matches': True,
+        'use_bp_reranker': False,
+        'use_gpt_reranker': False
+    }
 
-    def __init__(self, topk=20, finetuned_model_path=None,  use_gpt=False):
-        self.topk = topk
-        self.finetuned_model_path = finetuned_model_path
-        self.use_gpt = use_gpt
+    def __init__(self, **kwargs):
+        # Merge provided kwargs with defaults, use params in case you need more parameters: for ablation, etc
+        self.params = {**self.DEFAULT_PARAMS, **kwargs}
+        # print("MatchMaker Params:", self.params)
 
-    def get_matches(self, source_table: BaseTable, target_table: BaseTable) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
+    def apply_strsim_matches(self):
+        if self.params['include_strsim_matches']:
+            
+            strsim_candidates = get_str_similarity_candidates(
+                self.df_source.columns, self.df_target.columns)
+            for (source_col, target_col), score in strsim_candidates.items():
+                self.input_sim_map[source_col][target_col] = score
 
-        self.df_source = clean_df(source_table.get_df())
-        self.df_target = clean_df(target_table.get_df())
-
-        if len(self.df_source.columns) == 0 or len(self.df_target.columns) == 0:
-            return {}
-
-        # Input similarity map
-        self.input_sim_map = {col: {} for col in self.df_source.columns}
-
-        schemaSimRanker = SimilarityRanker( self.topk)
-
-
-        # SCHEMA-Based Matches with string similarity and alignment
-        strBasicSimilarities = schemaSimRanker.get_str_similarity_candidates(
-            self.df_source.columns,  self.df_target.columns)
-        for (col_source, col_target), score in strBasicSimilarities.items():
-            self.input_sim_map[col_source][col_target] = score
-
-        if self.finetuned_model_path is not None:
-            print("Using Fine-Tuned Model for Embeddings")
-
+    def apply_embedding_matches(self):
+        if not self.params['include_embedding_matches']:
+            return
         
-        else:
-            #  SCHEMA-Based Matches with LM embeddings
-            strEmbeddingSimilarities = schemaSimRanker.get_embedding_similarity_candidates(
-                self.df_source,  self.df_target)
-            for (col_source, col_target), score in strEmbeddingSimilarities.items():
-                self.input_sim_map[col_source][col_target] = score
+        embeddingMatcher = EmbeddingMatcher(params=self.params)
 
-        # # ## just add the exact matches on top
-        for source_col in self.df_source.columns:
-            cand_source = remove_invalid_characters(source_col.strip().lower())
-            for target_col in self.df_target.columns:
-                cand_target = remove_invalid_characters(
-                    target_col.strip().lower())
-                if cand_source == cand_target:
-                    self.input_sim_map[source_col][target_col] = 1.0
+        embedding_candidates = embeddingMatcher.get_embedding_similarity_candidates(
+            self.df_source, self.df_target)
+        for (col_source, col_target), score in embedding_candidates.items():
+            self.input_sim_map[col_source][col_target] = score
+        
+        
 
-        # # Keep only the top-k entries for each column in input_sim_map
-        for col_source in self.input_sim_map:
-            sorted_matches = sorted(
-                self.input_sim_map[col_source].items(), key=lambda item: item[1], reverse=True)
-            top_k_matches = sorted_matches[:self.topk]
-            self.input_sim_map[col_source] = dict(top_k_matches)
+        # if self.params['embedding_model'] in DEFAULT_MODELS:
 
-        # Wraps the matches into Valentine format
-        matches = {}
-        for col_input, matches_dict in self.input_sim_map.items():
-            for col_target, score in matches_dict.items():
-                match = Match(target_table.name, col_target,
-                              source_table.name, col_input, score).to_dict
-                matches.update(match)
-                # print(match)
+        #     embeddingMatcher = EmbeddingMatcher(params=self.params)
 
-        if self.use_gpt:
-            matches = self.llm_matcher(source_table, target_table, matches)
-        else:
-            matches = arrange_bipartite_matches(
-                matches, source_table, target_table)
+        #     embedding_candidates = embeddingMatcher.get_embedding_similarity_candidates(
+        #         self.df_source, self.df_target)
+        #     for (col_source, col_target), score in embedding_candidates.items():
+        #         self.input_sim_map[col_source][col_target] = score
 
-        return matches
+        # else:
 
-    def llm_matcher(self, source_table, target_table, matches):
+        #     retriever = Retriever(self.params['embedding_model'])
+
+        #     source_values = {
+        #         col: get_samples_2(self.df_source[col]) for col in self.df_source.columns
+        #     }
+        #     target_values = {
+        #         col: get_samples_2(self.df_target[col]) for col in self.df_target.columns
+        #     }
+        #     matched_columns = retriever.find_matches(
+        #         self.df_source, self.df_target, source_values, target_values, 20
+        #     )
+        #     # print("Initial Matches:", matched_columns)
+        #     for key in matched_columns:
+        #         for match in matched_columns[key]:
+        #             self.input_sim_map[key][match[0]] = match[1]
+
+    def apply_equal_matches(self):
+        if self.params['include_equal_matches']:
+            
+            source_cols_cleaned = {col: remove_invalid_characters(
+                col.strip().lower()) for col in self.df_source.columns}
+            target_cols_cleaned = {col: remove_invalid_characters(
+                col.strip().lower()) for col in self.df_target.columns}
+
+            for source_col, cand_source in source_cols_cleaned.items():
+                for target_col, cand_target in target_cols_cleaned.items():
+                    if cand_source == cand_target:
+                        self.input_sim_map[source_col][target_col] = 1.0
+
+    def get_top_k_matches(self, col_matches):
+        sorted_matches = sorted(col_matches.items(),
+                                key=lambda item: item[1], reverse=True)
+        top_k_matches = sorted_matches[:self.params['topk']]
+        return dict(top_k_matches)
+
+    def call_llm_reranker(self, source_table, target_table, matches):
 
         orig_source_table, orig_target_table = source_table, target_table
         source_table = source_table.get_df()
@@ -130,3 +152,59 @@ class MatchMaker(BaseMatcher):
         )
 
         return converted_matches
+
+    def get_matches(self, source_table: BaseTable, target_table: BaseTable) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
+
+        self.df_source = clean_df(source_table.get_df())
+        self.df_target = clean_df(target_table.get_df())
+
+        if len(self.df_source.columns) == 0 or len(self.df_target.columns) == 0:
+            return {}
+
+        # store similarity scores between columns
+        # we replace the (col_src: col_tgt:score) entries with scores from "stronger" matchers as we progress
+        self.input_sim_map = {col: {} for col in self.df_source.columns}
+
+        if 'strategy_order' in self.params:
+            self.apply_strategies_in_order(self.params['strategy_order'])
+        else:
+            match_strategies = [
+                self.apply_strsim_matches,
+                self.apply_embedding_matches,
+                self.apply_equal_matches
+            ]
+
+            for strategy in match_strategies:
+                strategy()  # runs the strategy and updates the input_sim_map
+
+        # filter top-k matcher per column
+        for col_source in self.input_sim_map:
+            self.input_sim_map[col_source] = self.get_top_k_matches(
+                self.input_sim_map[col_source])
+
+        matches = convert_simmap_to_valentine_format(
+            self.input_sim_map, source_table.name, target_table.name)
+
+        if self.params['use_bp_reranker']:
+            matches = arrange_bipartite_matches(
+                matches, self.df_source, source_table.name,  self.df_target, target_table.name)
+
+        if self.params['use_gpt_reranker']:
+            matches = self.call_llm_reranker(
+                source_table, target_table, matches)
+
+        return matches
+
+    ## only used in ablation experiments
+    def apply_strategies_in_order(self, order):
+        strategy_functions = {
+            'strsim': self.apply_strsim_matches,
+            'embedding': self.apply_embedding_matches,
+            'equal': self.apply_equal_matches
+        }
+
+        order = {k: v for k, v in order.items() if v != -1}
+        sorted_strategies = sorted(order.items(), key=lambda item: item[1])
+
+        for strategy, _ in sorted_strategies:
+            strategy_functions[strategy]()
