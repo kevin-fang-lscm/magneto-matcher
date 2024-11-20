@@ -6,7 +6,10 @@ import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 from valentine import MatcherResults
 from valentine.algorithms.match import Match
+import mmh3
 
+PHI_FRACTION = 0.6180339887  # φ - 1
+np.random.seed(42)
 
 def convert_to_valentine_format(matched_columns, source_table, target_table):
     valentine_format = {}
@@ -265,6 +268,10 @@ def get_type2columns_map(df):
 #     return [str(token) for token in tokens]
 
 
+def fibonacci_hash(x):
+    result = (x * PHI_FRACTION) % 1  # Take fractional part
+    return result
+
 def get_samples(values, n=15, mode="mixed"):
     """
     Sample values from a pandas Series using different strategies.
@@ -276,6 +283,9 @@ def get_samples(values, n=15, mode="mixed"):
             - 'random': completely random sampling from unique values
             - 'frequent': only the most frequent values
             - 'mixed': combination of frequent and diverse values
+            - 'weighted': weighted sampling based on value counts
+            - 'priority_sampling': uses priority sampling based on frequency and hash of the values
+            - 'consistent_sampling': consistent uniform sampling based on hash of the values
     
     Returns:
         List of string representations of sampled values
@@ -287,8 +297,6 @@ def get_samples(values, n=15, mode="mixed"):
     if total_unique <= n:
         return sorted([str(val) for val in unique_values])
     
-    # Get value counts for frequency-based sampling
-    value_counts = values.dropna().value_counts()
     
     if mode == "random":
         # Completely random sampling
@@ -298,12 +306,14 @@ def get_samples(values, n=15, mode="mixed"):
     
     elif mode == "frequent":
         # Only most frequent values
+        value_counts = values.dropna().value_counts()
         tokens = value_counts.head(n).index.tolist()
         tokens.sort()
     
     elif mode == "mixed":
         # Mix of most frequent and evenly spaced values
         n_frequent = n // 2
+        value_counts = values.dropna().value_counts()
         most_frequent_values = value_counts.head(n_frequent).index.tolist()
         
         # Calculate evenly spaced samples for diversity
@@ -315,8 +325,40 @@ def get_samples(values, n=15, mode="mixed"):
         # tokens = sorted(set(most_frequent_values + list(diverse_values)))
         tokens = sorted(set(map(str, most_frequent_values + list(diverse_values))))
 
+    elif mode == "weighted":
+        # Weighted sampling based on value counts
+        value_counts = values.dropna().value_counts(sort=False)
+        weights = value_counts / value_counts.sum()
+        sampled_indices = np.random.choice(total_unique, size=n, replace=False, p=weights)
+        sampled_values = unique_values[sampled_indices]
+        tokens = sampled_values
+    
+    elif mode == "priority_sampling":
+        value_counts = values.dropna().value_counts(sort=False)
+        
+        # Calculate priorities: qi = freq / hash(value) 
+        priorities = pd.Series({
+            val:  freq / fibonacci_hash(mmh3.hash(str(val), 42))
+            for val, freq  in value_counts.items()
+        })
+
+        # Select the top elements based on priority scores
+        sampled_values = priorities.nlargest(n).index.tolist()
+        tokens = sampled_values
+    
+    elif mode == "consistent_sampling":
+        value_counts = values.dropna().value_counts(sort=False)
+        
+        priorities = pd.Series({
+            val:  fibonacci_hash(mmh3.hash(str(val), 42))
+            for val in value_counts.keys()
+        })
+
+        # Select the top elements based on priority scores
+        sampled_values = priorities.nlargest(n).index.tolist()
+        tokens = sampled_values
     
     else:
-        raise ValueError(f"Unsupported mode: {mode}. Use 'random', 'frequent', or 'mixed'")
+        raise ValueError(f"Unsupported mode: {mode}. Use 'random', 'frequent', 'mixed', 'priority_sampling' or 'consistent_sampling'")
     
     return [str(token) for token in tokens]
