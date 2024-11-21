@@ -30,7 +30,7 @@ class MatchMaker(BaseMatcher):
         'topk': 20,
         'include_strsim_matches': False,
         'include_embedding_matches': True,
-        'embedding_threshold': 0.4,
+        'embedding_threshold': 0.1,
         'include_equal_matches': True,
         'use_bp_reranker': False,
         'use_gpt_reranker': False

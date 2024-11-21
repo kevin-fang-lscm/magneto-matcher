@@ -1,3 +1,4 @@
+
 from itertools import product
 import os
 import sys
@@ -15,9 +16,9 @@ warnings.simplefilter('ignore', FutureWarning)
 project_path = os.getcwd()
 sys.path.append(os.path.join(project_path))
 
-
-from experiments.benchmarks.utils import compute_mean_ranking_reciprocal, create_result_file, record_result
 import algorithms.schema_matching.match_maker.match_maker as mm
+from experiments.benchmarks.utils import compute_mean_ranking_reciprocal, create_result_file, record_result
+from tqdm import tqdm
 
 
 def extract_matchings(json_data):
@@ -40,12 +41,14 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
         "header_only",
         "header_values_verbose_notype",
         "header_values_columnvaluepair_notype",
-        "header_header_values_repeat_notype"
+        "header_header_values_repeat_notype",
+        "header_values_default_notype"
     ]
 
-    sampling_modes = ["random", "frequent", "mixed", "weighted", "priority_sampling", "consistent_sampling"]
-    #sampling_modes = [ "frequent"]
-    
+    sampling_modes = ["random", "frequent", "mixed",
+                      "weighted", "priority_sampling", "consistent_sampling"]
+    # sampling_modes = [ "frequent"]
+
     sampling_sizes = [10, 30]
 
     # Extended header for grid search results
@@ -84,9 +87,11 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
     )
     create_result_file(results_dir, result_file, HEADER)
 
-    for folder in os.listdir(ROOT):
-        if folder == '.DS_Store' or folder == '.ipynb_checkpoints':
-            continue
+    # for folder in os.listdir(ROOT): 
+    folders = [folder for folder in os.listdir(ROOT) if folder not in ['.DS_Store', '.ipynb_checkpoints']]
+    for folder in tqdm(folders, desc="Processing folders"):
+
+        
 
         source_file = os.path.join(ROOT, folder, folder+'_source.csv')
         target_file = os.path.join(ROOT, folder, folder+'_target.csv')
@@ -156,7 +161,8 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
 
             record_result(result_file, result)
 
-            print(f"MRR: {mrr_score:.4f}, RecallAtGT {all_metrics['RecallAtSizeofGroundTruth']:.4f} Runtime: {runtime:.2f}s")
+            print(f"MRR: {mrr_score:.4f}, RecallAtGT {
+                  all_metrics['RecallAtSizeofGroundTruth']:.4f} Runtime: {runtime:.2f}s")
         print("Done with ", folder, "\n")
 
 
@@ -170,12 +176,14 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
         "header_only",
         "header_values_verbose_notype",
         "header_values_columnvaluepair_notype",
-        "header_header_values_repeat_notype"
+        "header_header_values_repeat_notype",
+        "header_values_default_notype"
     ]
 
-    sampling_modes = ["random", "frequent", "mixed", "weighted", "priority_sampling", "consistent_sampling"]
-    #sampling_modes = [ "frequent"]
-    
+    sampling_modes = ["random", "frequent", "mixed",
+                      "weighted", "priority_sampling", "consistent_sampling"]
+    # sampling_modes = [ "frequent"]
+
     sampling_sizes = [10, 30]
 
     # Extended header for grid search results
@@ -202,15 +210,21 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
     )
     create_result_file(results_dir, result_file, HEADER)
 
-    for type in os.listdir(ROOT):
-        if type == '.DS_Store' or type == '.ipynb_checkpoints':
-            continue
+    # for type in os.listdir(ROOT): 
+    types = [type for type in os.listdir(ROOT) if type not in ['.DS_Store', '.ipynb_checkpoints']]
+    for type in tqdm(types, desc="Processing types"):
+
+        
 
         print("Type: ", type)
-        for table_folder in os.listdir(os.path.join(ROOT, type)):
+        table_folders = [folder for folder in os.listdir(os.path.join(ROOT, type)) if folder not in ['.DS_Store', '.ipynb_checkpoints']]
 
-            if table_folder == '.DS_Store' or table_folder == '.ipynb_checkpoints':
-                continue
+        table_folders = table_folders[:int(0.25 * len(table_folders))]
+
+        for table_folder in tqdm(table_folders, desc=f"Processing table folders in {type}"):
+
+            # if table_folder == '.DS_Store' or table_folder == '.ipynb_checkpoints':
+            #     continue
 
             # print("Table: ", table_folder)
 
@@ -223,12 +237,8 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
 
             ground_truth = extract_matchings(open(mapping_file).read())
 
-
-
             df_source = pd.read_csv(source_file, low_memory=False)
             df_target = pd.read_csv(target_file, low_memory=False)
-
- 
 
             ncols_src = str(df_source.shape[1])
             ncols_tgt = str(df_target.shape[1])
@@ -289,7 +299,8 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
 
                 record_result(result_file, result)
 
-                print(f"MRR: {mrr_score:.4f}, RecallAtGT {all_metrics['RecallAtSizeofGroundTruth']:.4f} Runtime: {runtime:.2f}s")
+                print(f"MRR: {mrr_score:.4f}, RecallAtGT {
+                      all_metrics['RecallAtSizeofGroundTruth']:.4f} Runtime: {runtime:.2f}s")
             print("Done with ", table_folder, "\n")
 
 
