@@ -1,4 +1,3 @@
-
 import os
 import csv
 import json
@@ -25,36 +24,32 @@ def compute_mean_ranking_reciprocal(matches, ground_truth):
     # print("Matches: ", matches)
     # print("Ground Truth: ", ground_truth)
 
-
-
-
+    # Group ground truth by its key (input_col)
+    gt_per_input_col = {}
+    for input_col, target_col in ground_truth:
+        if input_col not in gt_per_input_col:
+            gt_per_input_col[input_col] = set()
+        gt_per_input_col[input_col].add(target_col)
 
     ordered_matches = sort_matches(matches)
-#
+
     total_score = 0
-    for input_col, target_col in ground_truth:
-        score = 0
-        # print("Input Col: ", input_col)
-        if input_col in ordered_matches:
-            ordered_matches_list = [v[0] for v in ordered_matches[input_col]]
-            # position = -1
-            if target_col in ordered_matches_list:
-                position = ordered_matches_list.index(target_col)
-                score = 1/(position + 1)
-            #     print(f"Mapping {input_col} -> {target_col} found at position {position}")
-            #     if position > 5:
-            #         print(f"Other matches for {input_col}: {ordered_matches_list}")
-            # else:
-            #     print(f"1- Mapping {input_col} -> {target_col} not found")
-            #     for entry in ordered_matches[input_col]:
-            #         print(entry)
-        # else:
-            # print(f"2- Mapping {input_col} -> {target_col} not found")
-        total_score += score
+    total_queries = 0
+    for input_col in ordered_matches.keys():
+        gt = gt_per_input_col.get(input_col, set())
+        if len(gt) == 0:
+            # If no ground truth, we ignore the source column.
+            # We could throw an exception instead to find problems in the data.
+            continue
+        else:
+            total_queries += 1
 
-    final_score = total_score / len(ground_truth)
-    return final_score
+        for idx, (target_col, _) in enumerate(ordered_matches[input_col]):
+            if target_col in gt:
+                total_score += 1/(idx + 1)
+                break # MRR only considers the first correct match
 
+    return total_score / total_queries
 
 
 def sort_matches(matches):
