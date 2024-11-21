@@ -154,7 +154,7 @@ def main():
     dataset = CustomDataset(
         data,
         model_type=args.model_type,
-        serialization="header_values_verbose",
+        serialization="header_values_repeat",
         augmentation="exact_semantic",
     )
 
@@ -170,7 +170,8 @@ def main():
     )
 
     model = SentenceTransformer(sentence_transformer_map[args.model_type])
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
+    # optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-5, weight_decay=0.5)
 
     
     if not os.path.exists("models"):

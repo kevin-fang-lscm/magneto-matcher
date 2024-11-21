@@ -77,19 +77,35 @@ class CustomDataset(Dataset):
             "header_values_default": f"{self.tokenizer.cls_token}{header}{self.tokenizer.sep_token}{data_type}{self.tokenizer.sep_token}{','.join(map(str, values))}",
             "header_values_prefix": f"{self.tokenizer.cls_token}header:{header}. {self.tokenizer.sep_token}datatype:{data_type}{self.tokenizer.sep_token}values:{', '.join(map(str, values))}",
             "header_values_repeat": f"{self.tokenizer.cls_token}{self.tokenizer.sep_token.join([header] * 5)}{self.tokenizer.sep_token}{data_type}{self.tokenizer.sep_token}{','.join(map(str, values))}",
+            "header_values_repeat_simple": f"{self.tokenizer.cls_token}{self.tokenizer.sep_token.join([header] * 5)}{self.tokenizer.sep_token}{self.tokenizer.sep_token.join(map(str, values))}",
             "header_only": f"{self.tokenizer.cls_token}{header}{self.tokenizer.eos_token}",
             "header_values_simple": f"{self.tokenizer.cls_token}Column: {header}{self.tokenizer.sep_token}Values: {','.join(map(str, values))}{self.tokenizer.sep_token}{self.tokenizer.eos_token}",
         }
 
+        cls_token = self.tokenizer.cls_token or ""
+        sep_token = self.tokenizer.sep_token or ""
+        eos_token = self.tokenizer.eos_token or ""
+        tokens = [str(token) for token in tokens]
+        
         serialization["header_values_verbose"] = (
-            self.tokenizer.cls_token
-            + "Column: " + header
-            + self.tokenizer.sep_token
-            + "Type: " + data_type
-            + self.tokenizer.sep_token
-            + "Values: " + self.tokenizer.sep_token.join(map(str, values))
-            + self.tokenizer.sep_token
-            + self.tokenizer.eos_token
+            # self.tokenizer.cls_token
+            # + "Column: " + header
+            # + self.tokenizer.sep_token
+            # + "Type: " + data_type
+            # + self.tokenizer.sep_token
+            # + "Values: " + self.tokenizer.sep_token.join(map(str, values))
+            # + self.tokenizer.sep_token
+            # + self.tokenizer.eos_token        
+            cls_token +
+            "Column: " + str(header) +
+            # sep_token +
+            # "Type: " + str(data_type) +
+            sep_token +
+            "Values: " +  sep_token 
+            + sep_token.join(tokens) +
+            sep_token +
+            eos_token
+        
         )
 
         return serialization[self.serialization]

@@ -4,7 +4,7 @@
 from valentine.metrics import *
 from valentine.algorithms.matcher_results import MatcherResults
 
-from utils import compute_mean_ranking_reciprocal
+from utils import compute_mean_ranking_reciprocal_adjusted
 
 def test_mean_reciprocal_rank():
     # Case 1 - Correct match at position 1

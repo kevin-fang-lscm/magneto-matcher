@@ -21,8 +21,24 @@ def extract_matchings(json_data):
     return matchings
 
 def compute_mean_ranking_reciprocal(matches, ground_truth):
-    # print("Matches: ", matches)
-    # print("Ground Truth: ", ground_truth)
+
+    ordered_matches = sort_matches(matches)
+    total_score = 0
+    for input_col, target_col in ground_truth:
+        score = 0
+        if input_col in ordered_matches:
+            ordered_matches_list = [v[0] for v in ordered_matches[input_col]]
+            
+            if target_col in ordered_matches_list:
+                position = ordered_matches_list.index(target_col)
+                score = 1/(position + 1)
+        total_score += score
+
+    final_score = total_score / len(ground_truth)
+    return final_score
+
+def compute_mean_ranking_reciprocal_adjusted(matches, ground_truth):
+
 
     # Group ground truth by its key (input_col)
     gt_per_input_col = {}
