@@ -359,6 +359,6 @@ def get_samples(values, n=15, mode="mixed"):
         tokens = sampled_values
     
     else:
-        raise ValueError(f"Unsupported mode: {mode}. Use 'random', 'frequent', 'mixed', 'priority_sampling' or 'consistent_sampling'")
+        raise ValueError(f"Unsupported mode: {mode}. Use 'random', 'frequent', 'mixed','weighted', 'priority_sampling' or 'consistent_sampling'")
     
     return [str(token) for token in tokens]

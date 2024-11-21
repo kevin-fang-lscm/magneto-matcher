@@ -8,23 +8,29 @@ from itertools import product
 project_path = os.getcwd()
 sys.path.append(os.path.join(project_path))
 
-import algorithms.schema_matching.topk.match_maker.match_maker as mm
+import algorithms.schema_matching.match_maker.match_maker as mm
 from valentine import valentine_match
 from experiments.benchmarks.utils import compute_mean_ranking_reciprocal, create_result_file, record_result
 
 def run_grid_search_experiment(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='./data/gdc'):
     # Define parameter grid
+
+
     encoding_modes = [
         "header_values_default",
         "header_values_prefix",
         "header_values_repeat",
         "header_values_verbose",
         "header_only",
-        "header_values_simple"
+        "header_values_verbose_notype",
+        "header_values_columnvaluepair_notype",
+        "header_header_values_repeat_notype"
     ]
+
+    #sampling_modes = ["random", "frequent", "mixed", "weighted", "priority_sampling", "consistent_sampling"]
+    sampling_modes = [ "frequent"]
     
-    sampling_modes = ["random", "frequent", "mixed"]
-    sampling_sizes = [10, 15, 20, 30]
+    sampling_sizes = [10]
 
     # Extended header for grid search results
     HEADER = [
@@ -128,7 +134,7 @@ def run_grid_search_experiment(BENCHMARK='gdc_studies', DATASET='gdc_studies', R
             
             record_result(result_file, result)
             
-            print(f"MRR: {mrr_score:.4f}, Runtime: {runtime:.2f}s")
+            print(f"MRR: {mrr_score:.4f}, RecallAtGT {all_metrics['RecallAtSizeofGroundTruth']:.4f} Runtime: {runtime:.2f}s")
 
 if __name__ == '__main__':
     run_grid_search_experiment()
