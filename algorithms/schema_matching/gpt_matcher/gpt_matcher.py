@@ -8,14 +8,19 @@ from typing import Dict, Tuple
 from valentine.algorithms.match import Match
 from valentine.data_sources.base_table import BaseTable
 from valentine.algorithms.base_matcher import BaseMatcher
+import random
+
+
+from algorithms.schema_matching.match_maker.utils import get_samples, convert_to_valentine_format
+from algorithms.schema_matching.match_maker.llm_reranker import LLMReranker
 
 
 class GPTMatcher(BaseMatcher):
-    def __init__(self, llm_model="gpt-4o-mini",  sample_size=10, include_example=False):
+    def __init__(self, llm_model="gpt-4o-mini",  sample_size=10, random_order=False):
         self.llm_model = llm_model
         self.client = self._load_client()
         self.sample_size = sample_size
-        self.include_example = include_example
+        self.target_columns_random_order = random_order
 
     def _load_client(self):
         # print("Loading OpenAI client")
@@ -39,150 +44,43 @@ class GPTMatcher(BaseMatcher):
 
         source_table = source_table.get_df()
         target_table = target_table.get_df()
-        
+
         refined_matches = []
 
         source_columns = source_table.columns
         target_columns = target_table.columns
 
-        
-        source_samples = {
-            col: source_table[col].dropna().sample(
-                n=min(self.sample_size, len(source_table[col].dropna()))
-            ).tolist() if not source_table[col].dropna().empty else [] 
-            for col in source_columns
+        reranker = LLMReranker()
+
+        source_values = {
+            col: get_samples(source_table[col], self.sample_size) for col in source_table.columns
+        }
+        target_values = {
+            col: get_samples(target_table[col], self.sample_size) for col in target_table.columns
         }
 
-        target_samples = {
-            col: target_table[col].dropna().sample(
-                n=min(self.sample_size, len(target_table[col].dropna()))
-            ).tolist() if not target_table[col].dropna().empty else [] 
-            for col in target_columns
-        }
+        matched_columns = {}
 
+        target_col_list = [ (col, 1.0) for col in target_columns ]
+
+        if self.target_columns_random_order:
+            random.shuffle(target_col_list)
 
         for source_col in source_columns:
-            source_col_info = f"{source_col}, Sample values: {
-                ', '.join(map(str, source_samples[source_col]))}"
+            matched_columns[source_col] = target_col_list
 
-            target_cols_info = [
-                f"{target_col}, Sample values: {
-                    ', '.join(map(str, target_samples[target_col]))}"
-                for target_col in target_columns
-            ]
-
-            target_columns_str = "\n".join(target_cols_info)
-
-            prompt = self._get_prompt(
-                source_col_info, target_columns_str, self.include_example)
-            
-
-            # print(prompt)
-            # print('-----------------------------')
-
-            candidate_matches = self._get_matches_w_score(prompt)
-
-            ranked_matches = self._parse_scored_matches(candidate_matches)
-            if ranked_matches:
-                refined_matches.extend(ranked_matches)
-
-        final_matches = {}
-        for ref_match in refined_matches:
-            match = Match(target_name, ref_match[1],
-                              source_name, ref_match[0], ref_match[2]).to_dict
-            final_matches.update(match)
-                
-        return final_matches
-
-    def _get_prompt(self, source_col_info, target_columns_str, include_example=False):
-        prompt = (
-            "On a scale from 0.00 to 1.00, rate the similarity of the candidate column from the source table to each target column from the target table. "
-            "Each column is identified by its name and a sample of its respective values if available. "
-            "Your response should only contain in each line the source and target column names followed by their similarity scores in parentheses, formatted to two decimal places, and separated by semi-colon. Like:\n"
-            "ColumnSource1;ColumnTarget1;0.95\n"
-            "ColumnSource1;ColumnTarget1;0.95\n"
+        matched_columns = reranker.rematch(
+            source_table,
+            target_table,
+            source_values,
+            target_values,
+            matched_columns,
         )
 
-        if include_example:
-            example = (
-                "\n\nExample:\n"
-                "Candidate Column:\n"
-                "Column: EmployeeID, Sample values: [100, 101, 102]\n"
-                "Target Columns:\n"
-                "Column: WorkerID, Sample values: [100, 101, 102]\n"
-                "Column: EmpCode, Sample values: [001, 002, 003]\n"
-                "Column: StaffName, Sample values: ['Alice', 'Bob', 'Charlie']\n"
-                "Response:\n"
-                "EmployeeID;WorkerID;0.95\n"
-                "EmployeeID;EmpCode;0.80\n"
-                "EmployeeID;StaffName;0.20\n"
-            )
-            prompt += example
-
-        final = (
-            "\n\nRank the column-score pairs in descending order of similarity. Do not include any additional information, explanations, or quotation marks.\n"
-            f"Candidate Column:\n{source_col_info}\n\nTarget Columns:\n{
-                target_columns_str}\n\nResponse: "
+        converted_matches = convert_to_valentine_format(
+            matched_columns,
+            source_name,
+            target_name,
         )
 
-        prompt += final
-        return prompt
-
-    def _get_matches_w_score(self, prompt):
-        messages = [
-            {
-                "role": "system",
-                "content": "You are an AI trained to perform schema matching by providing similarity scores.",
-            },
-            {
-                "role": "user",
-                "content": prompt,
-            },
-        ]
-
-        response = self.client.chat.completions.create(
-            model=self.llm_model,
-            messages=messages,
-            temperature=0.3,
-        )
-        matches = response.choices[0].message.content
-
-
-        return matches
-
-    def _parse_scored_matches(self, candidate_matches):
-        matched_columns = []
-
-        try:
-            candidate_matches = candidate_matches.split("\n")
-
-            for entry in candidate_matches:
-                if entry.strip():  # Skip empty lines
-                    col1, col2, score = entry.split(";")
-                    matched_columns.append((col1, col2, float(score)))
-
-        except Exception as e:
-            # Log the exception (if you have logging setup) and return an empty list
-            print(f"Error parsing scored matches: {e}")
-            return []
-
-        return matched_columns
-
-
-
-# if __name__ == "__main__":
-
-#     source_data = {'Name': ['Alice', 'Bob'], 'Age': [
-#         25, 30], 'City': ['New York', 'Los Angeles']}
-#     target_data = {'Full_Name': ['Alice Johnson', 'Bob Smith'], 'Years': [
-#         25, 30], 'Location': ['New York', 'Los Angeles']}
-
-#     source_table = pd.DataFrame(source_data)
-#     target_table = pd.DataFrame(target_data)
-
-#     matcher = GPTMatcher(llm_model="gpt-4o-mini")
-
-#     matches = matcher.match(source_table, target_table,  include_example=True)
-
-#     for match in matches:
-#         print(match)
+        return converted_matches

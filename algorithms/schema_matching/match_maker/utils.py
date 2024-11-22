@@ -272,7 +272,7 @@ def fibonacci_hash(x):
     result = (x * PHI_FRACTION) % 1  # Take fractional part
     return result
 
-def get_samples(values, n=15, mode="mixed"):
+def get_samples(values, n=15, mode="priority_sampling"):
     """
     Sample values from a pandas Series using different strategies.
     

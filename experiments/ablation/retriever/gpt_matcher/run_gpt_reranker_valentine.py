@@ -38,10 +38,10 @@ def extract_matchings(json_data):
 
 
 def get_gpt_method(method):
-    if method == 'GPTMatcher':
+    if method == 'GPTMatcherSchemaOrder':
         return gpt_matcher.GPTMatcher()
-    elif method == 'GPTMatcherExample':
-        return gpt_matcher.GPTMatcher(include_example=True)
+    elif method == 'GPTMatcherRandomOrder':
+        return gpt_matcher.GPTMatcher(random_order=True)
     else:
         raise ValueError(f"Unknown method: {method}")
 
@@ -119,7 +119,9 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
 
         gptFull = "MatchMakerGPT_"+str(ncols_tgt)
 
-        matchers = [ "MatchMakerBP", "MatchMakerGPT_20",gptFull, "GPTMatcherExample", "GPTMatcher"]
+        # matchers = [ "MatchMakerBP", "MatchMakerGPT_20",gptFull, "GPTMatcherExample", "GPTMatcher"]
+
+        matchers = [  "GPTMatcherSchemaOrder",  "GPTMatcherRandomOrder"]
 
 
         for matcher in matchers:
@@ -131,12 +133,12 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
 
             start_time = time.time()
 
-            try:
-                matches = valentine_match(df_source, df_target, matcher)
-            except Exception as e:
-                print(f"Not able to run the matcher because of exception: {e}")
-                matches = matcher_results.MatcherResults({})
-            # matches = valentine_match(df_source, df_target, matcher)
+            # try:
+            #     matches = valentine_match(df_source, df_target, matcher)
+            # except Exception as e:
+            #     print(f"Not able to run the matcher because of exception: {e}")
+            #     matches = matcher_results.MatcherResults({})
+            matches = valentine_match(df_source, df_target, matcher)
 
             end_time = time.time()
             runtime = end_time - start_time
@@ -293,7 +295,7 @@ if __name__ == '__main__':
     BENCHMARK = 'valentine'
 
     # WIKIDATA musicians
-    # run_valentine_benchmark_one_level()s
+    run_valentine_benchmark_one_level()
 
     # Magellan
     # DATASET='Magellan'
@@ -301,7 +303,7 @@ if __name__ == '__main__':
     # run_valentine_benchmark_one_level(BENCHMARK, DATASET, ROOT)
 
     # OpenData
-    run_valentine_benchmark_three_levels()
+    # run_valentine_benchmark_three_levels()
 
     # # ChEMBLc
     # DATASET='ChEMBL'
