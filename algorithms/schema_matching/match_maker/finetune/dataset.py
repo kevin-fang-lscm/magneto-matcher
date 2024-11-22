@@ -1,4 +1,4 @@
-from algorithms.schema_matching.topk.match_maker.utils import detect_column_type, clean_element
+from algorithms.schema_matching.match_maker.utils import detect_column_type, clean_element
 from train_utils import sentence_transformer_map
 import pandas as pd
 from transformers import AutoTokenizer
@@ -24,6 +24,21 @@ class CustomDataset(Dataset):
         self.labels = []
         self.items = self._initialize_items(data, augmentation)
 
+        self._serialization_methods = {
+            "header_values_default": self._serialize_header_values_default,
+            "header_values_prefix": self._serialize_header_values_prefix,
+            "header_values_repeat": self._serialize_header_values_repeat,
+            "header_values_verbose": self._serialize_header_values_verbose,
+            "header_only": self._serialize_header_only,
+            "header_values_verbose_notype": self._serialize_header_values_verbose_notype,
+            "header_values_columnvaluepair_notype": self._serialize_header_values_columnvaluepair_notype,
+            "header_header_values_repeat_notype": self._serialize_header_values_repeat_notype,
+            "header_values_default_notype": self._serialize_header_values_default
+        }
+        self.cls_token = self.tokenizer.cls_token or ""
+        self.sep_token = self.tokenizer.sep_token or ""
+        self.eos_token = self.tokenizer.eos_token or ""
+
     def _initialize_items(self, data, augmentation):
         items = []
         class_id = 0
@@ -38,8 +53,10 @@ class CustomDataset(Dataset):
                             else column_name
                         )
                         # processed_column_name = clean_element(processed_column_name)
-                        values = [clean_element(str(value))
-                                  for value in values]
+                        # values = [clean_element(str(value))
+                        #           for value in values]
+                        values = [clean_element(value) if isinstance(value, str) else str(value) for value in values]
+                        
                         items.append((processed_column_name, values, class_id))
                         self.labels.append(class_id)
             class_id += 1
@@ -73,39 +90,90 @@ class CustomDataset(Dataset):
             data_type = "unknown"
             values = []
 
-        serialization = {
-            "header_values_default": f"{self.tokenizer.cls_token}{header}{self.tokenizer.sep_token}{data_type}{self.tokenizer.sep_token}{','.join(map(str, values))}",
-            "header_values_prefix": f"{self.tokenizer.cls_token}header:{header}. {self.tokenizer.sep_token}datatype:{data_type}{self.tokenizer.sep_token}values:{', '.join(map(str, values))}",
-            "header_values_repeat": f"{self.tokenizer.cls_token}{self.tokenizer.sep_token.join([header] * 5)}{self.tokenizer.sep_token}{data_type}{self.tokenizer.sep_token}{','.join(map(str, values))}",
-            "header_values_repeat_simple": f"{self.tokenizer.cls_token}{self.tokenizer.sep_token.join([header] * 5)}{self.tokenizer.sep_token}{self.tokenizer.sep_token.join(map(str, values))}",
-            "header_only": f"{self.tokenizer.cls_token}{header}{self.tokenizer.eos_token}",
-            "header_values_simple": f"{self.tokenizer.cls_token}Column: {header}{self.tokenizer.sep_token}Values: {','.join(map(str, values))}{self.tokenizer.sep_token}{self.tokenizer.eos_token}",
-        }
 
-        cls_token = self.tokenizer.cls_token or ""
-        sep_token = self.tokenizer.sep_token or ""
-        eos_token = self.tokenizer.eos_token or ""
-        tokens = [str(token) for token in tokens]
-        
-        serialization["header_values_verbose"] = (
-            # self.tokenizer.cls_token
-            # + "Column: " + header
-            # + self.tokenizer.sep_token
-            # + "Type: " + data_type
-            # + self.tokenizer.sep_token
-            # + "Values: " + self.tokenizer.sep_token.join(map(str, values))
-            # + self.tokenizer.sep_token
-            # + self.tokenizer.eos_token        
-            cls_token +
-            "Column: " + str(header) +
-            # sep_token +
-            # "Type: " + str(data_type) +
-            sep_token +
-            "Values: " +  sep_token 
-            + sep_token.join(tokens) +
-            sep_token +
-            eos_token
-        
-        )
 
-        return serialization[self.serialization]
+        tokens = [str(token) for token in values]
+        
+        return self._serialization_methods[self.serialization](header, data_type, tokens)
+    
+    def _serialize_header_values_verbose(self, header, data_type, tokens):
+            """Serializes with detailed column header, type, and token values."""
+            return (
+                f"{self.cls_token}"
+                f"Column: {header}{self.sep_token}"
+                f"Type: {data_type}{self.sep_token}"
+                f"Values: {self.sep_token.join(tokens)}{self.sep_token}"
+            )
+
+    def _serialize_header_values_default(self, header, data_type, tokens):
+            """Serializes with default format including header, type, and tokens."""
+            return (
+                f"{self.cls_token}"
+                f"{header}{self.sep_token}"
+                f"{data_type}{self.sep_token}"
+                f"{self.sep_token.join(tokens)}"
+            )
+
+    def _serialize_header_values_prefix(self, header, data_type, tokens):
+            """Serializes with prefixed labels for header, datatype, and values."""
+            return (
+                f"{self.cls_token}"
+                f"header:{header}{self.sep_token}"
+                f"datatype:{data_type}{self.sep_token}"
+                f"values:{', '.join(tokens)}"
+            )
+
+    def _serialize_header_values_repeat(self, header, data_type, tokens):
+            """Serializes with repeated header for emphasis."""
+            repeated_header = self.sep_token.join([header] * 5)
+            return (
+                f"{self.cls_token}"
+                f"{repeated_header}{self.sep_token}"
+                f"{data_type}{self.sep_token}"
+                f"{self.sep_token.join(tokens)}"
+            )
+
+    def _serialize_header_only(self, header, data_type, tokens):
+            """Serializes with header only."""
+            return (
+                f"{self.cls_token}"
+                f"{header}"
+                f"{self.eos_token}"
+            )
+
+    def _serialize_header_values_verbose_notype(self, header, data_type, tokens):
+            """Serializes with simple format including header and tokens."""
+            return (
+                f"{self.cls_token}"
+                f"Column: {header}{self.sep_token}"
+                f"Values: {self.sep_token.join(tokens)}{self.sep_token}"
+                f"{self.eos_token}"
+            )
+
+    def _serialize_header_values_columnvaluepair_notype(self, header, data_type, tokens):
+
+            tokens = [f"{header}:{token}" for token in tokens]
+            return (
+                f"{self.cls_token}"
+                f"Column: {header}{self.sep_token}"
+                f"Values: {self.sep_token.join(tokens)}{self.sep_token}"
+                f"{self.eos_token}"
+            )
+
+    def _serialize_header_values_repeat_notype(self, header, data_type, tokens):
+            """Serializes with repeated header for emphasis."""
+            repeated_header = self.sep_token.join([header] * 5)
+            return (
+                f"{self.cls_token}"
+                f"{repeated_header}{self.sep_token}"
+                f"{data_type}{self.sep_token}"
+                f"{self.sep_token.join(tokens)}"
+            )
+
+    def _serialize_header_values_default_notype(self, header, data_type, tokens):
+
+            return (
+                f"{self.cls_token}"
+                f"{header}{self.sep_token}"
+                f"{self.sep_token.join(tokens)}"
+            )

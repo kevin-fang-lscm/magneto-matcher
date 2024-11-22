@@ -2,7 +2,6 @@ from openai import OpenAI
 import tiktoken
 import re
 import os
-from dotenv import load_dotenv
 
 
 class LLMReranker:
@@ -13,12 +12,12 @@ class LLMReranker:
     # TODO: Add any additional models here
     def _load_client(self):
         if self.llm_model in ["gpt-4-turbo-preview", "gpt-4o-mini"]:
-            print("Loading OpenAI client")
-            load_dotenv(os.path.expanduser('~/config.env'))
-            return OpenAI(api_key=os.getenv("API_KEY"))
-        # elif self.llm_model in ["gemma2:9b"]:
-        #     print("Loading OLLAMA client")
-        #     return ollama.Client(host=OLLAMA_HOST)
+            api_key = os.getenv("OPENAI_API_KEY")
+
+            if not api_key:
+                raise ValueError("API key not found in environment variables.")
+
+            return OpenAI(api_key=api_key)
 
     def num_tokens_from_string(self, string, encoding_name="gpt-4o-mini"):
         encoding = tiktoken.encoding_for_model(encoding_name)
@@ -31,9 +30,7 @@ class LLMReranker:
         target_table,
         source_values,
         target_values,
-        top_k,
         matched_columns,
-        cand_k,
         score_based=True,
     ):
         refined_matches = {}
@@ -59,21 +56,22 @@ class LLMReranker:
             )
             if score_based:
                 while True:
-                    refined_match = self._get_matches_w_score(cand, targets, other_cols)
+                    refined_match = self._get_matches_w_score(
+                        cand, targets, other_cols)
                     refined_match = self._parse_scored_matches(refined_match)
                     if refined_match is not None:
                         break
             else:
-                refined_match = self._get_matches(cand, targets, top_k)
+                refined_match = self._get_matches(cand, targets)
                 refined_match = refined_match.split("; ")
             refined_matches[source_col] = refined_match
         return refined_matches
 
     def _get_prompt(self, cand, targets):
         prompt = (
-            "From a score of 0.00 to 1.00, please judge the similarity of the candidate column from the candidate table to each target schema in the target table. \
+            "From a score of 0.00 to 1.00, please judge the similarity of the candidate column from the candidate table to each target column in the target table. \
 All the columns are defined by the column name and a sample of its respective values if available. \
-Provide only the name of each target schema followed by its similarity score in parentheses, formatted to two decimals, and separated by a semicolon. \
+Provide only the name of each target column followed by its similarity score in parentheses, formatted to two decimals, and separated by a semicolon. \
 Rank the schema-score pairs by score in descending order. Ensure your response excludes additional information and quotations.\n \
 Example:\n \
 Candidate Column: \
@@ -106,7 +104,7 @@ Candidate Column:"
             messages = [
                 {
                     "role": "system",
-                    "content": "You are an AI trained to perform schema matching by providing similarity scores.",
+                    "content": "You are an AI trained to perform schema matching by providing column similarity scores.",
                 },
                 {
                     "role": "user",
@@ -149,7 +147,8 @@ Candidate Column:"
             try:
                 score = float(score_part[:-1])
             except ValueError:
-                score_part = score_part[:-1].rstrip(")")  # Remove all trailing ')'
+                # Remove all trailing ')'
+                score_part = score_part[:-1].rstrip(")")
                 try:
                     score = float(score_part)
                 except ValueError:
@@ -160,12 +159,11 @@ Candidate Column:"
                     if match:
                         score = float(match.group())
                     else:
-                        print("The string does not contain a valid two decimal float.")
+                        print(
+                            "The string does not contain a valid two decimal float.")
                         return None
 
             schema_name = schema_part.strip()
             matched_columns.append((schema_name, score))
 
         return matched_columns
-
-

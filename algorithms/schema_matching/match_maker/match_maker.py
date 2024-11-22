@@ -12,12 +12,8 @@ from .utils import clean_df, remove_invalid_characters, convert_simmap_to_valent
 from .bp_reranker import arrange_bipartite_matches
 from .llm_reranker import LLMReranker
 
-from .retriever import Retriever
-from .retriever_utils import get_samples_2
-
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
 
 class MatchMaker(BaseMatcher):
     ## attention
@@ -117,10 +113,10 @@ class MatchMaker(BaseMatcher):
         reranker = LLMReranker()
 
         source_values = {
-            col: get_samples(source_table[col], 15, False) for col in source_table.columns
+            col: get_samples(source_table[col], 10) for col in source_table.columns
         }
         target_values = {
-            col: get_samples(target_table[col], 15, False) for col in target_table.columns
+            col: get_samples(target_table[col], 10) for col in target_table.columns
         }
 
         matched_columns = {}
@@ -139,9 +135,7 @@ class MatchMaker(BaseMatcher):
             target_table,
             source_values,
             target_values,
-            self.topk,
             matched_columns,
-            self.topk,
         )
         # print("Refined Matches:", matched_columns)
 
@@ -186,10 +180,12 @@ class MatchMaker(BaseMatcher):
             self.input_sim_map, source_table.name, target_table.name)
 
         if self.params['use_bp_reranker']:
+            # print("Applying bipartite matching")
             matches = arrange_bipartite_matches(
                 matches, self.df_source, source_table.name,  self.df_target, target_table.name)
 
         if self.params['use_gpt_reranker']:
+            print("Applying GPT reranker")
             matches = self.call_llm_reranker(
                 source_table, target_table, matches)
 

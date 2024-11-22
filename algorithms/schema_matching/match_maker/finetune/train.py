@@ -93,7 +93,7 @@ def main():
     )
     parser.add_argument(
         "--dataset",
-        default="gdc",
+        default="opendata",
         help="Name of the dataset for model customization",
     )
     parser.add_argument(

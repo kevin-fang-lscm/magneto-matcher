@@ -1,7 +1,7 @@
 
 import pprint
 
-from itertools import product
+from tqdm import tqdm
 import os
 import sys
 import json
@@ -11,6 +11,7 @@ import datetime
 from valentine import valentine_match
 from valentine.algorithms import Coma
 import valentine.algorithms.matcher_results as matcher_results
+import random
 
 import warnings
 warnings.simplefilter('ignore', FutureWarning)
@@ -23,6 +24,7 @@ sys.path.append(os.path.join(project_path))
 import algorithms.schema_matching.gpt_matcher.gpt_matcher as gpt_matcher
 import algorithms.schema_matching.match_maker.match_maker as mm
 from experiments.benchmarks.utils import compute_mean_ranking_reciprocal, create_result_file, record_result
+from tqdm import tqdm
 
 
 pp = pprint.PrettyPrinter(indent=4)
@@ -45,8 +47,14 @@ def get_gpt_method(method):
 
 
 def get_match_maker_matcher(method):
-    return mm.MatchMaker()
-
+    if method=="MatchMaker":
+        return mm.MatchMaker()
+    elif method=="MatchMakerBP":
+        return mm.MatchMaker(use_bp_reranker=True)
+    elif method.startswith('MatchMakerGPT'):
+        print("Method: ", method)
+        topk = int(method.split('_')[1])
+        return mm.MatchMaker(use_gpt_reranker=True, topk=topk)
 
 def get_matcher(method):
     if method.startswith('GPT'):
@@ -63,9 +71,7 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
     HEADER = [
         'benchmark', 'dataset', 'source_table', 'target_table',
         'ncols_src', 'ncols_tgt', 'nrows_src', 'nrows_tgt', 'nmatches',
-        'method', 'encoding_mode', 'sampling_mode', 'sampling_size',
-        'strsim', 'emebedding', 'equal',
-        'runtime', 'mrr',
+        'method', 'runtime', 'mrr',
         'All_Precision', 'All_F1Score', 'All_Recall',
         'All_PrecisionTop10Percent', 'All_RecallAtSizeofGroundTruth',
         'One2One_Precision', 'One2One_F1Score', 'One2One_Recall',
@@ -84,7 +90,10 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
     )
     create_result_file(results_dir, result_file, HEADER)
 
-    for folder in os.listdir(ROOT):
+    # for folder in os.listdir(ROOT):
+    folders = [folder for folder in os.listdir(ROOT) if folder not in ['.DS_Store', '.ipynb_checkpoints']]
+    for folder in tqdm(folders, desc="Processing folders"):
+
         if folder == '.DS_Store' or folder == '.ipynb_checkpoints':
             continue
 
@@ -102,7 +111,11 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
         nrows_tgt = str(df_target.shape[0])
         nmatches = len(ground_truth)
 
-        matchers = ["GPTMatcher", "GPTMatcherExample", "MatchMaker"]
+        # matchers = ["GPTMatcher", "GPTMatcherExample", "MatchMaker"]
+        # matchers = ["GPTMatcher", "GPTMatcherExample", "MatchMaker", "MatchMakerBP", "MatchMakerGPT_5", "MatchMakerGPT_10, MatchMakerGPT_20"]
+        # matchers = ["MatchMaker", "MatchMakerBP"]
+        matchers = ["MatchMakerGPT_5"]
+        # matchers = [ "MatchMaker", "MatchMakerBP", "MatchMakerGPT_10", "MatchMakerGPT_20", "GPTMatcher", "GPTMatcherExample", "GPTMatcher"]
 
         for matcher in matchers:
 
@@ -135,26 +148,160 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
             matches = matches.one_to_one()
             one2one_metrics = matches.get_metrics(ground_truth)
 
-        break
+            source_file = source_file.split('/')[-1]
+            target_file = target_file.split('/')[-1]
 
+            result = [BENCHMARK, DATASET, source_file, target_file, ncols_src, ncols_tgt, nrows_src, nrows_tgt, nmatches, method_name, runtime, mrr_score, all_metrics['Precision'], all_metrics['F1Score'], all_metrics['Recall'], all_metrics['PrecisionTop10Percent'], all_metrics['RecallAtSizeofGroundTruth'],
+                      one2one_metrics['Precision'], one2one_metrics['F1Score'], one2one_metrics['Recall'], one2one_metrics['PrecisionTop10Percent'], one2one_metrics['RecallAtSizeofGroundTruth']]
+            
+            record_result(result_file, result)
+
+        # break
+def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenData', ROOT='data/valentine/OpenData/'):
+    '''
+    Run the valentine benchmark for datasets split on Unionable, View-Unionable, Joinable, Semantically-Joinable
+    '''
+
+    HEADER = ['benchmark', 'dataset', 'type', 'source_table', 'target_table', 'ncols_src', 'ncols_tgt', 'nrows_src', 'nrows_tgt', 'nmatches', 'method', 'runtime', 'mrr',  'All_Precision', 'All_F1Score', 'All_Recall', 'All_PrecisionTop10Percent', 'All_RecallAtSizeofGroundTruth',
+              'One2One_Precision', 'One2One_F1Score', 'One2One_Recall', 'One2One_PrecisionTop10Percent', 'One2One_RecallAtSizeofGroundTruth']
+
+    results_dir = os.path.join(
+        project_path, 'results', 'ablations', 'gpt_reranker',
+        BENCHMARK, DATASET
+    )
+    result_file = os.path.join(
+        results_dir,
+        f'{BENCHMARK}_{DATASET}_gpt_reranker_results_{
+            datetime.datetime.now().strftime("%Y%m%d%H%M%S")}.csv'
+    )
+    create_result_file(results_dir, result_file, HEADER)
+
+   
+
+    for type in os.listdir(ROOT):
+        if type == '.DS_Store':
+            continue
+
+        # large_table_count=0
+
+        
+        print("Type: ", type)
+        table_folders = [folder for folder in os.listdir(os.path.join(ROOT, type)) if folder not in ['.DS_Store', '.ipynb_checkpoints']]
+
+        # table_folders = table_folders[:int(0.2 * len(table_folders))]
+        table_folders = random.sample(table_folders, int(0.11 * len(table_folders)))
+        print("Table Folders: ", len(table_folders))
+        
+
+        for table_folder in tqdm(table_folders, desc=f"Processing table folders in {type}"):
+
+            if table_folder == '.DS_Store':
+                continue
+
+            # print("Table: ", table_folder)
+
+            source_file = os.path.join(
+                ROOT, type, table_folder, table_folder+'_source.csv')
+            target_file = os.path.join(
+                ROOT, type, table_folder, table_folder+'_target.csv')
+            mapping_file = os.path.join(
+                ROOT, type, table_folder, table_folder+'_mapping.json')
+
+            ground_truth = extract_matchings(open(mapping_file).read())
+
+            # if len(ground_truth) < 2:
+            #     continue
+
+            df_source = pd.read_csv(source_file, low_memory=False)
+            df_target = pd.read_csv(target_file, low_memory=False)
+
+            # print("GroundTruth")
+            # for gt in ground_truth:
+            #     print(gt)
+            # print("\n")
+
+            # print(ground_truth)
+
+            ncols_src = str(df_source.shape[1])
+            ncols_tgt = str(df_target.shape[1])
+            nrows_src = str(df_source.shape[0])
+            nrows_tgt = str(df_target.shape[0])
+            nmatches = len(ground_truth)
+
+            if len(ground_truth) == 0:
+                continue
+
+            # print(ncols_src, ncols_tgt)
+
+            # if int(ncols_src) > 15 or int(ncols_tgt) > 15:
+            #     large_table_count+=1
+            
+
+
+            # matchers = ["MatchMaker"]
+            matchers = [ "MatchMaker", "MatchMakerBP", "MatchMakerGPT_5", "MatchMakerGPT_10", "MatchMakerGPT_20", "GPTMatcher", "GPTMatcherExample"]
+
+
+            for matcher in matchers:
+                print("Running matcher: ", matcher)
+
+                method_name = matcher
+                matcher = get_matcher(matcher)
+
+                start_time = time.time()
+
+                try:
+                    matches = valentine_match(df_source, df_target, matcher)
+                except Exception as e:
+                    print(
+                        f"Not able to run the matcher because of exception: {e}")
+                    matches = matcher_results.MatcherResults({})
+                # matches = valentine_match(df_source, df_target, matcher)
+
+                end_time = time.time()
+                runtime = end_time - start_time
+                
+                mrr_score = compute_mean_ranking_reciprocal(matches, ground_truth)
+                
+                all_metrics = matches.get_metrics(ground_truth)
+
+                recallAtGT = all_metrics['RecallAtSizeofGroundTruth']
+
+                print(method_name, " with MRR Score: ",
+                      mrr_score, " and RecallAtGT: ", recallAtGT)
+
+                matches = matches.one_to_one()
+                one2one_metrics = matches.get_metrics(ground_truth)
+
+                source_file = source_file.split('/')[-1]
+                target_file = target_file.split('/')[-1]
+
+                result = [BENCHMARK, DATASET, type, source_file, target_file, ncols_src, ncols_tgt, nrows_src, nrows_tgt, nmatches, method_name, runtime, mrr_score, all_metrics['Precision'], all_metrics['F1Score'], all_metrics['Recall'], all_metrics['PrecisionTop10Percent'], all_metrics['RecallAtSizeofGroundTruth'],
+                          one2one_metrics['Precision'], one2one_metrics['F1Score'], one2one_metrics['Recall'], one2one_metrics['PrecisionTop10Percent'], one2one_metrics['RecallAtSizeofGroundTruth']]
+
+                record_result(result_file, result)
+        # print("Large Table Count for ", type, ' is:', large_table_count)
 
 if __name__ == '__main__':
     BENCHMARK = 'valentine'
 
     # WIKIDATA musicians
-    run_valentine_benchmark_one_level()
+    # run_valentine_benchmark_one_level()s
 
     # Magellan
+    # DATASET='Magellan'
+    # ROOT='data/valentine/Magellan'
+    # run_valentine_benchmark_one_level(BENCHMARK, DATASET, ROOT)
 
     # OpenData
-    # run_valentine_benchmark_three_levels()
+    run_valentine_benchmark_three_levels()
 
     # # ChEMBLc
-    # DATASET='ChEMBL'
-    # ROOT='./data/valentine/ChEMBL/'
-    # run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)
+    DATASET='ChEMBL'
+    ROOT='./data/valentine/ChEMBL/'
+    run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)
 
     # # TPC-DI
-    # DATASET='TPC-DI'
-    # ROOT='./data/valentine/TPC-DI/'
-    # run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)
+    DATASET='TPC-DI'
+    ROOT='./data/valentine/TPC-DI/'
+    run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)

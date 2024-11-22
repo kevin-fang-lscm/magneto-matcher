@@ -18,7 +18,7 @@ class GPTMatcher(BaseMatcher):
         self.include_example = include_example
 
     def _load_client(self):
-        print("Loading OpenAI client")
+        # print("Loading OpenAI client")
         api_key = os.getenv("OPENAI_API_KEY")
 
         if not api_key:
@@ -45,10 +45,21 @@ class GPTMatcher(BaseMatcher):
         source_columns = source_table.columns
         target_columns = target_table.columns
 
-        source_samples = {col: source_table[col].dropna().sample(
-            n=min(self.sample_size, len(source_table))).tolist() for col in source_columns}
-        target_samples = {col: target_table[col].dropna().sample(
-            n=min(self.sample_size, len(target_table))).tolist() for col in target_columns}
+        
+        source_samples = {
+            col: source_table[col].dropna().sample(
+                n=min(self.sample_size, len(source_table[col].dropna()))
+            ).tolist() if not source_table[col].dropna().empty else [] 
+            for col in source_columns
+        }
+
+        target_samples = {
+            col: target_table[col].dropna().sample(
+                n=min(self.sample_size, len(target_table[col].dropna()))
+            ).tolist() if not target_table[col].dropna().empty else [] 
+            for col in target_columns
+        }
+
 
         for source_col in source_columns:
             source_col_info = f"{source_col}, Sample values: {
@@ -130,8 +141,9 @@ class GPTMatcher(BaseMatcher):
             messages=messages,
             temperature=0.3,
         )
-
         matches = response.choices[0].message.content
+
+
         return matches
 
     def _parse_scored_matches(self, candidate_matches):
