@@ -143,6 +143,8 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
 
     create_result_file(results_dir, result_file, HEADER)
 
+    table_count = 0
+
     for type in os.listdir(ROOT):
         if type == '.DS_Store':
             continue
@@ -185,10 +187,11 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
 
             if len(ground_truth) == 0:
                 continue
+            
+            table_count += 1
 
-
-            matchers = ["MatchMaker"]
-
+            # matchers = ["MatchMaker"]
+            matchers = []
 
             for matcher in matchers:
                 print("Running matcher: ", matcher)
@@ -229,6 +232,8 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
 
                 record_result(result_file, result)
 
+    print("Total tables: ", table_count)
+
 
 if __name__ == '__main__':
     BENCHMARK = 'valentine'
@@ -242,14 +247,14 @@ if __name__ == '__main__':
     # run_valentine_benchmark_one_level(BENCHMARK, DATASET, ROOT)
 
     # OpenData
-    # run_valentine_benchmark_three_levels()
+    run_valentine_benchmark_three_levels()
 
     # ChEMBLc
-    # DATASET='ChEMBL'
-    # ROOT='data/valentine/ChEMBL/'
-    # run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)
+    DATASET='ChEMBL'
+    ROOT='data/valentine/ChEMBL/'
+    run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)
 
     # TPC-DI
-    DATASET='TPC-DI'
-    ROOT='data/valentine/TPC-DI/'
-    run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)
+    # DATASET='TPC-DI'
+    # ROOT='data/valentine/TPC-DI/'
+    # run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)

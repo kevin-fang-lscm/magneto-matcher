@@ -117,6 +117,11 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
         matchers = ["MatchMakerGPT_5"]
         # matchers = [ "MatchMaker", "MatchMakerBP", "MatchMakerGPT_10", "MatchMakerGPT_20", "GPTMatcher", "GPTMatcherExample", "GPTMatcher"]
 
+        gptFull = "MatchMakerGPT_"+str(ncols_tgt)
+
+        matchers = [ "MatchMakerBP", "MatchMakerGPT_20",gptFull, "GPTMatcherExample", "GPTMatcher"]
+
+
         for matcher in matchers:
 
             print("Running matcher: ", matcher)
@@ -238,9 +243,11 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
             
 
 
-            # matchers = ["MatchMaker"]
-            matchers = [ "MatchMaker", "MatchMakerBP", "MatchMakerGPT_5", "MatchMakerGPT_10", "MatchMakerGPT_20", "GPTMatcher", "GPTMatcherExample"]
+            # matchers = ["GPTMatcherExample"]
+            # matchers = [ "MatchMaker", "MatchMakerBP", "MatchMakerGPT_5", "MatchMakerGPT_10", "MatchMakerGPT_20", "GPTMatcher", "GPTMatcherExample"]
 
+            gptFull = "MatchMakerGPT_"+str(ncols_tgt)
+            matchers = [ "MatchMakerBP", "MatchMakerGPT_20",gptFull, "GPTMatcherExample", "GPTMatcher"]
 
             for matcher in matchers:
                 print("Running matcher: ", matcher)
@@ -297,11 +304,11 @@ if __name__ == '__main__':
     run_valentine_benchmark_three_levels()
 
     # # ChEMBLc
-    DATASET='ChEMBL'
-    ROOT='./data/valentine/ChEMBL/'
-    run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)
+    # DATASET='ChEMBL'
+    # ROOT='./data/valentine/ChEMBL/'
+    # run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)
 
-    # # TPC-DI
-    DATASET='TPC-DI'
-    ROOT='./data/valentine/TPC-DI/'
-    run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)
+    # # # TPC-DI
+    # DATASET='TPC-DI'
+    # ROOT='./data/valentine/TPC-DI/'
+    # run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)
