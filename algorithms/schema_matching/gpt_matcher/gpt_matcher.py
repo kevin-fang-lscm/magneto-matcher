@@ -18,19 +18,10 @@ from algorithms.schema_matching.match_maker.llm_reranker import LLMReranker
 class GPTMatcher(BaseMatcher):
     def __init__(self, llm_model="gpt-4o-mini",  sample_size=10, random_order=False):
         self.llm_model = llm_model
-        self.client = self._load_client()
         self.sample_size = sample_size
         self.target_columns_random_order = random_order
 
-    def _load_client(self):
-        # print("Loading OpenAI client")
-        api_key = os.getenv("OPENAI_API_KEY")
 
-        if not api_key:
-            raise ValueError("API key not found in environment variables.")
-
-        openai.api_key = api_key
-        return openai
 
     def num_tokens_from_string(self, string, encoding_name="gpt-4"):
         encoding = tiktoken.encoding_for_model(encoding_name)

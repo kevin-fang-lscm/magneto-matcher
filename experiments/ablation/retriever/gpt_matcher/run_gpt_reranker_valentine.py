@@ -114,14 +114,15 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
         # matchers = ["GPTMatcher", "GPTMatcherExample", "MatchMaker"]
         # matchers = ["GPTMatcher", "GPTMatcherExample", "MatchMaker", "MatchMakerBP", "MatchMakerGPT_5", "MatchMakerGPT_10, MatchMakerGPT_20"]
         # matchers = ["MatchMaker", "MatchMakerBP"]
-        matchers = ["MatchMakerGPT_5"]
+        # matchers = ["MatchMakerGPT_5"]
         # matchers = [ "MatchMaker", "MatchMakerBP", "MatchMakerGPT_10", "MatchMakerGPT_20", "GPTMatcher", "GPTMatcherExample", "GPTMatcher"]
 
-        gptFull = "MatchMakerGPT_"+str(ncols_tgt)
+        
 
-        # matchers = [ "MatchMakerBP", "MatchMakerGPT_20",gptFull, "GPTMatcherExample", "GPTMatcher"]
+        matchers = [ "GPTMatcherRandomOrder"]
 
-        matchers = [  "GPTMatcherSchemaOrder",  "GPTMatcherRandomOrder"]
+        # gptFull = "MatchMakerGPT_"+str(ncols_tgt)
+        # matchers = ["MatchMakerBP", "MatchMakerGPT_20",  gptFull, "GPTMatcherSchemaOrder",  "GPTMatcherRandomOrder"]
 
 
         for matcher in matchers:
@@ -133,12 +134,12 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
 
             start_time = time.time()
 
-            # try:
-            #     matches = valentine_match(df_source, df_target, matcher)
-            # except Exception as e:
-            #     print(f"Not able to run the matcher because of exception: {e}")
-            #     matches = matcher_results.MatcherResults({})
-            matches = valentine_match(df_source, df_target, matcher)
+            try:
+                matches = valentine_match(df_source, df_target, matcher)
+            except Exception as e:
+                print(f"Not able to run the matcher because of exception: {e}")
+                matches = matcher_results.MatcherResults({})
+            # matches = valentine_match(df_source, df_target, matcher)
 
             end_time = time.time()
             runtime = end_time - start_time
@@ -248,8 +249,11 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
             # matchers = ["GPTMatcherExample"]
             # matchers = [ "MatchMaker", "MatchMakerBP", "MatchMakerGPT_5", "MatchMakerGPT_10", "MatchMakerGPT_20", "GPTMatcher", "GPTMatcherExample"]
 
+            # gptFull = "MatchMakerGPT_"+str(ncols_tgt)
+            # matchers = [ "MatchMakerBP", "MatchMakerGPT_20",gptFull, "GPTMatcherExample", "GPTMatcher"]
+
             gptFull = "MatchMakerGPT_"+str(ncols_tgt)
-            matchers = [ "MatchMakerBP", "MatchMakerGPT_20",gptFull, "GPTMatcherExample", "GPTMatcher"]
+            matchers = ["MatchMakerBP", "MatchMakerGPT_20",  gptFull, "GPTMatcherSchemaOrder",  "GPTMatcherRandomOrder"]
 
             for matcher in matchers:
                 print("Running matcher: ", matcher)
@@ -277,7 +281,7 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
                 recallAtGT = all_metrics['RecallAtSizeofGroundTruth']
 
                 print(method_name, " with MRR Score: ",
-                      mrr_score, " and RecallAtGT: ", recallAtGT)
+                      mrr_score, " and RecallAtGT: ", recallAtGT, " and runtime: ", runtime)
 
                 matches = matches.one_to_one()
                 one2one_metrics = matches.get_metrics(ground_truth)
