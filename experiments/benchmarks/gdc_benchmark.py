@@ -14,7 +14,7 @@ project_path = os.path.dirname(os.path.dirname(
 sys.path.append(os.path.join(project_path))
 
 
-from experiments.benchmarks.utils import compute_mean_ranking_reciprocal, create_result_file, record_result
+from experiments.benchmarks.utils import compute_mean_ranking_reciprocal, compute_mean_ranking_reciprocal_adjusted, create_result_file, record_result
 import algorithms.schema_matching.match_maker.match_maker as mm
 
 def get_matcher(method):
@@ -30,7 +30,12 @@ def get_matcher(method):
         # return mm.MatchMaker(embedding_model=model_path, include_strsim_matches=False, include_embedding_matches=True, include_equal_matches=False, use_bp_reranker=False, use_gpt_reranker=False)
         return mm.MatchMaker(embedding_model=model_path)
     elif method == 'MatchMakerGPT':
-        return mm.MatchMaker(use_gpt=True)
+        return mm.MatchMaker(use_bp_reranker=False,use_gpt_reranker=True)
+    elif method == 'MatchMakerFTGPT':
+        model_path = os.path.join(
+            project_path, 'models', 'mpnet-gdc-header_values_repeat-exact_semantic-64-0.5.pth')
+        # return mm.MatchMaker(embedding_model=model_path, include_strsim_matches=False, include_embedding_matches=True, include_equal_matches=False, use_bp_reranker=False, use_gpt_reranker=False)
+        return mm.MatchMaker(embedding_model=model_path, use_bp_reranker=False,use_gpt_reranker=True)
 
 
 def run_benchmark(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='data/gdc'):
@@ -58,8 +63,8 @@ def run_benchmark(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='data/gdc
 
             print(f"Processing {gt_file}")
 
-            if gt_file != 'Huang.csv':
-                continue
+            # if gt_file != 'Clark.csv':
+            #     continue
 
             source_file = os.path.join(studies_path, gt_file)
             df_source = pd.read_csv(source_file)
@@ -68,11 +73,13 @@ def run_benchmark(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='data/gdc
             gt_df.dropna(inplace=True)
             ground_truth = list(gt_df.itertuples(index=False, name=None))
 
-            matchers = ["MatchMaker",  "MatchMakerFT"]
+            print(ground_truth  )
+
+            matchers = [ "ComaInst", "MatchMaker","MatchMakerFT",  "MatchMakerFTGPT",  "MatchMakerGPT"]
             # matchers = [  "MatchMaker"]
 
             for matcher in matchers:
-                # print(f"Matcher: {matcher}, Source: {source_file}, Target: {target_file}")
+                print(f"Matcher: {matcher}, Source: {source_file}, Target: {target_file}")
 
                 method_name = matcher
                 matcher = get_matcher(matcher)
@@ -82,7 +89,7 @@ def run_benchmark(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='data/gdc
                 end_time = time.time()
                 runtime = end_time - start_time
 
-                mrr_score = compute_mean_ranking_reciprocal(
+                mrr_score = compute_mean_ranking_reciprocal_adjusted(
                     matches, ground_truth)
 
                 all_metrics = matches.get_metrics(ground_truth)

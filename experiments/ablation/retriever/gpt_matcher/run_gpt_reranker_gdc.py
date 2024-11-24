@@ -6,6 +6,7 @@ import datetime
 import pprint
 pp = pprint.PrettyPrinter(indent=4, sort_dicts=True)
 from valentine import valentine_match
+from tqdm import tqdm
 
 
 
@@ -14,14 +15,16 @@ sys.path.append(os.path.join(project_path))
 
 
 from experiments.benchmarks.utils import compute_mean_ranking_reciprocal, create_result_file, record_result
+
 import algorithms.schema_matching.match_maker.match_maker as mm
 import algorithms.schema_matching.gpt_matcher.gpt_matcher as gpt_matcher
 
+
 def get_gpt_method(method):
-    if method == 'GPTMatcher':
+    if method == 'GPTMatcherSchemaOrder':
         return gpt_matcher.GPTMatcher()
-    elif method == 'GPTMatcherExample':
-        return gpt_matcher.GPTMatcher(include_example=True)
+    elif method == 'GPTMatcherRandomOrder':
+        return gpt_matcher.GPTMatcher(random_order=True)
     else:
         raise ValueError(f"Unknown method: {method}")
 
@@ -67,36 +70,46 @@ def run_ablation(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='data/gdc'
 
     df_target = pd.read_csv(target_file, low_memory=False)
 
+    ncols_tgt = len(df_target.columns)
+
     studies_path = os.path.join(ROOT, 'source-tables')
     gt_path = os.path.join(ROOT, 'ground-truth')
 
-    for gt_file in os.listdir(gt_path):
+    
+    gt_files = [f for f in os.listdir(gt_path) if f.endswith('.csv')]
+    for gt_file in tqdm(gt_files, desc="Processing ground truth files"):
         if gt_file.endswith('.csv'):
 
             print(f"Processing {gt_file}")
 
-            if gt_file != 'Huang.csv':
-                continue
+            # if gt_file != 'Huang.csv':
+            #     continue
 
             source_file = os.path.join(studies_path, gt_file)
             df_source = pd.read_csv(source_file)
+
+            
 
             gt_df = pd.read_csv(os.path.join(gt_path, gt_file))
             gt_df.dropna(inplace=True)
             ground_truth = list(gt_df.itertuples(index=False, name=None))
 
-            matchers = ["MatchMaker",  "MatchMakerFT"]
-            # matchers = [ "MatchMaker", "MatchMakerBP", "MatchMakerGPT_10", "MatchMakerGPT_20", "GPTMatcher", "GPTMatcherExample"]
-            matchers = [ "GPTMatcher", "GPTMatcherExample"]
+            
+            gptFull = "MatchMakerGPT_"+str(ncols_tgt)
+            #matchers = ["MatchMakerBP", "MatchMakerGPT_3","MatchMakerGPT_5","MatchMakerGPT_10","MatchMakerGPT_20",  gptFull, "GPTMatcherSchemaOrder",  "GPTMatcherRandomOrder"]
+
+            matchers = [ "MatchMakerBP", "MatchMakerGPT_3","MatchMakerGPT_5","MatchMakerGPT_10","MatchMakerGPT_20"]
 
             for matcher in matchers:
-                # print(f"Matcher: {matcher}, Source: {source_file}, Target: {target_file}")
+                print(f"Matcher: {matcher}")
 
                 method_name = matcher
                 matcher = get_matcher(matcher)
 
                 start_time = time.time()
+                
                 matches = valentine_match(df_source, df_target, matcher)
+                
                 end_time = time.time()
                 runtime = end_time - start_time
 

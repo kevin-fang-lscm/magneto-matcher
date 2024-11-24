@@ -121,8 +121,8 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
 
         matchers = [ "GPTMatcherRandomOrder"]
 
-        # gptFull = "MatchMakerGPT_"+str(ncols_tgt)
-        # matchers = ["MatchMakerBP", "MatchMakerGPT_20",  gptFull, "GPTMatcherSchemaOrder",  "GPTMatcherRandomOrder"]
+        gptFull = "MatchMakerGPT_"+str(ncols_tgt)
+        matchers = ["MatchMakerBP", "MatchMakerGPT_3","MatchMakerGPT_5","MatchMakerGPT_10","MatchMakerGPT_20",  gptFull, "GPTMatcherSchemaOrder",  "GPTMatcherRandomOrder"]
 
 
         for matcher in matchers:

@@ -20,15 +20,15 @@ class MatchMaker(BaseMatcher):
     ## for ablation experiments, make sure to have the default set correcly
     DEFAULT_PARAMS = {
         'embedding_model': "sentence-transformers/all-mpnet-base-v2",
-        'encoding_mode': "header_values_repeat",
-        "sampling_mode": "mixed",
+        'encoding_mode': "header_values_default",
+        "sampling_mode": "priority_sampling",
         "sampling_size": 10,
         'topk': 20,
         'include_strsim_matches': False,
         'include_embedding_matches': True,
         'embedding_threshold': 0.1,
         'include_equal_matches': True,
-        'use_bp_reranker': False,
+        'use_bp_reranker': True,
         'use_gpt_reranker': False
     }
 

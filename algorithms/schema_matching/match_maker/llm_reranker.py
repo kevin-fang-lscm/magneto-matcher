@@ -2,6 +2,7 @@ from openai import OpenAI
 import tiktoken
 import re
 import os
+import time
 
 
 class LLMReranker:
@@ -34,7 +35,10 @@ class LLMReranker:
         score_based=True,
     ):
         refined_matches = {}
+        column_count = 0
         for source_col, target_col_scores in matched_columns.items():
+            # print(f"Refining matches for {source_col}", column_count, "out of", len(matched_columns))
+            # column_count += 1
             cand = (
                 "Column: "
                 + source_col
@@ -56,8 +60,7 @@ class LLMReranker:
             )
             if score_based:
                 while True:
-                    refined_match = self._get_matches_w_score(
-                        cand, targets, other_cols)
+                    refined_match = self._get_matches_w_score(cand, targets, other_cols)
                     refined_match = self._parse_scored_matches(refined_match)
                     if refined_match is not None:
                         break
@@ -112,12 +115,18 @@ Candidate Column:"
                 },
             ]
             # print(messages[1]["content"])
+
+            # time_begin = time.time()
+
             response = self.client.chat.completions.create(
                 model=self.llm_model,
                 messages=messages,
                 temperature=0.3,
             )
             matches = response.choices[0].message.content
+
+            # time_end = time.time()
+            # print("Time taken for completion:", time_end - time_begin)
 
         elif self.llm_model in ["gemma2:9b"]:
             response = self.client.chat(
