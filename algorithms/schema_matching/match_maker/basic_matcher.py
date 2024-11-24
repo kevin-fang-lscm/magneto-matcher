@@ -1,5 +1,5 @@
 from fuzzywuzzy import fuzz
-from .utils import preprocess_string, common_prefix,  get_samples, detect_column_type
+from .utils import preprocess_string, common_prefix, get_samples, detect_column_type
 
 
 def alignment_score_consecutive(str1, str2, max_distance=2, size_ratio_threshold=2):
@@ -42,7 +42,12 @@ def fuzzy_similarity(s1: str, s2: str) -> float:
     return fuzz.ratio(s1, s2) / 100.0
 
 
-def get_str_similarity_candidates(source_column_names, target_column_names, alignment_threshold=0.95, fuzzy_similarity_threshold=0.6):
+def get_str_similarity_candidates(
+    source_column_names,
+    target_column_names,
+    alignment_threshold=0.95,
+    fuzzy_similarity_threshold=0.6,
+):
 
     prefix_source = common_prefix(list(source_column_names))
     prefix_target = common_prefix(list(target_column_names))
@@ -55,13 +60,13 @@ def get_str_similarity_candidates(source_column_names, target_column_names, alig
             prep_target_col = target_col.replace(prefix_target, "")
 
             alignment_score = alignment_score_consecutive(
-                prep_source_col, prep_target_col)
+                prep_source_col, prep_target_col
+            )
 
             if alignment_score >= alignment_threshold:
                 candidates[(source_col, target_col)] = alignment_score
 
-            name_similarity = fuzzy_similarity(
-                prep_source_col, prep_target_col)
+            name_similarity = fuzzy_similarity(prep_source_col, prep_target_col)
 
             if name_similarity >= fuzzy_similarity_threshold:
                 candidates[(source_col, target_col)] = name_similarity

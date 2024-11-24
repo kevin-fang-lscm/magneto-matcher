@@ -1,4 +1,3 @@
-
 from .constants import NULL_REPRESENTATIONS, BINARY_VALUES, KEY_REPRESENTATIONS
 import numpy as np
 import pandas as pd
@@ -11,6 +10,7 @@ import mmh3
 PHI_FRACTION = 0.6180339887  # φ - 1
 np.random.seed(42)
 
+
 def convert_to_valentine_format(matched_columns, source_table, target_table):
     valentine_format = {}
     for source_column, matches in matched_columns.items():
@@ -21,14 +21,16 @@ def convert_to_valentine_format(matched_columns, source_table, target_table):
         return valentine_format
     return MatcherResults(valentine_format)
 
+
 def convert_simmap_to_valentine_format(sim_map, source_table_name, target_table_name):
-    
+
     matches = {}
     for col_input, matches_dict in sim_map.items():
-            for col_target, score in matches_dict.items():
-                match = Match(target_table_name, col_target,
-                              source_table_name, col_input, score).to_dict
-                matches.update(match)
+        for col_target, score in matches_dict.items():
+            match = Match(
+                target_table_name, col_target, source_table_name, col_input, score
+            ).to_dict
+            matches.update(match)
     return MatcherResults(matches)
 
 
@@ -53,27 +55,28 @@ def common_ngrams(strings, threshold=0.3):
 
     for n in range(3, 9):
 
-        vectorizer = TfidfVectorizer(analyzer='char', ngram_range=(n, n))
+        vectorizer = TfidfVectorizer(analyzer="char", ngram_range=(n, n))
 
         tfidf_matrix = vectorizer.fit_transform(strings)
 
         scores = tfidf_matrix.sum(axis=0)
 
-        ngram_scores = [(ngram, scores[0, idx])
-                        for ngram, idx in vectorizer.vocabulary_.items()]
+        ngram_scores = [
+            (ngram, scores[0, idx]) for ngram, idx in vectorizer.vocabulary_.items()
+        ]
 
-        filtered_ngrams = [
-            ngram for ngram in ngram_scores if ngram[1] > threshold]
+        filtered_ngrams = [ngram for ngram in ngram_scores if ngram[1] > threshold]
 
         most_common_ngrams[n] = sorted(
-            filtered_ngrams, key=lambda x: x[1], reverse=True)
+            filtered_ngrams, key=lambda x: x[1], reverse=True
+        )
 
     return most_common_ngrams
 
 
 def preprocess_string(s):
     # Remove non-alphanumeric characters and convert to lowercase
-    return re.sub(r'[^a-zA-Z0-9]', '', s).lower()
+    return re.sub(r"[^a-zA-Z0-9]", "", s).lower()
 
 
 def is_null_value(value):
@@ -90,14 +93,14 @@ def is_binary_value(value):
 
 def remove_invalid_characters(input_string):
     # Remove any character that is not a letter, digit, or whitespace
-    pattern = r'[^a-zA-Z0-9\s]'
-    cleaned_string = re.sub(pattern, ' ', input_string)
+    pattern = r"[^a-zA-Z0-9\s]"
+    cleaned_string = re.sub(pattern, " ", input_string)
     return cleaned_string
 
 
 def split_camel_case(input_string):
     # Split camel case by adding a space before any uppercase letter that is followed by a lowercase letter
-    split_string = re.sub(r'(?<=[a-z])(?=[A-Z])', ' ', input_string)
+    split_string = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", input_string)
     return split_string
 
 
@@ -108,7 +111,7 @@ def clean_column_name(col_name):
     col_name = col_name.lower()
     col_name = remove_invalid_characters(col_name)
     # Reduce multiple spaces to a single space
-    col_name = re.sub(r'\s+', ' ', col_name)
+    col_name = re.sub(r"\s+", " ", col_name)
     return col_name
 
 
@@ -178,6 +181,7 @@ def clean_df(df):
 #         return "categorical"
 
 #     raise ValueError(f"Could not detect type for column {col.name}")
+
 
 def detect_column_type(col, key_threshold=0.8, numeric_threshold=0.90):
 
@@ -255,6 +259,7 @@ def get_type2columns_map(df):
 
     return types2columns_map
 
+
 # def get_samples(values, n=15, random=True):
 #     unique_values = values.dropna()#.unique()
 #     if random:
@@ -272,10 +277,11 @@ def fibonacci_hash(x):
     result = (x * PHI_FRACTION) % 1  # Take fractional part
     return result
 
+
 def get_samples(values, n=15, mode="priority_sampling"):
     """
     Sample values from a pandas Series using different strategies.
-    
+
     Args:
         values: pandas Series containing the values to sample
         n: number of samples to return (default: 15)
@@ -286,41 +292,40 @@ def get_samples(values, n=15, mode="priority_sampling"):
             - 'weighted': weighted sampling based on value counts
             - 'priority_sampling': uses priority sampling based on frequency and hash of the values
             - 'consistent_sampling': consistent uniform sampling based on hash of the values
-    
+
     Returns:
         List of string representations of sampled values
     """
     unique_values = values.dropna().unique()
     total_unique = len(unique_values)
-    
+
     # If total unique values are fewer than n, return them all
     if total_unique <= n:
         return sorted([str(val) for val in unique_values])
-    
-    
+
     if mode == "random":
         # Completely random sampling
         random_indices = np.random.choice(total_unique, size=n, replace=False)
         sampled_values = unique_values[random_indices]
         tokens = sorted(sampled_values)
-    
+
     elif mode == "frequent":
         # Only most frequent values
         value_counts = values.dropna().value_counts()
         tokens = value_counts.head(n).index.tolist()
         tokens.sort()
-    
+
     elif mode == "mixed":
         # Mix of most frequent and evenly spaced values
         n_frequent = n // 2
         value_counts = values.dropna().value_counts()
         most_frequent_values = value_counts.head(n_frequent).index.tolist()
-        
+
         # Calculate evenly spaced samples for diversity
         n_diverse = n - n_frequent
         spacing_interval = max(1, total_unique // n_diverse)
         diverse_values = unique_values[::spacing_interval][:n_diverse]
-        
+
         # Combine frequent and diverse samples, remove duplicates
         # tokens = sorted(set(most_frequent_values + list(diverse_values)))
         tokens = sorted(set(map(str, most_frequent_values + list(diverse_values))))
@@ -329,36 +334,44 @@ def get_samples(values, n=15, mode="priority_sampling"):
         # Weighted sampling based on value counts
         value_counts = values.dropna().value_counts(sort=False)
         weights = value_counts / value_counts.sum()
-        sampled_indices = np.random.choice(total_unique, size=n, replace=False, p=weights)
+        sampled_indices = np.random.choice(
+            total_unique, size=n, replace=False, p=weights
+        )
         sampled_values = unique_values[sampled_indices]
         tokens = sampled_values
-    
+
     elif mode == "priority_sampling":
         value_counts = values.dropna().value_counts(sort=False)
-        
-        # Calculate priorities: qi = freq / hash(value) 
-        priorities = pd.Series({
-            val:  freq / fibonacci_hash(mmh3.hash(str(val), 42))
-            for val, freq  in value_counts.items()
-        })
+
+        # Calculate priorities: qi = freq / hash(value)
+        priorities = pd.Series(
+            {
+                val: freq / fibonacci_hash(mmh3.hash(str(val), 42))
+                for val, freq in value_counts.items()
+            }
+        )
 
         # Select the top elements based on priority scores
         sampled_values = priorities.nlargest(n).index.tolist()
         tokens = sampled_values
-    
+
     elif mode == "consistent_sampling":
         value_counts = values.dropna().value_counts(sort=False)
-        
-        priorities = pd.Series({
-            val:  fibonacci_hash(mmh3.hash(str(val), 42))
-            for val in value_counts.keys()
-        })
+
+        priorities = pd.Series(
+            {
+                val: fibonacci_hash(mmh3.hash(str(val), 42))
+                for val in value_counts.keys()
+            }
+        )
 
         # Select the top elements based on priority scores
         sampled_values = priorities.nlargest(n).index.tolist()
         tokens = sampled_values
-    
+
     else:
-        raise ValueError(f"Unsupported mode: {mode}. Use 'random', 'frequent', 'mixed','weighted', 'priority_sampling' or 'consistent_sampling'")
-    
+        raise ValueError(
+            f"Unsupported mode: {mode}. Use 'random', 'frequent', 'mixed','weighted', 'priority_sampling' or 'consistent_sampling'"
+        )
+
     return [str(token) for token in tokens]

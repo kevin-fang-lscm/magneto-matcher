@@ -9,9 +9,7 @@ import pandas as pd
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 # from config import API_KEY
-API_KEY = os.environ.get('OPENAI_API_KEY')
-
-
+API_KEY = os.environ.get("OPENAI_API_KEY")
 
 
 class SemanticGenerator:
@@ -80,9 +78,9 @@ class ExactGenerator:
         # with probability(0.3) replace a random character in the column name with a random character or number or blank space
         if random.random() < 0.3 or value_size < self.threshold:
             alternative_column_name = list(column_name)
-            alternative_column_name[random.randint(0, len(alternative_column_name) - 1)] = random.choice(
-                "abcdefghijklmnopqrstuvwxyz0123456789 "
-            )
+            alternative_column_name[
+                random.randint(0, len(alternative_column_name) - 1)
+            ] = random.choice("abcdefghijklmnopqrstuvwxyz0123456789 ")
             alternative_column_name = "".join(alternative_column_name)
         else:
             alternative_column_name = column_name
@@ -114,22 +112,20 @@ def generate_matches(dataset, unique_columns):
 
     exact_generator = ExactGenerator()
 
-    
     semantic_generator = SemanticGenerator(API_KEY)
-    
 
     for column_name, column_values in tqdm.tqdm(unique_columns.items()):
 
-
-        
         if column_name in matches:
             continue
 
-
-
         matches[column_name] = {"exact": {}, "semantic": {}, "original": {}}
-        
-        values = column_values if len(column_values) < 15 else random.sample(column_values, 15)
+
+        values = (
+            column_values
+            if len(column_values) < 15
+            else random.sample(column_values, 15)
+        )
         matches[column_name]["original"] = {column_name: values}
 
         exact_matches = exact_generator.get_exact_matches(column_name, column_values)
@@ -149,6 +145,7 @@ def generate_matches(dataset, unique_columns):
         with open(file_path, "w") as file:
             json.dump(matches, file, indent=4)
 
+
 def extract_unique_columns(file_path):
 
     df = pd.read_csv(file_path, low_memory=False)
@@ -160,7 +157,7 @@ def extract_unique_columns(file_path):
         if len(value_counts) > 50:
             value_counts = value_counts.head(50)
         unique_columns[column] = value_counts.index.tolist()
-    
+
     return unique_columns
 
 
@@ -168,13 +165,12 @@ def main():
     # base_path = '/Users/pena/nyu-code/data-integration-eval/data/gdc/target-tables/gdc_unique_columns_concat_values.csv'
     # unique_columns = extract_unique_columns(base_path)
 
-    
-    path = '/Users/pena/nyu-code/data-integration-eval/data_generation/source/opendata/miller2_horizontal_0_ec_ev_source.csv'    
+    path = "/Users/pena/nyu-code/data-integration-eval/data_generation/source/opendata/miller2_horizontal_0_ec_ev_source.csv"
     unique_columns = extract_unique_columns(path)
     # print(unique_columns)
     # extract_unique_columns('gdc_unique_columns_concat_values.csv')
     print(API_KEY)
-    generate_matches('opendata', unique_columns)
+    generate_matches("opendata", unique_columns)
 
 
 if __name__ == "__main__":

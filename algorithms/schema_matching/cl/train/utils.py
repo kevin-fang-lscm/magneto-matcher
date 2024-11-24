@@ -53,7 +53,7 @@ def evaluate(model, iterator, threshold=None):
         return f1
     else:
         best_th = 0.5
-        f1 = 0.0 # metrics.f1_score(all_y, all_p)
+        f1 = 0.0  # metrics.f1_score(all_y, all_p)
 
         for th in np.arange(0.0, 1.0, 0.05):
             pred = [1 if p > th else 0 for p in all_probs]
@@ -65,23 +65,21 @@ def evaluate(model, iterator, threshold=None):
         return f1, best_th
 
 
-
 def evaluate_column_matching(train, valid, test):
-    """Run classification algorithms on feature vectors.
-    """
+    """Run classification algorithms on feature vectors."""
     # datasets = pickle.load(open(feature_path, "rb"))
     # train, valid, test = datasets
 
     ml_models = {
         "LR": LogisticRegression,
         "SVM": LinearSVC,
-        "GB": XGBClassifier, # GradientBoostingClassifier,
-        "RF": RandomForestClassifier
+        "GB": XGBClassifier,  # GradientBoostingClassifier,
+        "RF": RandomForestClassifier,
     }
 
     mname = "GB"
     Model = ml_models[mname]
-    
+
     # standardization
     pipe = make_pipeline(StandardScaler(), Model())
 
@@ -90,7 +88,7 @@ def evaluate_column_matching(train, valid, test):
 
     # eval
     results = {}
-    for ds, ds_name in zip([valid, test], ['valid', 'test']):
+    for ds, ds_name in zip([valid, test], ["valid", "test"]):
         X, y = ds
         y_pred = pipe.predict(np.nan_to_num(X))
         f1 = metrics.f1_score(y, y_pred)
@@ -99,14 +97,11 @@ def evaluate_column_matching(train, valid, test):
 
         for var in ["f1", "p", "r"]:
             results[ds_name + "_" + var] = eval(var)
-    
+
     return results
 
 
-def blocked_matmul(mata, matb,
-                   threshold=None,
-                   k=None,
-                   batch_size=512):
+def blocked_matmul(mata, matb, threshold=None, k=None, batch_size=512):
     """Find the most similar pairs of vectors from two matrices (top-k or threshold)
 
     Args:
@@ -117,7 +112,7 @@ def blocked_matmul(mata, matb,
         k (int, optional): if set, return for each row in matb the top-k
             most similar vectors in mata
         batch_size (int, optional): the batch size of each block
-    
+
     Returns:
         list of tuples: the pairs of similar vectors' indices and the similarity
     """
@@ -125,36 +120,35 @@ def blocked_matmul(mata, matb,
     matb = np.array(matb)
     results = []
     for start in tqdm(range(0, len(matb), batch_size)):
-        block = matb[start:start+batch_size]
+        block = matb[start : start + batch_size]
         sim_mat = np.matmul(mata, block.transpose())
         if k is not None:
             indices = np.argpartition(-sim_mat, k, axis=0)
             for row in indices[:k]:
                 for idx_b, idx_a in enumerate(row):
                     idx_b += start
-                    results.append((idx_a, idx_b, sim_mat[idx_a][idx_b-start]))
+                    results.append((idx_a, idx_b, sim_mat[idx_a][idx_b - start]))
         elif threshold is not None:
             indices = np.argwhere(sim_mat >= threshold)
             for idx_a, idx_b in indices:
                 idx_b += start
-                results.append((idx_a, idx_b, sim_mat[idx_a][idx_b-start]))
+                results.append((idx_a, idx_b, sim_mat[idx_a][idx_b - start]))
     return results
 
 
 def connected_components(pairs, cluster_size=50):
-    """Helper function for computing the connected components
-    """
+    """Helper function for computing the connected components"""
     edges = {}
     for left, right, _ in pairs:
         if left not in edges:
             edges[left] = []
         if right not in edges:
             edges[right] = []
-            
+
         edges[left].append(right)
         edges[right].append(left)
-    
-    print('num nodes =', len(edges))
+
+    print("num nodes =", len(edges))
     all_ccs = []
     used = set([])
     for start in edges:
@@ -162,7 +156,7 @@ def connected_components(pairs, cluster_size=50):
             continue
         used.add(start)
         cc = [start]
-        
+
         queue = deque([start])
         while len(queue) > 0:
             u = queue.popleft()
@@ -171,22 +165,19 @@ def connected_components(pairs, cluster_size=50):
                     cc.append(v)
                     used.add(v)
                     queue.append(v)
-            
+
             if len(cc) >= cluster_size:
                 break
-        
+
         all_ccs.append(cc)
         # print(cc)
     return all_ccs
 
 
 def evaluate_clustering(vectors, labels):
-    """Evaluate column clustering on input column vectors.
-    """
+    """Evaluate column clustering on input column vectors."""
     # top 20 matching columns
-    pairs = blocked_matmul(vectors, vectors,
-                           k=20,
-                           batch_size=4096)
+    pairs = blocked_matmul(vectors, vectors, k=20, batch_size=4096)
 
     # run column clustering algorithm
     ccs = connected_components(pairs)
@@ -201,6 +192,8 @@ def evaluate_clustering(vectors, labels):
         purity.append(cnt.most_common(1)[0][1] / len(cc))
     purity = np.mean(purity)
 
-    return {"num_clusters": len(ccs), 
-            "avg_cluster_size": np.mean([len(cc) for cc in ccs]),
-            "purity": purity}
+    return {
+        "num_clusters": len(ccs),
+        "avg_cluster_size": np.mean([len(cc) for cc in ccs]),
+        "purity": purity,
+    }

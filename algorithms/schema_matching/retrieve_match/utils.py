@@ -114,24 +114,28 @@ def default_converter(o):
 
 #     return first[:i]
 
+
 def common_prefix(strings, prefix_threshold=0.4, min_prefix_length=4):
     if not strings:
         return ""
-    
+
     # Sort the list, the common prefix of the whole list would be the common prefix of the first and last string
     strings.sort()
     first = strings[0]
     last = strings[-1]
-    
+
     # Find the length of the common prefix between the first and last strings
     i = 0
     while i < len(first) and i < len(last) and first[i] == last[i]:
         i += 1
     common_prefix_length = i
-    
+
     # Check if the common prefix appears in more than 40% of the strings
     prefix_count = sum(1 for s in strings if s.startswith(first[:common_prefix_length]))
-    if prefix_count / len(strings) >= prefix_threshold and common_prefix_length >= min_prefix_length:
+    if (
+        prefix_count / len(strings) >= prefix_threshold
+        and common_prefix_length >= min_prefix_length
+    ):
         return first[:common_prefix_length]
     else:
         return ""

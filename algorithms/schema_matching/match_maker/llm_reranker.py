@@ -168,8 +168,7 @@ Candidate Column:"
                     if match:
                         score = float(match.group())
                     else:
-                        print(
-                            "The string does not contain a valid two decimal float.")
+                        print("The string does not contain a valid two decimal float.")
                         return None
 
             schema_name = schema_part.strip()

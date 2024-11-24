@@ -32,11 +32,11 @@ def hash_dataframe(df: pd.DataFrame) -> str:
 
     hash_object = hashlib.sha256()
 
-    columns_string = ','.join(df.columns) + '\n'
+    columns_string = ",".join(df.columns) + "\n"
     hash_object.update(columns_string.encode())
 
     for row in df.itertuples(index=False, name=None):
-        row_string = ','.join(map(str, row)) + '\n'
+        row_string = ",".join(map(str, row)) + "\n"
         hash_object.update(row_string.encode())
 
     return hash_object.hexdigest()
@@ -115,16 +115,14 @@ class ContrastiveLearningAPI:
         for index, similarities in enumerate(cosine_sim):
             top_k_indices = np.argsort(similarities)[::-1][: self.top_k]
             top_k_column_names = [gt_column_ids[i] for i in top_k_indices]
-            top_k_similarities = [str(round(similarities[i], 4))
-                                  for i in top_k_indices]
+            top_k_similarities = [str(round(similarities[i], 4)) for i in top_k_indices]
             top_k_columns = list(zip(top_k_column_names, top_k_similarities))
             result = {
                 "Candidate column": l_column_ids[index],
                 "Top k columns": top_k_columns,
             }
             top_k_results.append(result)
-        recommendations = self._extract_recommendations_from_top_k(
-            top_k_results)
+        recommendations = self._extract_recommendations_from_top_k(top_k_results)
         return recommendations, top_k_results
 
     def _extract_recommendations_from_top_k(self, top_k_results):
@@ -176,8 +174,7 @@ class ContrastiveLearningAPI:
                         current = []
                         for token_id in xi:
                             if token_id == self.unlabeled.tokenizer.cls_token_id:
-                                current.append(
-                                    column_vectors[ptr].cpu().numpy())
+                                current.append(column_vectors[ptr].cpu().numpy())
                                 ptr += 1
                         results.append(current)
                 batch.clear()

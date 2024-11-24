@@ -1,4 +1,3 @@
-
 import argparse
 import json
 import torch
@@ -10,7 +9,8 @@ from tqdm import tqdm
 
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 project_path = os.getcwd()
 sys.path.append(os.path.join(project_path))
@@ -50,8 +50,8 @@ def train_model(
     for epoch in range(epochs):
         total_loss = 0
         # for batch in data_loader:
-        for batch in tqdm(data_loader, desc=f'Epoch {epoch+1}/{epochs}', unit='batch'):
-            
+        for batch in tqdm(data_loader, desc=f"Epoch {epoch+1}/{epochs}", unit="batch"):
+
             texts, labels = batch
             labels = torch.tensor(labels, dtype=torch.float, device=device)
 
@@ -70,14 +70,15 @@ def train_model(
         avg_loss = total_loss / len(data_loader)
         # validation_accuracy = evaluate_recall_at_ground_truth(model, data_loader, device)
         # validation_accuracy = evaluate_top_k(model, data_loader, device, k=1)
-        accuracy, recall_at_ground_truth = evaluate_metrics(
+        accuracy, recall_at_ground_truth, mrr = evaluate_metrics(
             model, data_loader, device, fixed_k=1
         )
         # print(f"Epoch {epoch+1}, Loss: {avg_loss}, Val Accuracy: {validation_accuracy}")
         print(
-            f"Epoch {epoch+1}, Loss: {avg_loss}, Val Accuracy: {accuracy}, Recall at Ground Truth: {recall_at_ground_truth}"
+            f"Epoch {epoch+1}, Loss: {avg_loss}, Val Accuracy: {accuracy}, Recall at Ground Truth: {recall_at_ground_truth}, MRR: {mrr}"
         )
-        validation_accuracy = (accuracy + recall_at_ground_truth) / 2
+        # validation_accuracy = (accuracy + recall_at_ground_truth) / 2
+        validation_accuracy = (recall_at_ground_truth + mrr) / 2
         # Save best model
         if validation_accuracy > best_accuracy:
             best_accuracy = validation_accuracy
@@ -93,7 +94,7 @@ def main():
     )
     parser.add_argument(
         "--dataset",
-        default="opendata",
+        default="gdc",
         help="Name of the dataset for model customization",
     )
     parser.add_argument(
@@ -112,8 +113,7 @@ def main():
             "- header_only,"
             "- header_values_simple,"
             "- header_values_verbose,"
-        )
-
+        ),
     )
     parser.add_argument(
         "--augmentation",
@@ -123,7 +123,7 @@ def main():
     parser.add_argument(
         "--epochs",
         type=int,
-        default=1,
+        default=150,
         help="Number of epochs for training",
     )
     parser.add_argument(
@@ -173,15 +173,12 @@ def main():
     # optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-5, weight_decay=0.5)
 
-    
     if not os.path.exists("models"):
         os.makedirs("models")
 
-
     loss_type = args.loss_type
     model_path = (
-        f"models/{args.model_type}-{args.dataset}-{args.serialization}-{
-            args.augmentation}-{str(args.batch_size)}-{str(args.margin)}.pth"
+        f"models/{args.model_type}-{args.dataset}-{args.serialization}-{args.augmentation}-{str(args.batch_size)}-{str(args.margin)}.pth"
         if loss_type == "triplet"
         else f"models/{args.model_type}-{args.dataset}-{args.serialization}-{args.augmentation}-simclr.pth"
     )

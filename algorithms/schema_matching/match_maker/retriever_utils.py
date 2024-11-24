@@ -94,6 +94,7 @@ def get_samples_2(values, n=15, random=False):
         tokens = most_frequent_values.index.tolist()
     return [str(token) for token in tokens]
 
+
 def infer_column_dtype(column, datetime_threshold=0.9):
     if column.isnull().all():
         return "unknown"

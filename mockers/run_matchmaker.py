@@ -9,18 +9,14 @@ sys.path.append(os.path.join(project_path))
 
 from algorithms.schema_matching.match_maker import MatchMaker
 
-def get_default_dataframes():
-    df1 = pd.DataFrame({
-        'id': [1, 2, 3],
-        'name': ['Alice', 'Bob', 'Charlie']
-    })
 
-    df2 = pd.DataFrame({
-        'id': [4, 5, 6],
-        'name': ['David', 'Eve', 'Frank']
-    })
+def get_default_dataframes():
+    df1 = pd.DataFrame({"id": [1, 2, 3], "name": ["Alice", "Bob", "Charlie"]})
+
+    df2 = pd.DataFrame({"id": [4, 5, 6], "name": ["David", "Eve", "Frank"]})
 
     return df1, df2
+
 
 def run_matchmaker(file1=None, file2=None):
 
@@ -37,16 +33,14 @@ def run_matchmaker(file1=None, file2=None):
         print("No files provided. Using default dataframes.")
         df1, df2 = get_default_dataframes()
 
-    
     matcher = MatchMaker()
-   
-   
+
     matches = valentine_match(df1, df2, matcher)
 
     print("Matches:")
     for m in matches:
         print(m, matches[m])
-   
+
 
 if __name__ == "__main__":
     csv1 = sys.argv[1] if len(sys.argv) > 1 else None

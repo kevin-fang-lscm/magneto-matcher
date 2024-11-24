@@ -21,17 +21,13 @@ class RetrieveMatch(BaseMatcher):
         )
         self.matcher = ColumnMatcher(llm_model=llm_model)
 
-
-
-
-    def match(self, source_table, target_table,  top_k, cand_k):
+    def match(self, source_table, target_table, top_k, cand_k):
         orig_source_table, orig_target_table = source_table, target_table
         source_table = source_table.get_df()
         target_table = target_table.get_df()
 
         # print(orig_source_table.name,
         #     orig_target_table.name)
-        
 
         start_time = time.time()
         source_values = {
@@ -64,9 +60,13 @@ class RetrieveMatch(BaseMatcher):
             orig_target_table.name,
         )
         return converted_matches, runtime, matched_columns
-    
-    def get_matches(self, source_table: BaseTable, target_table: BaseTable) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
-        converted_matches, runtime, matched_columns = self.match(source_table, target_table, 20, 20)
+
+    def get_matches(
+        self, source_table: BaseTable, target_table: BaseTable
+    ) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
+        converted_matches, runtime, matched_columns = self.match(
+            source_table, target_table, 20, 20
+        )
         return converted_matches
 
 
