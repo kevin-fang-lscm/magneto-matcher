@@ -9,6 +9,7 @@ class LLMReranker:
     def __init__(self, llm_model="gpt-4o-mini"):
         self.llm_model = llm_model
         self.client = self._load_client()
+        self.llm_attempts = 5
 
     # TODO: Add any additional models here
     def _load_client(self):
@@ -59,14 +60,32 @@ class LLMReranker:
                 [col for col in source_table.columns if col != source_col]
             )
             if score_based:
+                attempts = 0
                 while True:
+
+                    if attempts >= self.llm_attempts:
+                        print(
+                            f"Failed to parse response after {self.llm_attempts} attempts. Skipping."
+                        )
+                        refined_match = []
+                        for target_col, score in target_col_scores:
+                            refined_match.append((target_col, score))
+                        break
+
                     refined_match = self._get_matches_w_score(cand, targets, other_cols)
                     refined_match = self._parse_scored_matches(refined_match)
+                    attempts += 1
+                    
                     if refined_match is not None:
                         break
+                    
+
+
             else:
                 refined_match = self._get_matches(cand, targets)
                 refined_match = refined_match.split("; ")
+
+            # print(f"Refined matches for {source_col}: {refined_match}")
             refined_matches[source_col] = refined_match
         return refined_matches
 

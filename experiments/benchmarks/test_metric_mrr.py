@@ -22,7 +22,7 @@ def test_mean_reciprocal_rank():
         ("Cited by", "Cited by"),
     ]
 
-    mrr = compute_mean_ranking_reciprocal(matches, ground_truth)
+    mrr = compute_mean_ranking_reciprocal_adjusted(matches, ground_truth)
     assert mrr == 1.0
 
     # Case 2 - Correct match at position 3
@@ -43,7 +43,7 @@ def test_mean_reciprocal_rank():
         ("Cited by", "Cited by"),
     ]
 
-    mrr = compute_mean_ranking_reciprocal(matches, ground_truth)
+    mrr = compute_mean_ranking_reciprocal_adjusted(matches, ground_truth)
     assert mrr == 1 / 3
 
     # Case 3 - Multiple source columns at position 1
@@ -70,7 +70,7 @@ def test_mean_reciprocal_rank():
         ("name", "firstName"),
     ]
 
-    mrr = compute_mean_ranking_reciprocal(matches, ground_truth)
+    mrr = compute_mean_ranking_reciprocal_adjusted(matches, ground_truth)
     assert mrr == 1.0
 
     # Case 4 - Multiple source columns at different positions
@@ -97,7 +97,7 @@ def test_mean_reciprocal_rank():
         ("name", "firstName"),
     ]
 
-    mrr = compute_mean_ranking_reciprocal(matches, ground_truth)
+    mrr = compute_mean_ranking_reciprocal_adjusted(matches, ground_truth)
     assert mrr == 1.0 / 2.0 * (1.0 + 1.0 / 3.0)
 
     # Case 5 - Multiple correct matches, at positions 1 and 2
@@ -115,7 +115,7 @@ def test_mean_reciprocal_rank():
         ("Cited by", "Authors"),
     ]
 
-    mrr = compute_mean_ranking_reciprocal(matches, ground_truth)
+    mrr = compute_mean_ranking_reciprocal_adjusted(matches, ground_truth)
     assert mrr == 1.0
 
     # Case 5 - Multiple correct matches, at positions 2 and 3
@@ -133,7 +133,7 @@ def test_mean_reciprocal_rank():
         ("Cited by", "Authors"),
     ]
 
-    mrr = compute_mean_ranking_reciprocal(matches, ground_truth)
+    mrr = compute_mean_ranking_reciprocal_adjusted(matches, ground_truth)
     assert mrr == 1.0 / 2.0
 
     # Case 6 - Edge-case with multiple source columns and multiple correct matches
@@ -164,7 +164,7 @@ def test_mean_reciprocal_rank():
         ("name", "DUMMY1"),
     ]
 
-    mrr = compute_mean_ranking_reciprocal(matches, ground_truth)
+    mrr = compute_mean_ranking_reciprocal_adjusted(matches, ground_truth)
     assert mrr == 1.0 / 2.0 * (1 / 1 + 1 / 3)
 
     # Case 7 - Multiple correct matches at position 2 and 3
@@ -191,7 +191,7 @@ def test_mean_reciprocal_rank():
         # no ground truth for name -> firstName
     ]
 
-    mrr = compute_mean_ranking_reciprocal(matches, ground_truth)
+    mrr = compute_mean_ranking_reciprocal_adjusted(matches, ground_truth)
     assert mrr == 1.0  # we ignore the sourcce column name since it has no ground truth
 
     # Case 8 - Correct match is not found
@@ -208,5 +208,5 @@ def test_mean_reciprocal_rank():
         ("Cited by", "Cited by"),
     ]
 
-    mrr = compute_mean_ranking_reciprocal(matches, ground_truth)
+    mrr = compute_mean_ranking_reciprocal_adjusted(matches, ground_truth)
     assert mrr == 0.0

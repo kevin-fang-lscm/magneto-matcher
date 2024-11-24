@@ -19,44 +19,41 @@ class EmbeddingMatcher:
         self.embedding_threshold = params["embedding_threshold"]
 
         # Dynamically set device to GPU if available, else fallback to CPU
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu")
 
         self.model_name = params["embedding_model"]
 
         if self.model_name in DEFAULT_MODELS:
             self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
             # Load the model onto the selected device
-            self.model = AutoModel.from_pretrained(self.model_name).to(self.device)
+            self.model = AutoModel.from_pretrained(
+                self.model_name).to(self.device)
             print(f"Loaded ZeroShot Model on {self.device}")
         else:
-            # Base model for SentenceTransformer
+            # Base model
             base_model = "sentence-transformers/all-mpnet-base-v2"
             self.model = SentenceTransformer(base_model)
             self.tokenizer = AutoTokenizer.from_pretrained(base_model)
 
-            # Print the device where the model will be loaded
             print(f"Loaded SentenceTransformer Model on {self.device}")
 
-            # Load the trained model's state_dict if provided
             # path to the trained model weights
             model_path = params["embedding_model"]
             if os.path.exists(model_path):
                 print(f"Loading trained model from {model_path}")
                 # Load state dict for the SentenceTransformer model
-
                 state_dict = torch.load(
                     model_path, map_location=self.device, weights_only=True
                 )
-
                 # Assuming the state_dict contains the proper model weights and is compatible with SentenceTransformer
                 self.model.load_state_dict(state_dict)
-                # Ensure the model is moved to the correct device
                 self.model.eval()
                 self.model.to(self.device)
-
             else:
                 print(
-                    f"Trained model not found at {model_path}, loading default model."
+                    f"Trained model not found at {
+                        model_path}, loading default model."
                 )
 
     def _get_embeddings(self, texts, batch_size=32):
@@ -68,7 +65,7 @@ class EmbeddingMatcher:
     def _get_embeddings_zs(self, texts, batch_size=32):
         embeddings = []
         for i in range(0, len(texts), batch_size):
-            batch_texts = texts[i : i + batch_size]
+            batch_texts = texts[i: i + batch_size]
             inputs = self.tokenizer(
                 batch_texts,
                 padding=True,
@@ -84,7 +81,7 @@ class EmbeddingMatcher:
     def _get_embeddings_ft(self, texts, batch_size=32):
         embeddings = []
         for i in range(0, len(texts), batch_size):
-            batch_texts = texts[i : i + batch_size]
+            batch_texts = texts[i: i + batch_size]
             with torch.no_grad():
                 batch_embeddings = self.model.encode(
                     batch_texts, show_progress_bar=False, device=self.device
@@ -129,6 +126,7 @@ class EmbeddingMatcher:
                 similarity = topk_similarity[i, j].item()
 
                 if similarity >= self.embedding_threshold:
-                    candidates[(original_input_col, original_target_col)] = similarity
+                    candidates[(original_input_col,
+                                original_target_col)] = similarity
 
         return candidates
