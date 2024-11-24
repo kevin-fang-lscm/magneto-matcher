@@ -2,6 +2,7 @@ from openai import OpenAI
 import tiktoken
 import re
 import ollama
+
 # from config import API_KEY, OLLAMA_HOST
 import os
 from dotenv import load_dotenv
@@ -16,7 +17,7 @@ class ColumnMatcher:
     def _load_client(self):
         if self.llm_model in ["gpt-4-turbo-preview", "gpt-4o-mini"]:
             print("Loading OpenAI client")
-            load_dotenv(os.path.expanduser('~/config.env'))
+            load_dotenv(os.path.expanduser("~/config.env"))
             return OpenAI(api_key=os.getenv("API_KEY"))
         # elif self.llm_model in ["gemma2:9b"]:
         #     print("Loading OLLAMA client")

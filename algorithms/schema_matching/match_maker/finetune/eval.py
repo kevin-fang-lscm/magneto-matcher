@@ -1,5 +1,6 @@
 import torch
 
+
 def evaluate_top_k(model, validation_loader, device, k=1):
     model.eval()
     all_embeddings = []
@@ -92,6 +93,7 @@ def evaluate_metrics(model, validation_loader, device, fixed_k=1):
     total_matches_fixed_k = 0
     correct_matches_recall = 0
     total_matches_recall = 0
+    mrr_total = 0
 
     for i in range(len(all_labels)):
         similarity = similarity_matrix[i]
@@ -113,6 +115,18 @@ def evaluate_metrics(model, validation_loader, device, fixed_k=1):
         ).item()
         total_matches_recall += ground_truth_k
 
+        # Mean Reciprocal Rank (MRR) evaluation
+        correct_indices = (all_labels == true_label).nonzero(as_tuple=False).squeeze()
+        ranks = torch.argsort(similarity, descending=True)
+        reciprocal_rank = 0
+        for idx in correct_indices:
+            if idx == i:
+                continue
+            rank = (ranks == idx).nonzero(as_tuple=True)[0].item() + 1
+            reciprocal_rank = 1 / rank
+            break
+        mrr_total += reciprocal_rank
+
     accuracy = (
         correct_matches_fixed_k / total_matches_fixed_k
         if total_matches_fixed_k > 0
@@ -121,5 +135,6 @@ def evaluate_metrics(model, validation_loader, device, fixed_k=1):
     recall_at_ground_truth = (
         correct_matches_recall / total_matches_recall if total_matches_recall > 0 else 0
     )
+    mean_reciprocal_rank = mrr_total / len(all_labels) if len(all_labels) > 0 else 0
 
-    return accuracy, recall_at_ground_truth
+    return accuracy, recall_at_ground_truth, mean_reciprocal_rank

@@ -11,9 +11,11 @@ from augment import augment
 from preprocessor import computeTfIdf, tfidfRowSample, preprocess
 
 # map lm name to huggingface's pre-trained model names
-lm_mp = {'roberta': 'roberta-base',
-         'bert': 'bert-base-uncased',
-         'distilbert': 'distilbert-base-uncased'}
+lm_mp = {
+    "roberta": "roberta-base",
+    "bert": "bert-base-uncased",
+    "distilbert": "distilbert-base-uncased",
+}
 
 # class TableDataset(data.Dataset):
 #     """Table dataset"""
@@ -120,29 +122,31 @@ lm_mp = {'roberta': 'roberta-base',
 class PretrainTableDataset(data.Dataset):
     """Table dataset for pre-training"""
 
-    def __init__(self,
-                 path,
-                 augment_op,
-                 max_len=256,
-                 size=None,
-                 lm='roberta',
-                 single_column=False,
-                 sample_meth='wordProb',
-                 table_order='column',
-                 gpt=False):
+    def __init__(
+        self,
+        path,
+        augment_op,
+        max_len=256,
+        size=None,
+        lm="roberta",
+        single_column=False,
+        sample_meth="wordProb",
+        table_order="column",
+        gpt=False,
+    ):
         self.tokenizer = AutoTokenizer.from_pretrained(lm_mp[lm])
         self.max_len = max_len
         self.path = path
         self.gpt = gpt
-        
+
         # ----------------------------- Only one training table for ARPA ---------------------------------
-        if path == 'data/tables':
+        if path == "data/tables":
             self.tables = []
-            table = pd.read_csv(os.path.join(path, 'gdc_table.csv'))
+            table = pd.read_csv(os.path.join(path, "gdc_table.csv"))
             for col in table.columns:
                 self.tables.append(pd.DataFrame(table[col]))
         else:
-            self.tables = [fn for fn in os.listdir(path) if '.csv' in fn]
+            self.tables = [fn for fn in os.listdir(path) if ".csv" in fn]
 
         # only keep the first n tables
         if size is not None:
@@ -179,16 +183,17 @@ class PretrainTableDataset(data.Dataset):
         Returns:
             PretrainTableDataset: the constructed dataset
         """
-        return PretrainTableDataset(path,
-                         augment_op=hp.augment_op,
-                         lm=hp.lm,
-                         max_len=hp.max_len,
-                         size=hp.size,
-                         single_column=hp.single_column,
-                         sample_meth=hp.sample_meth,
-                         table_order=hp.table_order,
-                         gpt=hp.gpt)
-
+        return PretrainTableDataset(
+            path,
+            augment_op=hp.augment_op,
+            lm=hp.lm,
+            max_len=hp.max_len,
+            size=hp.size,
+            single_column=hp.single_column,
+            sample_meth=hp.sample_meth,
+            table_order=hp.table_order,
+            gpt=hp.gpt,
+        )
 
     def _read_table(self, table_id):
         """Read a table"""
@@ -196,11 +201,10 @@ class PretrainTableDataset(data.Dataset):
             table = self.table_cache[table_id]
         else:
             fn = os.path.join(self.path, self.tables[table_id])
-            table = pd.read_csv(fn, lineterminator='\n')
+            table = pd.read_csv(fn, lineterminator="\n")
             self.table_cache[table_id] = table
 
         return table
-
 
     def _tokenize(self, table: pd.DataFrame) -> List[int]:
         """Tokenize a DataFrame table
@@ -215,58 +219,85 @@ class PretrainTableDataset(data.Dataset):
         res = []
         max_tokens = self.max_len * 2
         budget = max(1, self.max_len - 1)
-        tfidfDict = computeTfIdf(table) if "tfidf" in self.sample_meth else None # from preprocessor.py
+        tfidfDict = (
+            computeTfIdf(table) if "tfidf" in self.sample_meth else None
+        )  # from preprocessor.py
 
         # a map from column names to special token indices
         column_mp = {}
 
         if self.gpt:
             for column in table.columns:
-                tokens = preprocess(table[column], tfidfDict, max_tokens, self.sample_meth)  # from preprocessor.py
-                col_text = self.tokenizer.cls_token + column +  self.tokenizer.sep_token  + \
-                        self.tokenizer.sep_token.join(tokens[:max_tokens])
+                tokens = preprocess(
+                    table[column], tfidfDict, max_tokens, self.sample_meth
+                )  # from preprocessor.py
+                col_text = (
+                    self.tokenizer.cls_token
+                    + column
+                    + self.tokenizer.sep_token
+                    + self.tokenizer.sep_token.join(tokens[:max_tokens])
+                )
                 # col_text = self.tokenizer.cls_token + " " + column +  self.tokenizer.sep_token  + \
-                        # self.tokenizer.sep_token.join(tokens[:max_tokens]) + " "
+                # self.tokenizer.sep_token.join(tokens[:max_tokens]) + " "
                 # print(col_text)
                 # exit()
                 column_mp[column] = len(res)
-                res += self.tokenizer.encode(text=col_text,
-                                            max_length=budget,
-                                            add_special_tokens=False,
-                                            truncation=True)
+                res += self.tokenizer.encode(
+                    text=col_text,
+                    max_length=budget,
+                    add_special_tokens=False,
+                    truncation=True,
+                )
 
         # column-ordered preprocessing
-        elif self.table_order == 'column':
-            if 'row' in self.sample_meth: 
+        elif self.table_order == "column":
+            if "row" in self.sample_meth:
                 table = tfidfRowSample(table, tfidfDict, max_tokens)
             for column in table.columns:
-                tokens = preprocess(table[column], tfidfDict, max_tokens, self.sample_meth) # from preprocessor.py
-                col_text = self.tokenizer.cls_token + " " + \
-                        ' '.join(tokens[:max_tokens]) + " "
+                tokens = preprocess(
+                    table[column], tfidfDict, max_tokens, self.sample_meth
+                )  # from preprocessor.py
+                col_text = (
+                    self.tokenizer.cls_token + " " + " ".join(tokens[:max_tokens]) + " "
+                )
                 column_mp[column] = len(res)
-                res += self.tokenizer.encode(text=col_text,
-                                        max_length=budget,
-                                        add_special_tokens=False,
-                                        truncation=True)
+                res += self.tokenizer.encode(
+                    text=col_text,
+                    max_length=budget,
+                    add_special_tokens=False,
+                    truncation=True,
+                )
         else:
             # row-ordered preprocessing
             reached_max_len = False
             for rid in range(len(table)):
-                row = table.iloc[rid:rid+1]
+                row = table.iloc[rid : rid + 1]
                 for column in table.columns:
-                    tokens = preprocess(row[column], tfidfDict, max_tokens, self.sample_meth) # from preprocessor.py
+                    tokens = preprocess(
+                        row[column], tfidfDict, max_tokens, self.sample_meth
+                    )  # from preprocessor.py
                     if rid == 0:
                         column_mp[column] = len(res)
-                        col_text = self.tokenizer.cls_token + " " + \
-                                ' '.join(tokens[:max_tokens]) + " "
+                        col_text = (
+                            self.tokenizer.cls_token
+                            + " "
+                            + " ".join(tokens[:max_tokens])
+                            + " "
+                        )
                     else:
-                        col_text = self.tokenizer.pad_token + " " + \
-                                ' '.join(tokens[:max_tokens]) + " "
+                        col_text = (
+                            self.tokenizer.pad_token
+                            + " "
+                            + " ".join(tokens[:max_tokens])
+                            + " "
+                        )
 
-                    tokenized = self.tokenizer.encode(text=col_text,
-                                        max_length=budget,
-                                        add_special_tokens=False,
-                                        truncation=True)
+                    tokenized = self.tokenizer.encode(
+                        text=col_text,
+                        max_length=budget,
+                        add_special_tokens=False,
+                        truncation=True,
+                    )
 
                     if len(tokenized) + len(res) <= self.max_len:
                         res += tokenized
@@ -282,7 +313,6 @@ class PretrainTableDataset(data.Dataset):
             print(self.tokenizer.decode(res))
 
         return res, column_mp
-
 
     def __len__(self):
         """Return the size of the dataset."""
@@ -304,10 +334,10 @@ class PretrainTableDataset(data.Dataset):
             table_ori = self.tables[idx]
             col = random.choice(table_ori.columns)
             table_ori = table_ori[[col]]
-            train_map = pd.read_csv('data/train.csv')
-            gdc_table_synthetic = pd.read_csv('data/tables/gdc_table_synthetic.csv')
-            row = train_map[train_map['l_column_id'] == col]
-            table_aug = gdc_table_synthetic[row['r_column_id']]
+            train_map = pd.read_csv("data/train.csv")
+            gdc_table_synthetic = pd.read_csv("data/tables/gdc_table_synthetic.csv")
+            row = train_map[train_map["l_column_id"] == col]
+            table_aug = gdc_table_synthetic[row["r_column_id"]]
             table_aug = table_aug.sample(frac=1)
         # --------------------------------------------------------------
         else:
@@ -319,21 +349,21 @@ class PretrainTableDataset(data.Dataset):
                 table_ori = table_ori[[col]]
 
             # apply the augmentation operator
-            if ',' in self.augment_op:
-                op1, op2 = self.augment_op.split(',')
+            if "," in self.augment_op:
+                op1, op2 = self.augment_op.split(",")
                 table_tmp = table_ori
                 table_ori = augment(table_tmp, op1)
                 table_aug = augment(table_tmp, op2)
             else:
                 table_aug = augment(table_ori, self.augment_op)
-                
+
         # print("table_ori: ", table_ori)
         # print("table_aug: ", table_aug)
 
         # convert table into string
         x_ori, mp_ori = self._tokenize(table_ori)
         x_aug, mp_aug = self._tokenize(table_aug)
-        
+
         # print("x_ori: ", x_ori)
         # print("x_aug: ", x_aug)
         # print("mp_ori: ", mp_ori)
@@ -343,7 +373,7 @@ class PretrainTableDataset(data.Dataset):
         # x_ori_cnt = sum([int(x == self.tokenizer.cls_token_id) for x in x_ori])
         # x_aug_cnt = sum([int(x == self.tokenizer.cls_token_id) for x in x_aug])
         # assert x_ori_cnt == x_aug_cnt
-        
+
         # insertsect the two mappings
         cls_indices = []
         for col in mp_ori:
@@ -352,9 +382,8 @@ class PretrainTableDataset(data.Dataset):
         # TODO: debug
         if self.gpt:
             cls_indices = [(0, 0)]
-        
-        return x_ori, x_aug, cls_indices
 
+        return x_ori, x_aug, cls_indices
 
     def pad(self, batch):
         """Merge a list of dataset items into a training batch
@@ -371,8 +400,12 @@ class PretrainTableDataset(data.Dataset):
         max_len_ori = max([len(x) for x in x_ori])
         max_len_aug = max([len(x) for x in x_aug])
         maxlen = max(max_len_ori, max_len_aug)
-        x_ori_new = [xi + [self.tokenizer.pad_token_id]*(maxlen - len(xi)) for xi in x_ori]
-        x_aug_new = [xi + [self.tokenizer.pad_token_id]*(maxlen - len(xi)) for xi in x_aug]
+        x_ori_new = [
+            xi + [self.tokenizer.pad_token_id] * (maxlen - len(xi)) for xi in x_ori
+        ]
+        x_aug_new = [
+            xi + [self.tokenizer.pad_token_id] * (maxlen - len(xi)) for xi in x_aug
+        ]
 
         # decompose the column alignment
         cls_ori = []
@@ -385,4 +418,8 @@ class PretrainTableDataset(data.Dataset):
                 cls_ori[-1].append(idx1)
                 cls_aug[-1].append(idx2)
 
-        return torch.LongTensor(x_ori_new), torch.LongTensor(x_aug_new), (cls_ori, cls_aug)
+        return (
+            torch.LongTensor(x_ori_new),
+            torch.LongTensor(x_aug_new),
+            (cls_ori, cls_aug),
+        )

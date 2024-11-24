@@ -1,4 +1,3 @@
-
 import argparse
 import json
 import torch
@@ -10,7 +9,8 @@ from tqdm import tqdm
 
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 project_path = os.getcwd()
 sys.path.append(os.path.join(project_path))
@@ -50,8 +50,8 @@ def train_model(
     for epoch in range(epochs):
         total_loss = 0
         # for batch in data_loader:
-        for batch in tqdm(data_loader, desc=f'Epoch {epoch+1}/{epochs}', unit='batch'):
-            
+        for batch in tqdm(data_loader, desc=f"Epoch {epoch+1}/{epochs}", unit="batch"):
+
             texts, labels = batch
             labels = torch.tensor(labels, dtype=torch.float, device=device)
 
@@ -112,8 +112,7 @@ def main():
             "- header_only,"
             "- header_values_simple,"
             "- header_values_verbose,"
-        )
-
+        ),
     )
     parser.add_argument(
         "--augmentation",
@@ -176,12 +175,10 @@ def main():
         for i in d:
             for x in i:
                 print(x)
-            print('\n')
-            
+            print("\n")
 
         break
 
-   
 
 if __name__ == "__main__":
     main()

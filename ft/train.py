@@ -7,11 +7,13 @@ from sentence_transformers import SentenceTransformer, losses
 
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 from ft.dataset import CustomDataset
 from ft.eval import evaluate_metrics
 from ft.train_utils import SimCLRLoss, BalancedBatchSampler, sentence_transformer_map
+
 
 def train_model(
     model,

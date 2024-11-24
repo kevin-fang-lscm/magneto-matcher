@@ -34,7 +34,9 @@ class Retriever:
         self._model = SentenceTransformer("sentence-transformers/all-mpnet-base-v2")
 
         # Correctly load the model state dict to the CPU
-        state_dict = torch.load(model_path, map_location=torch.device('cpu'), weights_only=True)
+        state_dict = torch.load(
+            model_path, map_location=torch.device("cpu"), weights_only=True
+        )
 
         # Load the state_dict into the model
         self._model.load_state_dict(state_dict)
@@ -56,8 +58,7 @@ class Retriever:
         }
 
     def encode_columns(self, table, values):
-        texts = [self._tokenize(col, table[col], values[col])
-                 for col in table.columns]
+        texts = [self._tokenize(col, table[col], values[col]) for col in table.columns]
         # if "zs" in self.model_type:
         #     batched_embeddings = {}
         #     for i in range(0, len(texts), self.batch_size):
@@ -100,10 +101,8 @@ class Retriever:
         #         source_table, target_table, source_values, target_values, top_k
         #     )
         # else:
-        source_embeddings = self.encode_columns(
-            source_table, source_values)
-        target_embeddings = self.encode_columns(
-            target_table, target_values)
+        source_embeddings = self.encode_columns(source_table, source_values)
+        target_embeddings = self.encode_columns(target_table, target_values)
         return self._match_columns(source_embeddings, target_embeddings, top_k)
 
     def _match_columns(self, source_embeddings, target_embeddings, top_k):
@@ -159,8 +158,7 @@ class Retriever:
     ):
         queries = []
         for col in source_table.columns:
-            queries.append(self._tokenize(
-                col, source_table[col], source_values[col]))
+            queries.append(self._tokenize(col, source_table[col], source_values[col]))
         queries_with_prefix = [f"{QUERY_PREFIX}{q}" for q in queries]
         query_tokens = self._tokenizer(
             queries_with_prefix,
@@ -172,8 +170,7 @@ class Retriever:
 
         documents = []
         for col in target_table.columns:
-            documents.append(self._tokenize(
-                col, target_table[col], target_values[col]))
+            documents.append(self._tokenize(col, target_table[col], target_values[col]))
         document_tokens = self._tokenizer(
             documents,
             padding=True,
@@ -194,8 +191,7 @@ class Retriever:
 
         for col, query_scores in zip(source_table.columns, scores):
             doc_score_pairs = list(zip(target_table.columns, query_scores))
-            doc_score_pairs = [(doc, score.item())
-                               for doc, score in doc_score_pairs]
+            doc_score_pairs = [(doc, score.item()) for doc, score in doc_score_pairs]
             doc_score_pairs_sorted = sorted(
                 doc_score_pairs, key=lambda x: x[1], reverse=True
             )[:top_k]

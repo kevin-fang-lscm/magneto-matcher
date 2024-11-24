@@ -6,7 +6,13 @@ import json
 
 from .retriever import ColumnRetriever
 from .matcher import ColumnMatcher
-from .utils import get_dataset_paths, process_tables, get_samples, default_converter, common_prefix
+from .utils import (
+    get_dataset_paths,
+    process_tables,
+    get_samples,
+    default_converter,
+    common_prefix,
+)
 from .evaluation import evaluate_matches, convert_to_valentine_format
 
 from valentine.algorithms.base_matcher import BaseMatcher
@@ -21,7 +27,15 @@ THRESHOLD = 0.95
 
 
 class RetrieveMatchSimpler(BaseMatcher):
-    def __init__(self, model_type, dataset, serialization, llm_model, filter=False, include_basic_matches=False):
+    def __init__(
+        self,
+        model_type,
+        dataset,
+        serialization,
+        llm_model,
+        filter=False,
+        include_basic_matches=False,
+    ):
         self.retriever = ColumnRetriever(
             model_type=model_type, dataset=dataset, serialization=serialization
         )
@@ -63,27 +77,34 @@ class RetrieveMatchSimpler(BaseMatcher):
 
         filtered_matches = {}
 
-        source_idx_to_col = {idx: col for col,
-                             idx in source_col_to_num.items()}
-        target_idx_to_col = {idx: col for col,
-                             idx in target_col_to_num.items()}
+        source_idx_to_col = {idx: col for col, idx in source_col_to_num.items()}
+        target_idx_to_col = {idx: col for col, idx in target_col_to_num.items()}
 
         for source_idx, target_idx in assignment:
             source_col = source_idx_to_col[source_idx]
             target_col = target_idx_to_col[target_idx]
-            filtered_matches[((source_table.name, source_col), (target_table.name,
-                              target_col))] = score_matrix[source_idx, target_idx]
+            filtered_matches[
+                ((source_table.name, source_col), (target_table.name, target_col))
+            ] = score_matrix[source_idx, target_idx]
 
         # print("Filtered Matches:", filtered_matches)
         return filtered_matches
 
     def stability_score(self, initial_matches, filtered_matches):
 
-        filtered_matches_sorted = {key: score for key, score in sorted(
-            filtered_matches.items(), key=lambda item: item[1], reverse=True)}
+        filtered_matches_sorted = {
+            key: score
+            for key, score in sorted(
+                filtered_matches.items(), key=lambda item: item[1], reverse=True
+            )
+        }
         filtered_matches_list = list(filtered_matches_sorted.keys())
-        initial_scores_sorted = {key: score for key, score in sorted(
-            initial_matches.items(), key=lambda item: item[1], reverse=True)}
+        initial_scores_sorted = {
+            key: score
+            for key, score in sorted(
+                initial_matches.items(), key=lambda item: item[1], reverse=True
+            )
+        }
         initial_scores_list = list(initial_scores_sorted.keys())
 
         # for match in initial_scores_list:
@@ -98,9 +119,9 @@ class RetrieveMatchSimpler(BaseMatcher):
             if key in initial_scores_list:
                 initial_rank = initial_scores_list.index(key)
                 filtered_rank = idx
-                rank_intersection = 1 - \
-                    abs(initial_rank - filtered_rank) / \
-                    len(initial_scores_list)
+                rank_intersection = 1 - abs(initial_rank - filtered_rank) / len(
+                    initial_scores_list
+                )
                 stability_score += rank_intersection
 
         stability_score = stability_score / len(filtered_matches_list)
@@ -113,14 +134,12 @@ class RetrieveMatchSimpler(BaseMatcher):
 
         def normalize_text(text):
             # Convert to lowercase and remove punctuation
-            translator = str.maketrans('', '', string.punctuation)
+            translator = str.maketrans("", "", string.punctuation)
             return text.lower().translate(translator).strip()
 
         #  Normalize column names
-        normalized_source_cols = {normalize_text(
-            col): col for col in source_cols}
-        normalized_target_cols = {normalize_text(
-            col): col for col in target_cols}
+        normalized_source_cols = {normalize_text(col): col for col in source_cols}
+        normalized_target_cols = {normalize_text(col): col for col in target_cols}
 
         for source_col in normalized_source_cols.keys():
             for target_col in normalized_target_cols.keys():
@@ -133,27 +152,32 @@ class RetrieveMatchSimpler(BaseMatcher):
                     if original_source_col in matched_columns:
                         # Filter out the target_col if it already exists with a different score
                         matched_columns[original_source_col] = [
-                            (tgt, sim) for tgt, sim in matched_columns[original_source_col]
+                            (tgt, sim)
+                            for tgt, sim in matched_columns[original_source_col]
                             if tgt != original_target_col
                         ]
                         # Add the exact match at the top of the list
                         matched_columns[original_source_col].insert(
-                            0, (original_target_col, 1.0))
+                            0, (original_target_col, 1.0)
+                        )
                     else:
                         # If the source_col is not in matched_columns, add it with the exact match
                         matched_columns[original_source_col].insert(
-                            0, (original_target_col, 1.0))
+                            0, (original_target_col, 1.0)
+                        )
 
                     # Remove target_col from all other entries in matched_columns
                     for other_source, matches in matched_columns.items():
                         if other_source != original_source_col:
                             matched_columns[other_source] = [
-                                (tgt, sim) for tgt, sim in matches if tgt != original_target_col
+                                (tgt, sim)
+                                for tgt, sim in matches
+                                if tgt != original_target_col
                             ]
 
         return matched_columns
 
-    def match(self, source_table, target_table,  top_k, cand_k):
+    def match(self, source_table, target_table, top_k, cand_k):
         orig_source_table, orig_target_table = source_table, target_table
         source_table = source_table.get_df()
         target_table = target_table.get_df()
@@ -200,7 +224,8 @@ class RetrieveMatchSimpler(BaseMatcher):
 
         if self.include_basic_matches:
             self.update_for_basic_matches(
-                matched_columns, orig_source_table, orig_target_table)
+                matched_columns, orig_source_table, orig_target_table
+            )
 
         # print("Matched Columns:", matched_columns)
 
@@ -212,7 +237,8 @@ class RetrieveMatchSimpler(BaseMatcher):
             )
 
             filtered_matches = self.bipartite_filtering(
-                matched_columns, orig_source_table, orig_target_table)
+                matched_columns, orig_source_table, orig_target_table
+            )
 
             # Compute confidence scores for the filtered matches
             # confidence_score = np.mean(list(filtered_matches.values()))
@@ -233,8 +259,11 @@ class RetrieveMatchSimpler(BaseMatcher):
 
             # Step 3: Calculate the scaling factor to keep scores in initial_matches just below min_filtered_score
             initial_max_score = max(matched_columns.values())
-            scaling_factor = (min_filtered_score - 0.01) / \
-                initial_max_score if initial_max_score > 0 else 1
+            scaling_factor = (
+                (min_filtered_score - 0.01) / initial_max_score
+                if initial_max_score > 0
+                else 1
+            )
 
             # Adjust scores in initial_matches, maintaining relative differences
             adjusted_initial_matches = {
@@ -257,7 +286,10 @@ class RetrieveMatchSimpler(BaseMatcher):
 
         return matched_columns, runtime, matched_columns
 
-    def get_matches(self, source_table: BaseTable, target_table: BaseTable) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
+    def get_matches(
+        self, source_table: BaseTable, target_table: BaseTable
+    ) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
         converted_matches, runtime, matched_columns = self.match(
-            source_table, target_table, 20, 20)
+            source_table, target_table, 20, 20
+        )
         return converted_matches
