@@ -36,7 +36,7 @@ def get_matcher(method):
         model_path = os.path.join(
             project_path,
             "models",
-            "mpnet-gdc-header_values_repeat-exact_semantic-64-0.5.pth",
+            "mpnet-gdc-header_values_verbose-exact_semantic-64-0.5.pth",
         )
         # return mm.MatchMaker(embedding_model=model_path, include_strsim_matches=False, include_embedding_matches=True, include_equal_matches=False, use_bp_reranker=False, use_gpt_reranker=False)
         return mm.MatchMaker(embedding_model=model_path)
@@ -46,7 +46,7 @@ def get_matcher(method):
         model_path = os.path.join(
             project_path,
             "models",
-            "mpnet-gdc-header_values_default-exact_semantic-64-0.5.pth",
+            "mpnet-gdc-header_values_verbose-exact_semantic-64-0.5.pth",
         )
         # return mm.MatchMaker(embedding_model=model_path, include_strsim_matches=False, include_embedding_matches=True, include_equal_matches=False, use_bp_reranker=False, use_gpt_reranker=False)
         return mm.MatchMaker(
@@ -123,8 +123,8 @@ def run_benchmark(BENCHMARK="gdc_studies", DATASET="gdc_studies", ROOT="data/gdc
 
             print(ground_truth)
 
-            # matchers = [ "ComaInst", "MatchMaker","MatchMakerFT",  "MatchMakerFTGPT",  "MatchMakerGPT"]
-            matchers = ["MatchMaker"]
+            matchers = [ "ComaInst", "MatchMaker","MatchMakerFT",  "MatchMakerFTGPT",  "MatchMakerGPT"]
+            # matchers = ["ComaInst"]
 
             for matcher in matchers:
                 print(

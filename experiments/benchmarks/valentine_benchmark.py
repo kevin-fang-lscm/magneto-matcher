@@ -292,7 +292,7 @@ def run_valentine_benchmark_three_levels(
             table_count += 1
 
             # matchers = ["MatchMaker"]
-            matchers = []
+            matchers = ["ComaInst"]
 
             for matcher in matchers:
                 print("Running matcher: ", matcher)
@@ -378,9 +378,9 @@ if __name__ == "__main__":
     run_valentine_benchmark_three_levels()
 
     # ChEMBLc
-    DATASET = "ChEMBL"
-    ROOT = "data/valentine/ChEMBL/"
-    run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)
+    # DATASET = "ChEMBL"
+    # ROOT = "data/valentine/ChEMBL/"
+    # run_valentine_benchmark_three_levels(BENCHMARK, DATASET, ROOT)
 
     # TPC-DI
     # DATASET='TPC-DI'
