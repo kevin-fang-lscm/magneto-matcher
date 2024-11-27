@@ -27,10 +27,10 @@ class MatchMaker(BaseMatcher):
     ## for ablation experiments, make sure to have the default set correcly
     DEFAULT_PARAMS = {
         "embedding_model": "sentence-transformers/all-mpnet-base-v2",
-        "encoding_mode": "header_values_verbose",
-        "sampling_mode": "weighted",
+        "encoding_mode": "header_values_repeat",
+        "sampling_mode": "priority_sampling",
         "sampling_size": 10,
-        "topk": 20,
+        "topk": 10,
         "include_strsim_matches": False,
         "include_embedding_matches": True,
         "embedding_threshold": 0.1,

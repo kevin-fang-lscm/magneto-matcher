@@ -367,7 +367,7 @@ if __name__ == "__main__":
     BENCHMARK = "valentine"
 
     # WIKIDATA musicians
-    # run_valentine_benchmark_one_level()
+    run_valentine_benchmark_one_level()
 
     # Magellan
     # DATASET='Magellan'
@@ -375,7 +375,7 @@ if __name__ == "__main__":
     # run_valentine_benchmark_one_level(BENCHMARK, DATASET, ROOT)
 
     # OpenData
-    run_valentine_benchmark_three_levels()
+    # run_valentine_benchmark_three_levels()
 
     # ChEMBLc
     # DATASET = "ChEMBL"
