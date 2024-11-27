@@ -123,7 +123,7 @@ def run_benchmark(BENCHMARK="gdc_studies", DATASET="gdc_studies", ROOT="data/gdc
 
             print(ground_truth)
 
-            matchers = [ "ComaInst", "MatchMaker","MatchMakerFT",  "MatchMakerFTGPT",  "MatchMakerGPT"]
+            matchers = [ "MatchMaker","MatchMakerFT"]
             # matchers = ["ComaInst"]
 
             for matcher in matchers:
