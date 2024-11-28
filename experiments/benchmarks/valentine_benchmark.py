@@ -10,6 +10,7 @@ from valentine.algorithms import Coma
 import valentine.algorithms.matcher_results as matcher_results
 
 import warnings
+from tqdm import tqdm
 
 warnings.simplefilter("ignore", FutureWarning)
 
@@ -117,6 +118,12 @@ def run_valentine_benchmark_one_level(
         nrows_src = str(df_source.shape[0])
         nrows_tgt = str(df_target.shape[0])
 
+
+        # print("Source: ", source_file, " Target: ", target_file)
+        # print(nrows_src, " ", nrows_tgt)
+        # print(ncols_src, " ", ncols_tgt)
+        # print('\n')
+
         nmatches = len(ground_truth)
 
         # print(ground_truth)
@@ -124,7 +131,8 @@ def run_valentine_benchmark_one_level(
         if len(ground_truth) == 0:
             continue
 
-        matchers = ["MatchMaker"]
+        matchers = []
+        matchers = ["Coma", "ComaInst"]
 
         for matcher in matchers:
 
@@ -248,7 +256,9 @@ def run_valentine_benchmark_three_levels(
             continue
 
         print("Type: ", type)
-        for table_folder in os.listdir(os.path.join(ROOT, type)):
+        # for table_folder in os.listdir(os.path.join(ROOT, type)):
+        table_folders = [f for f in os.listdir(os.path.join(ROOT, type)) if f != ".DS_Store"]
+        for table_folder in tqdm(table_folders, desc=f"Processing {type}"):
 
             if table_folder == ".DS_Store":
                 continue
@@ -289,10 +299,18 @@ def run_valentine_benchmark_three_levels(
             if len(ground_truth) == 0:
                 continue
 
+
+            # if int(ncols_src) >= 43 and int(ncols_tgt) >= 43 and int(nrows_src) >= 23254 and int(nrows_tgt) >= 23254:
+                
+            #     print(table_folder)
+            #     print(nrows_src, " ", nrows_tgt)
+            #     print(ncols_src, " ", ncols_tgt)
+            #     print('\n')
+
             table_count += 1
 
             # matchers = ["MatchMaker"]
-            matchers = ["ComaInst"]
+            matchers = ["Coma", "ComaInst"]
 
             for matcher in matchers:
                 print("Running matcher: ", matcher)
@@ -367,7 +385,7 @@ if __name__ == "__main__":
     BENCHMARK = "valentine"
 
     # WIKIDATA musicians
-    run_valentine_benchmark_one_level()
+    # run_valentine_benchmark_one_level()
 
     # Magellan
     # DATASET='Magellan'
@@ -375,7 +393,7 @@ if __name__ == "__main__":
     # run_valentine_benchmark_one_level(BENCHMARK, DATASET, ROOT)
 
     # OpenData
-    # run_valentine_benchmark_three_levels()
+    run_valentine_benchmark_three_levels()
 
     # ChEMBLc
     # DATASET = "ChEMBL"

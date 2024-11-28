@@ -103,8 +103,12 @@ def run_benchmark(BENCHMARK="gdc_studies", DATASET="gdc_studies", ROOT="data/gdc
 
     df_target = pd.read_csv(target_file, low_memory=False)
 
+    print(f"Target: {target_file}, nrows: {df_target.shape[0]}, ncols: {df_target.shape[1]}")
+
     studies_path = os.path.join(ROOT, "source-tables")
     gt_path = os.path.join(ROOT, "ground-truth")
+
+    # file_size = {}
 
     for gt_file in os.listdir(gt_path):
         if gt_file.endswith(".csv"):
@@ -117,14 +121,18 @@ def run_benchmark(BENCHMARK="gdc_studies", DATASET="gdc_studies", ROOT="data/gdc
             source_file = os.path.join(studies_path, gt_file)
             df_source = pd.read_csv(source_file)
 
+            # ncols, nrows = df_source.shape
+            # print(f"Source: {source_file},  nrows: {nrows}, ncols: {ncols}")
+            # file_size[gt_file] = (nrows, ncols)
+
             gt_df = pd.read_csv(os.path.join(gt_path, gt_file))
             gt_df.dropna(inplace=True)
             ground_truth = list(gt_df.itertuples(index=False, name=None))
 
-            print(ground_truth)
+            # print(ground_truth)
 
-            matchers = [ "MatchMaker","MatchMakerFT"]
-            # matchers = ["ComaInst"]
+            # matchers = [ "MatchMaker","MatchMakerFT"]
+            matchers = []
 
             for matcher in matchers:
                 print(
@@ -202,6 +210,9 @@ def run_benchmark(BENCHMARK="gdc_studies", DATASET="gdc_studies", ROOT="data/gdc
 
                 record_result(result_file, result)
             print("\n")
+
+    
+    # pp.pprint(file_size)
 
 
 if __name__ == "__main__":
