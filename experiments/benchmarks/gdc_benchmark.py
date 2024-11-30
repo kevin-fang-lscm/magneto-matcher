@@ -115,7 +115,7 @@ def run_benchmark(BENCHMARK="gdc_studies", DATASET="gdc_studies", ROOT="data/gdc
 
             print(f"Processing {gt_file}")
 
-            # if gt_file != 'Clark.csv':
+            # if gt_file != 'Gilette.csv':
             #     continue
 
             source_file = os.path.join(studies_path, gt_file)
@@ -132,7 +132,7 @@ def run_benchmark(BENCHMARK="gdc_studies", DATASET="gdc_studies", ROOT="data/gdc
             # print(ground_truth)
 
             # matchers = [ "MatchMaker","MatchMakerFT"]
-            matchers = []
+            matchers = ["MatchMaker", "MatchMakerGPT"]
 
             for matcher in matchers:
                 print(
