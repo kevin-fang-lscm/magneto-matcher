@@ -3,29 +3,24 @@ from multiprocessing import get_context
 from typing import Dict, Tuple
 
 from jellyfish import (
-    levenshtein_distance,
     damerau_levenshtein_distance,
+    hamming_distance,
     jaro_similarity,
     jaro_winkler_similarity,
-    hamming_distance,
+    levenshtein_distance,
 )
-
-from valentine.algorithms.jaccard_distance import StringDistanceFunction
-
 from valentine.algorithms.base_matcher import BaseMatcher
+from valentine.algorithms.jaccard_distance import StringDistanceFunction
 from valentine.algorithms.match import Match
 from valentine.data_sources.base_table import BaseTable
 from valentine.utils.utils import normalize_distance
 
-from .cl_api import (
-    ContrastiveLearningAPI,
-)
-
 from algorithms.download import get_cached_model_or_download
+
+from .cl_api import ContrastiveLearningAPI
 
 
 class CLMatcher(BaseMatcher):
-
     # "bdi-cl-v0.2"
     # "cl-reducer-v0.1"
     def __init__(self, model_name: str = "bdi-cl-v0.2", top_k=10):
@@ -37,7 +32,6 @@ class CLMatcher(BaseMatcher):
     def get_matches(
         self, source_input: BaseTable, target_input: BaseTable
     ) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
-
         dataset = source_input.get_df()
 
         global_table = target_input.get_df()

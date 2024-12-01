@@ -1,27 +1,27 @@
 import argparse
-import pandas as pd
-import os
-import time
 import json
+import os
+import string
+import time
+from typing import Dict, Tuple
 
-from .retriever import ColumnRetriever
-from .matcher import ColumnMatcher
-from .utils import (
-    get_dataset_paths,
-    process_tables,
-    get_samples,
-    default_converter,
-    common_prefix,
-)
-from .evaluation import evaluate_matches, convert_to_valentine_format
-
+import numpy as np
+import pandas as pd
+from fuzzywuzzy import fuzz
+from scipy.optimize import linear_sum_assignment
 from valentine.algorithms.base_matcher import BaseMatcher
 from valentine.data_sources.base_table import BaseTable
-from typing import Dict, Tuple
-from scipy.optimize import linear_sum_assignment
-import numpy as np
-from fuzzywuzzy import fuzz
-import string
+
+from .evaluation import convert_to_valentine_format, evaluate_matches
+from .matcher import ColumnMatcher
+from .retriever import ColumnRetriever
+from .utils import (
+    common_prefix,
+    default_converter,
+    get_dataset_paths,
+    get_samples,
+    process_tables,
+)
 
 THRESHOLD = 0.95
 
@@ -44,7 +44,6 @@ class RetrieveMatchSimpler(BaseMatcher):
         self.include_basic_matches = include_basic_matches
 
     def bipartite_filtering(self, initial_matches, source_table, target_table):
-
         source_cols = set()
         target_cols = set()
         for (col_source, col_target), score in initial_matches.items():
@@ -91,7 +90,6 @@ class RetrieveMatchSimpler(BaseMatcher):
         return filtered_matches
 
     def stability_score(self, initial_matches, filtered_matches):
-
         filtered_matches_sorted = {
             key: score
             for key, score in sorted(

@@ -1,7 +1,8 @@
-import pandas as pd
-import math
 import collections
+import math
 import string
+
+import pandas as pd
 from pandas.api.types import infer_dtype
 
 

@@ -1,9 +1,9 @@
 import argparse
-import numpy as np
 import random
-import torch
-import mlflow
 
+import mlflow
+import numpy as np
+import torch
 from dataset import PretrainTableDataset
 from pretrain import train
 

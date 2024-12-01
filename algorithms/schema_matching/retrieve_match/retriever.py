@@ -1,7 +1,7 @@
 import numpy as np
-from transformers import AutoTokenizer, AutoModel
 import torch
 from torch.nn.functional import normalize
+from transformers import AutoModel, AutoTokenizer
 
 from .utils import infer_column_dtype, lm_map
 

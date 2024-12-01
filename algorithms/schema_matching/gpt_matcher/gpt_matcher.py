@@ -1,15 +1,15 @@
-import tiktoken
-from typing import Dict, Tuple
-from valentine.data_sources.base_table import BaseTable
-from valentine.algorithms.base_matcher import BaseMatcher
 import random
+from typing import Dict, Tuple
 
+import tiktoken
+from valentine.algorithms.base_matcher import BaseMatcher
+from valentine.data_sources.base_table import BaseTable
 
-from algorithms.schema_matching.magneto.utils import (
-    get_samples,
-    convert_to_valentine_format,
-)
 from algorithms.schema_matching.magneto.llm_reranker import LLMReranker
+from algorithms.schema_matching.magneto.utils import (
+    convert_to_valentine_format,
+    get_samples,
+)
 
 
 class GPTMatcher(BaseMatcher):
@@ -26,7 +26,6 @@ class GPTMatcher(BaseMatcher):
     def get_matches(
         self, source_table: BaseTable, target_table: BaseTable
     ) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
-
         source_name = source_table.name
         target_name = target_table.name
 

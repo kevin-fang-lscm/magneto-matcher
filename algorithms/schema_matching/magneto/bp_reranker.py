@@ -5,7 +5,6 @@ from scipy.optimize import linear_sum_assignment
 def bipartite_filtering(
     initial_matches, source_table_name, source_table, target_table, target_table_name
 ):
-
     source_cols = set()
     target_cols = set()
     for (col_source, col_target), score in initial_matches.items():
@@ -54,7 +53,6 @@ def bipartite_filtering(
 def arrange_bipartite_matches(
     initial_matches, source_table, source_table_name, target_table, target_table_name
 ):
-
     filtered_matches = bipartite_filtering(
         initial_matches,
         source_table_name,
@@ -90,7 +88,6 @@ def arrange_bipartite_matches(
 
 ## not used
 def _min_max_normalize(self, valentine_matched_columns):
-
     matched_columns = {}
     for entry, score in valentine_matched_columns.items():
         source_col = entry[0][1]

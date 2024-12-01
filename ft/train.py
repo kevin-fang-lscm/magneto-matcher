@@ -1,18 +1,18 @@
 import argparse
 import json
-import torch
-import numpy as np
-from torch.utils.data import DataLoader
-from sentence_transformers import SentenceTransformer, losses
-
 import os
 import sys
+
+import numpy as np
+import torch
+from sentence_transformers import SentenceTransformer, losses
+from torch.utils.data import DataLoader
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 from ft.dataset import CustomDataset
 from ft.eval import evaluate_metrics
-from ft.train_utils import SimCLRLoss, BalancedBatchSampler, sentence_transformer_map
+from ft.train_utils import BalancedBatchSampler, SimCLRLoss, sentence_transformer_map
 
 
 def train_model(

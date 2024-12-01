@@ -1,17 +1,17 @@
-import pandas as pd
-from transformers import AutoTokenizer
-from torch.utils.data import Dataset
-
 import os
 import sys
 
+import pandas as pd
+from torch.utils.data import Dataset
+from transformers import AutoTokenizer
+
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
-from ft.train_utils import sentence_transformer_map
 from algorithms.schema_matching.magneto.retriever_utils import (
-    detect_column_type,
     clean_element,
+    detect_column_type,
 )
+from ft.train_utils import sentence_transformer_map
 
 
 class CustomDataset(Dataset):

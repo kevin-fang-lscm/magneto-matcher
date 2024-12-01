@@ -1,8 +1,9 @@
-from openai import OpenAI
-import tiktoken
-import re
 import os
+import re
 import time
+
+import tiktoken
+from openai import OpenAI
 
 
 class LLMReranker:
@@ -62,7 +63,6 @@ class LLMReranker:
             if score_based:
                 attempts = 0
                 while True:
-
                     if attempts >= self.llm_attempts:
                         print(
                             f"Failed to parse response after {self.llm_attempts} attempts. Skipping."
@@ -75,11 +75,9 @@ class LLMReranker:
                     refined_match = self._get_matches_w_score(cand, targets, other_cols)
                     refined_match = self._parse_scored_matches(refined_match)
                     attempts += 1
-                    
+
                     if refined_match is not None:
                         break
-                    
-
 
             else:
                 refined_match = self._get_matches(cand, targets)

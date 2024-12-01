@@ -1,4 +1,4 @@
-from .utils import get_samples, detect_column_type
+from .utils import detect_column_type, get_samples
 
 modes = [
     "header_values_default",
@@ -122,7 +122,6 @@ class ColumnEncoder:
     def _serialize_header_values_columnvaluepair_notype(
         self, header, data_type, tokens
     ):
-
         tokens = [f"{header}:{token}" for token in tokens]
         return (
             f"{self.cls_token}"
@@ -142,7 +141,6 @@ class ColumnEncoder:
         )
 
     def _serialize_header_values_default_notype(self, header, data_type, tokens):
-
         return (
             f"{self.cls_token}"
             f"{header}{self.sep_token}"

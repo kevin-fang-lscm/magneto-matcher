@@ -1,11 +1,11 @@
-from openai import OpenAI
-import tiktoken
-import re
-import ollama
-
 # from config import API_KEY, OLLAMA_HOST
 import os
+import re
+
+import ollama
+import tiktoken
 from dotenv import load_dotenv
+from openai import OpenAI
 
 
 class ColumnMatcher:

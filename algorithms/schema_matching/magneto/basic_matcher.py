@@ -1,5 +1,6 @@
 from fuzzywuzzy import fuzz
-from .utils import preprocess_string, common_prefix, get_samples, detect_column_type
+
+from .utils import common_prefix, detect_column_type, get_samples, preprocess_string
 
 
 def alignment_score_consecutive(str1, str2, max_distance=2, size_ratio_threshold=2):
@@ -48,7 +49,6 @@ def get_str_similarity_candidates(
     alignment_threshold=0.95,
     fuzzy_similarity_threshold=0.6,
 ):
-
     prefix_source = common_prefix(list(source_column_names))
     prefix_target = common_prefix(list(target_column_names))
 

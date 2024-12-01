@@ -1,11 +1,12 @@
 import argparse
-from openai import OpenAI
 import json
-import random
 import os
+import random
 import sys
-import tqdm
+
 import pandas as pd
+import tqdm
+from openai import OpenAI
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 # from config import API_KEY
@@ -115,7 +116,6 @@ def generate_matches(dataset, unique_columns):
     semantic_generator = SemanticGenerator(API_KEY)
 
     for column_name, column_values in tqdm.tqdm(unique_columns.items()):
-
         if column_name in matches:
             continue
 
@@ -147,7 +147,6 @@ def generate_matches(dataset, unique_columns):
 
 
 def extract_unique_columns(file_path):
-
     df = pd.read_csv(file_path, low_memory=False)
 
     unique_columns = {}

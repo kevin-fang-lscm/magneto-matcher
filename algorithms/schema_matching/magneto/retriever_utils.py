@@ -1,11 +1,11 @@
+import re
+import warnings
+
 import numpy as np
 import pandas as pd
-from pandas.api.types import is_integer_dtype, is_float_dtype, is_datetime64_any_dtype
-import numpy as np
-import warnings
-import re
+from pandas.api.types import is_datetime64_any_dtype, is_float_dtype, is_integer_dtype
 
-from .constants import NULL_REPRESENTATIONS, BINARY_VALUES, KEY_REPRESENTATIONS
+from .constants import BINARY_VALUES, KEY_REPRESENTATIONS, NULL_REPRESENTATIONS
 
 lm_map = {
     "roberta": "roberta-base",
@@ -136,7 +136,6 @@ def is_binary_value(value):
 
 
 def detect_column_type(col, key_threshold=0.8, numeric_threshold=0.90):
-
     # Try converting to numeric (int or float)
     temp_col = pd.to_numeric(col, errors="coerce")
     if not temp_col.isnull().all():

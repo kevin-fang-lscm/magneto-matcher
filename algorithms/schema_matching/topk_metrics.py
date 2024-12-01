@@ -1,7 +1,8 @@
+from dataclasses import dataclass
+from typing import Any, Dict, List, Tuple
+
 from valentine.metrics.base_metric import Metric
 from valentine.metrics.metric_helpers import *
-from dataclasses import dataclass
-from typing import List, Tuple, Dict, Any
 
 
 @dataclass(eq=True, frozen=True)

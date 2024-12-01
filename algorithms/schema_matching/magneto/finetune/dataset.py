@@ -1,15 +1,16 @@
-from algorithms.schema_matching.magneto.utils import (
-    detect_column_type,
-    clean_element,
-    get_samples,
-)
-from train_utils import sentence_transformer_map
-import pandas as pd
-from transformers import AutoTokenizer
-from torch.utils.data import Dataset
-
 import os
 import sys
+
+import pandas as pd
+from torch.utils.data import Dataset
+from train_utils import sentence_transformer_map
+from transformers import AutoTokenizer
+
+from algorithms.schema_matching.magneto.utils import (
+    clean_element,
+    detect_column_type,
+    get_samples,
+)
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
@@ -160,7 +161,6 @@ class CustomDataset(Dataset):
     def _serialize_header_values_columnvaluepair_notype(
         self, header, data_type, tokens
     ):
-
         tokens = [f"{header}:{token}" for token in tokens]
         return (
             f"{self.cls_token}"
@@ -180,7 +180,6 @@ class CustomDataset(Dataset):
         )
 
     def _serialize_header_values_default_notype(self, header, data_type, tokens):
-
         return (
             f"{self.cls_token}"
             f"{header}{self.sep_token}"

@@ -19,7 +19,6 @@ def get_default_dataframes():
 
 
 def run_matchmaker(file1=None, file2=None):
-
     if file1 and file2:
         try:
             df1 = pd.read_csv(file1)
