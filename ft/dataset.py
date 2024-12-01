@@ -8,7 +8,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 from ft.train_utils import sentence_transformer_map
-from algorithms.schema_matching.topk.match_maker.utils import (
+from algorithms.schema_matching.magneto.retriever_utils import (
     detect_column_type,
     clean_element,
 )

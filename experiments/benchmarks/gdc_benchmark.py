@@ -22,7 +22,7 @@ from experiments.benchmarks.utils import (
     record_result,
     calculate_recall_at_k,
 )
-import algorithms.schema_matching.match_maker.match_maker as mm
+import algorithms.schema_matching.magneto.magneto as mm
 
 
 def get_matcher(method):
@@ -30,26 +30,26 @@ def get_matcher(method):
         return Coma()
     elif method == "ComaInst":
         return Coma(use_instances=True, java_xmx="10096m")
-    elif method == "MatchMaker":
-        return mm.MatchMaker()
-    elif method == "MatchMakerFT":
+    elif method == "Magneto":
+        return mm.Magneto()
+    elif method == "MagnetoFT":
         model_path = os.path.join(
             project_path,
             "models",
             "mpnet-gdc-header_values_verbose-exact_semantic-64-0.5.pth",
         )
-        # return mm.MatchMaker(embedding_model=model_path, include_strsim_matches=False, include_embedding_matches=True, include_equal_matches=False, use_bp_reranker=False, use_gpt_reranker=False)
-        return mm.MatchMaker(embedding_model=model_path)
-    elif method == "MatchMakerGPT":
-        return mm.MatchMaker(use_bp_reranker=False, use_gpt_reranker=True)
-    elif method == "MatchMakerFTGPT":
+        # return mm.Magneto(embedding_model=model_path, include_strsim_matches=False, include_embedding_matches=True, include_equal_matches=False, use_bp_reranker=False, use_gpt_reranker=False)
+        return mm.Magneto(embedding_model=model_path)
+    elif method == "MagnetoGPT":
+        return mm.Magneto(use_bp_reranker=False, use_gpt_reranker=True)
+    elif method == "MagnetoFTGPT":
         model_path = os.path.join(
             project_path,
             "models",
             "mpnet-gdc-header_values_verbose-exact_semantic-64-0.5.pth",
         )
-        # return mm.MatchMaker(embedding_model=model_path, include_strsim_matches=False, include_embedding_matches=True, include_equal_matches=False, use_bp_reranker=False, use_gpt_reranker=False)
-        return mm.MatchMaker(
+        # return mm.Magneto(embedding_model=model_path, include_strsim_matches=False, include_embedding_matches=True, include_equal_matches=False, use_bp_reranker=False, use_gpt_reranker=False)
+        return mm.Magneto(
             embedding_model=model_path, use_bp_reranker=False, use_gpt_reranker=True
         )
 
@@ -131,8 +131,8 @@ def run_benchmark(BENCHMARK="gdc_studies", DATASET="gdc_studies", ROOT="data/gdc
 
             # print(ground_truth)
 
-            # matchers = [ "MatchMaker","MatchMakerFT"]
-            matchers = ["MatchMaker", "MatchMakerGPT"]
+            # matchers = [ "Magneto","MagnetoFT"]
+            matchers = ["Magneto", "MagnetoGPT"]
 
             for matcher in matchers:
                 print(

@@ -1,4 +1,4 @@
-from algorithms.schema_matching.match_maker.utils import (
+from algorithms.schema_matching.magneto.utils import (
     detect_column_type,
     clean_element,
     get_samples,

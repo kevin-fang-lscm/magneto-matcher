@@ -7,7 +7,7 @@ from valentine import valentine_match
 project_path = os.getcwd()
 sys.path.append(os.path.join(project_path))
 
-from algorithms.schema_matching.match_maker import MatchMaker
+from algorithms.schema_matching.magneto import Magneto
 
 
 def get_default_dataframes():
@@ -33,7 +33,7 @@ def run_matchmaker(file1=None, file2=None):
         print("No files provided. Using default dataframes.")
         df1, df2 = get_default_dataframes()
 
-    matcher = MatchMaker()
+    matcher = Magneto()
 
     matches = valentine_match(df1, df2, matcher)
 

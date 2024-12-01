@@ -16,7 +16,7 @@ sys.path.append(os.path.join(project_path))
 
 from experiments.benchmarks.utils import compute_mean_ranking_reciprocal, create_result_file, record_result
 
-import algorithms.schema_matching.match_maker.match_maker as mm
+import algorithms.schema_matching.magneto.magneto as mm
 import algorithms.schema_matching.gpt_matcher.gpt_matcher as gpt_matcher
 
 
@@ -29,21 +29,21 @@ def get_gpt_method(method):
         raise ValueError(f"Unknown method: {method}")
 
 
-def get_match_maker_matcher(method):
-    if method=="MatchMaker":
-        return mm.MatchMaker()
-    elif method=="MatchMakerBP":
-        return mm.MatchMaker(use_bp_reranker=True)
-    elif method.startswith('MatchMakerGPT'):
+def get_magneto_matcher(method):
+    if method=="Magneto":
+        return mm.Magneto()
+    elif method=="MagnetoBP":
+        return mm.Magneto(use_bp_reranker=True)
+    elif method.startswith('MagnetoGPT'):
         print("Method: ", method)
         topk = int(method.split('_')[1])
-        return mm.MatchMaker(use_gpt_reranker=True, topk=topk)
+        return mm.Magneto(use_gpt_reranker=True, topk=topk)
 
 def get_matcher(method):
     if method.startswith('GPT'):
         return get_gpt_method(method)
-    elif method.startswith('MatchMaker'):
-        return get_match_maker_matcher(method)
+    elif method.startswith('Magneto'):
+        return get_magneto_matcher(method)
     else:
         raise ValueError(f"Unknown method: {method}")
 
@@ -95,10 +95,10 @@ def run_ablation(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='data/gdc'
             ground_truth = list(gt_df.itertuples(index=False, name=None))
 
             
-            gptFull = "MatchMakerGPT_"+str(ncols_tgt)
-            #matchers = ["MatchMakerBP", "MatchMakerGPT_3","MatchMakerGPT_5","MatchMakerGPT_10","MatchMakerGPT_20",  gptFull, "GPTMatcherSchemaOrder",  "GPTMatcherRandomOrder"]
+            gptFull = "MagnetoGPT_"+str(ncols_tgt)
+            #matchers = ["MagnetoBP", "MagnetoGPT_3","MagnetoGPT_5","MagnetoGPT_10","MagnetoGPT_20",  gptFull, "GPTMatcherSchemaOrder",  "GPTMatcherRandomOrder"]
 
-            matchers = [ "MatchMakerBP", "MatchMakerGPT_3","MatchMakerGPT_5","MatchMakerGPT_10","MatchMakerGPT_20"]
+            matchers = [ "MagnetoBP", "MagnetoGPT_3","MagnetoGPT_5","MagnetoGPT_10","MagnetoGPT_20"]
 
             for matcher in matchers:
                 print(f"Matcher: {matcher}")

@@ -1,21 +1,15 @@
-import openai
 import tiktoken
-import os
-from dotenv import load_dotenv
-import pandas as pd
-import re
 from typing import Dict, Tuple
-from valentine.algorithms.match import Match
 from valentine.data_sources.base_table import BaseTable
 from valentine.algorithms.base_matcher import BaseMatcher
 import random
 
 
-from algorithms.schema_matching.match_maker.utils import (
+from algorithms.schema_matching.magneto.utils import (
     get_samples,
     convert_to_valentine_format,
 )
-from algorithms.schema_matching.match_maker.llm_reranker import LLMReranker
+from algorithms.schema_matching.magneto.llm_reranker import LLMReranker
 
 
 class GPTMatcher(BaseMatcher):
