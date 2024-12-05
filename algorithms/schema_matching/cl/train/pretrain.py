@@ -1,23 +1,22 @@
+import json
+import os
+from typing import List
+
+import mlflow
+import numpy as np
+import pandas as pd
+import sklearn.metrics as metrics
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-import numpy as np
-import sklearn.metrics as metrics
-import mlflow
-import pandas as pd
-import os
-import json
-
-from utils import evaluate_column_matching, evaluate_clustering
-from model import BarlowTwinsSimCLR
 from dataset import PretrainTableDataset
-
-from tqdm import tqdm
-from torch.utils import data
-from transformers import AdamW, get_linear_schedule_with_warmup
-from typing import List
+from model import BarlowTwinsSimCLR
 from sklearn.metrics.pairwise import cosine_similarity
+from torch.utils import data
+from tqdm import tqdm
+from transformers import AdamW, get_linear_schedule_with_warmup
+from utils import evaluate_clustering, evaluate_column_matching
 
 
 def train_step(train_iter, model, optimizer, scheduler, scaler, hp):

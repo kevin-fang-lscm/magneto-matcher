@@ -1,11 +1,13 @@
-from .constants import NULL_REPRESENTATIONS, BINARY_VALUES, KEY_REPRESENTATIONS
+import re
+
+import mmh3
 import numpy as np
 import pandas as pd
-import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 from valentine import MatcherResults
 from valentine.algorithms.match import Match
-import mmh3
+
+from .constants import BINARY_VALUES, KEY_REPRESENTATIONS, NULL_REPRESENTATIONS
 
 PHI_FRACTION = 0.6180339887  # φ - 1
 np.random.seed(42)
@@ -23,7 +25,6 @@ def convert_to_valentine_format(matched_columns, source_table, target_table):
 
 
 def convert_simmap_to_valentine_format(sim_map, source_table_name, target_table_name):
-
     matches = {}
     for col_input, matches_dict in sim_map.items():
         for col_target, score in matches_dict.items():
@@ -54,7 +55,6 @@ def common_ngrams(strings, threshold=0.3):
     most_common_ngrams = {}
 
     for n in range(3, 9):
-
         vectorizer = TfidfVectorizer(analyzer="char", ngram_range=(n, n))
 
         tfidf_matrix = vectorizer.fit_transform(strings)
@@ -184,7 +184,6 @@ def clean_df(df):
 
 
 def detect_column_type(col, key_threshold=0.8, numeric_threshold=0.90):
-
     # Try converting to numeric (int or float)
     temp_col = pd.to_numeric(col, errors="coerce")
     if not temp_col.isnull().all():

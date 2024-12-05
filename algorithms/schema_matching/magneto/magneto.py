@@ -1,28 +1,26 @@
-from typing import Dict, Tuple
 import os
+from typing import Dict, Tuple
 
+from valentine.algorithms.base_matcher import BaseMatcher
 from valentine.algorithms.match import Match
 from valentine.data_sources.base_table import BaseTable
-from valentine.algorithms.base_matcher import BaseMatcher
 
-from .embedding_matcher import DEFAULT_MODELS, EmbeddingMatcher
 from .basic_matcher import get_str_similarity_candidates
+from .bp_reranker import arrange_bipartite_matches
+from .embedding_matcher import DEFAULT_MODELS, EmbeddingMatcher
+from .llm_reranker import LLMReranker
 from .utils import (
     clean_df,
-    remove_invalid_characters,
     convert_simmap_to_valentine_format,
     convert_to_valentine_format,
     get_samples,
+    remove_invalid_characters,
 )
-
-from .bp_reranker import arrange_bipartite_matches
-from .llm_reranker import LLMReranker
-
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
-class MatchMaker(BaseMatcher):
+class Magneto(BaseMatcher):
     ## attention
     ## for ablation experiments, make sure to have the default set correcly
     DEFAULT_PARAMS = {
@@ -42,11 +40,10 @@ class MatchMaker(BaseMatcher):
     def __init__(self, **kwargs):
         # Merge provided kwargs with defaults, use params in case you need more parameters: for ablation, etc
         self.params = {**self.DEFAULT_PARAMS, **kwargs}
-        # print("MatchMaker Params:", self.params)
+        # print("Magneto Params:", self.params)
 
     def apply_strsim_matches(self):
         if self.params["include_strsim_matches"]:
-
             strsim_candidates = get_str_similarity_candidates(
                 self.df_source.columns, self.df_target.columns
             )
@@ -94,7 +91,6 @@ class MatchMaker(BaseMatcher):
 
     def apply_equal_matches(self):
         if self.params["include_equal_matches"]:
-
             source_cols_cleaned = {
                 col: remove_invalid_characters(col.strip().lower())
                 for col in self.df_source.columns
@@ -117,7 +113,6 @@ class MatchMaker(BaseMatcher):
         return dict(top_k_matches)
 
     def call_llm_reranker(self, source_table, target_table, matches):
-
         orig_source_table, orig_target_table = source_table, target_table
         source_table = source_table.get_df()
         target_table = target_table.get_df()
@@ -162,7 +157,6 @@ class MatchMaker(BaseMatcher):
     def get_matches(
         self, source_table: BaseTable, target_table: BaseTable
     ) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
-
         self.df_source = clean_df(source_table.get_df())
         self.df_target = clean_df(target_table.get_df())
 

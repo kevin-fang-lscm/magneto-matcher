@@ -20,7 +20,7 @@ sys.path.append(os.path.join(project_path))
 
 
 from experiments.benchmarks.utils import compute_mean_ranking_reciprocal_adjusted, compute_mean_ranking_reciprocal_detail, create_result_file, record_result
-import algorithms.schema_matching.match_maker.match_maker as mm
+import algorithms.schema_matching.magneto.magneto as mm
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -87,10 +87,10 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
          # Grid search over all parameter combinations
         for use_bp in [False, True]:
             
-            method = 'MatchMaker'+('_BP' if use_bp else 'NonBP')
+            method = 'Magneto'+('_BP' if use_bp else 'NonBP')
             print(f"Method: {method}")
             
-            matcher = mm.MatchMaker(
+            matcher = mm.Magneto(
                 use_bp_reranker=use_bp,    
             )
 
@@ -202,9 +202,9 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
 
             for use_bp in [False, True]:
             
-                method = 'MatchMaker'+('_BP' if use_bp else 'NonBP')
+                method = 'Magneto'+('_BP' if use_bp else 'NonBP')
                 
-                matcher = mm.MatchMaker(
+                matcher = mm.Magneto(
                     use_bp_reranker=use_bp,    
                 )
 

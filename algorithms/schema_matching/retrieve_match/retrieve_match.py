@@ -1,17 +1,17 @@
 import argparse
-import pandas as pd
+import json
 import os
 import time
-import json
+from typing import Dict, Tuple
 
-from .retriever import ColumnRetriever
-from .matcher import ColumnMatcher
-from .utils import get_dataset_paths, process_tables, get_samples, default_converter
-from .evaluation import evaluate_matches, convert_to_valentine_format
-
+import pandas as pd
 from valentine.algorithms.base_matcher import BaseMatcher
 from valentine.data_sources.base_table import BaseTable
-from typing import Dict, Tuple
+
+from .evaluation import convert_to_valentine_format, evaluate_matches
+from .matcher import ColumnMatcher
+from .retriever import ColumnRetriever
+from .utils import default_converter, get_dataset_paths, get_samples, process_tables
 
 
 class RetrieveMatch(BaseMatcher):

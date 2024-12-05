@@ -8,7 +8,7 @@ from itertools import product
 project_path = os.getcwd()
 sys.path.append(os.path.join(project_path))
 
-import algorithms.schema_matching.match_maker.match_maker as mm
+import algorithms.schema_matching.magneto.magneto as mm
 from valentine import valentine_match
 from experiments.benchmarks.utils import (
     compute_mean_ranking_reciprocal,
@@ -120,7 +120,7 @@ def run_grid_search_experiment(
             )
 
             # Initialize matcher with current parameter combination
-            matcher = mm.MatchMaker(
+            matcher = mm.Magneto(
                 encoding_mode=encoding_mode,
                 sampling_mode=sampling_mode,
                 sampling_size=sampling_size,
@@ -155,7 +155,7 @@ def run_grid_search_experiment(
                 nrows_src,
                 nrows_tgt,
                 nmatches,
-                "MatchMaker",
+                "Magneto",
                 encoding_mode,
                 sampling_mode,
                 sampling_size,

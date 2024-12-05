@@ -1,10 +1,11 @@
-from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
-import torch
-from torch.utils.data import Dataset, DataLoader
-import numpy as np
-from typing import List, Tuple, Dict, Union
 import re
 from collections import Counter
+from typing import Dict, List, Tuple, Union
+
+import numpy as np
+import torch
+from torch.utils.data import DataLoader, Dataset
+from transformers import DistilBertForSequenceClassification, DistilBertTokenizer
 
 
 class ColumnDataset(Dataset):

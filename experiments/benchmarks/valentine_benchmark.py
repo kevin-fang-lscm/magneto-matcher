@@ -26,7 +26,7 @@ from experiments.benchmarks.utils import (
     create_result_file,
     record_result,
 )
-import algorithms.schema_matching.match_maker.match_maker as mm
+import algorithms.schema_matching.magneto.magneto as mm
 
 
 pp = pprint.PrettyPrinter(indent=4)
@@ -48,10 +48,10 @@ def get_matcher(method):
     elif method == "ComaInst":
         return Coma(use_instances=True, java_xmx="10096m")
 
-    elif method == "MatchMaker":
-        return mm.MatchMaker()
-    elif method == "MatchMakerGPT":
-        return mm.MatchMaker(use_instances=False, use_gpt=True)
+    elif method == "Magneto":
+        return mm.Magneto()
+    elif method == "MagnetoGPT":
+        return mm.Magneto(use_instances=False, use_gpt=True)
 
 
 def run_valentine_benchmark_one_level(
@@ -309,7 +309,7 @@ def run_valentine_benchmark_three_levels(
 
             table_count += 1
 
-            # matchers = ["MatchMaker"]
+            # matchers = ["Magneto"]
             matchers = ["Coma", "ComaInst"]
 
             for matcher in matchers:

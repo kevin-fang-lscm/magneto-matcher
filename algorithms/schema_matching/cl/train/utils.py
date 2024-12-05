@@ -1,16 +1,15 @@
-import torch
+from collections import Counter, deque
+
 import numpy as np
 import sklearn.metrics as metrics
-
+import torch
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.svm import LinearSVC
-from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
-from xgboost import XGBClassifier
+from sklearn.svm import LinearSVC
 from tqdm import tqdm
-from collections import deque, Counter
+from xgboost import XGBClassifier
 
 
 def evaluate(model, iterator, threshold=None):

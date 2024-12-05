@@ -11,7 +11,7 @@ sys.path.append(os.path.join(project_path))
 
 
 from experiments.benchmarks.utils import compute_mean_ranking_reciprocal, create_result_file, record_result
-import algorithms.schema_matching.topk.match_maker.match_maker as mm
+import algorithms.schema_matching.magneto.magneto as mm
 
 def run_grid_search_experiment(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='./data/gdc'):
 
@@ -112,7 +112,7 @@ def run_grid_search_experiment(BENCHMARK='gdc_studies', DATASET='gdc_studies', R
             
 
             # Initialize matcher with current parameter combination
-            matcher = mm.MatchMaker(
+            matcher = mm.Magneto(
                 encoding_mode=encoding_mode,
                 sampling_mode=sampling_mode,
                 sampling_size=sampling_size,
@@ -147,7 +147,7 @@ def run_grid_search_experiment(BENCHMARK='gdc_studies', DATASET='gdc_studies', R
             result = [
                 BENCHMARK, DATASET, 'gdc_table', gt_file,
                 ncols_src, ncols_tgt, nrows_src, nrows_tgt, nmatches,
-                'MatchMaker', encoding_mode, sampling_mode, sampling_size,
+                'Magneto', encoding_mode, sampling_mode, sampling_size,
                 strsim, emebedding, equal,
                 runtime, mrr_score,
                 all_metrics['Precision'], all_metrics['F1Score'],

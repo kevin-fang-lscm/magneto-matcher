@@ -1,14 +1,14 @@
 import numpy as np
-from transformers import AutoTokenizer, AutoModel
 import torch
-from torch.nn.functional import normalize
 from sentence_transformers import SentenceTransformer
+from torch.nn.functional import normalize
+from transformers import AutoModel, AutoTokenizer
 
 from .retriever_utils import (
-    lm_map,
-    sentence_transformer_map,
     detect_column_type,
     infer_column_dtype,
+    lm_map,
+    sentence_transformer_map,
 )
 
 QUERY_PREFIX = "Represent this sentence for searching relevant passages: "

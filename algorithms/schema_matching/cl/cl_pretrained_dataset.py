@@ -1,10 +1,9 @@
 import pandas as pd
 import torch
-from .cl_preprocessor import (
-    preprocess,
-)
 from torch.utils import data
 from transformers import AutoTokenizer
+
+from .cl_preprocessor import preprocess
 
 lm_mp = {
     "roberta": "roberta-base",

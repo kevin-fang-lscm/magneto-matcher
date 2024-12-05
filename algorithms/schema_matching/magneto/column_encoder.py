@@ -1,33 +1,39 @@
-from algorithms.schema_matching.match_maker.utils import (
-    detect_column_type,
-    clean_element,
-    get_samples,
-)
-from train_utils import sentence_transformer_map
-import pandas as pd
-from transformers import AutoTokenizer
-from torch.utils.data import Dataset
+from .utils import detect_column_type, get_samples
 
-import os
-import sys
+modes = [
+    "header_values_default",
+    "header_values_prefix",
+    "header_values_repeat",
+    "header_values_verbose",
+    "header_only",
+    "header_values_verbose_notype",
+    "header_values_columnvaluepair_notype",
+    "header_header_values_repeat_notype",
+    "header_values_default_notype",
+]
 
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+sampling_modes = [
+    "random",
+    "frequent",
+    "mixed",
+    "weighted",
+    "priority_sampling",
+    "consistent_sampling",
+]
 
 
-class CustomDataset(Dataset):
+class ColumnEncoder:
     def __init__(
         self,
-        data,
-        model_type="mpnet",
-        serialization="header_values_verbose",
-        augmentation="exact_semantic",
+        tokenizer,
+        encoding_mode="header_values_repeat",
+        sampling_mode="mixed",
+        n_samples=10,
     ):
-        self.serialization = serialization
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            sentence_transformer_map[model_type]
-        )
-        self.labels = []
-        self.items = self._initialize_items(data, augmentation)
+        self._tokenizer = tokenizer
+        self.cls_token = getattr(tokenizer, "cls_token", "")
+        self.sep_token = getattr(tokenizer, "sep_token", "")
+        self.eos_token = getattr(tokenizer, "eos_token", "")
 
         self._serialization_methods = {
             "header_values_default": self._serialize_header_values_default,
@@ -40,70 +46,26 @@ class CustomDataset(Dataset):
             "header_header_values_repeat_notype": self._serialize_header_values_repeat_notype,
             "header_values_default_notype": self._serialize_header_values_default,
         }
-        self.cls_token = self.tokenizer.cls_token or ""
-        self.sep_token = self.tokenizer.sep_token or ""
-        self.eos_token = self.tokenizer.eos_token or ""
 
-    def _initialize_items(self, data, augmentation):
-        items = []
-        class_id = 0
+        if encoding_mode not in self._serialization_methods:
+            raise ValueError(
+                f"Unsupported encoding mode: {encoding_mode}. Supported modes are: {list(self._serialization_methods.keys())}"
+            )
+        if sampling_mode not in sampling_modes:
+            raise ValueError(
+                f"Unsupported sampling mode: {sampling_mode}. Supported modes are: {sampling_modes}"
+            )
 
-        for _, categories in data.items():
-            for aug_type, columns in categories.items():
-                if aug_type in augmentation or aug_type == "original":
-                    for column_name, values in columns.items():
-                        processed_column_name = (
-                            column_name.rsplit("_", 1)[0]
-                            if aug_type == "exact"
-                            else column_name
-                        )
-                        values = [
-                            (
-                                clean_element(value)
-                                if isinstance(value, str)
-                                else str(value)
-                            )
-                            for value in values
-                        ]
-                        tokens = get_samples(
-                            pd.Series(values), n=10, mode="priority_sampling"
-                        )
-                        items.append((processed_column_name, tokens, class_id))
-                        self.labels.append(class_id)
-            class_id += 1
+        self.encoding_mode = encoding_mode
+        self.sampling_mode = sampling_mode
+        self.n_samples = n_samples
 
-        return items
-
-    def __len__(self):
-        return len(self.items)
-
-    def __getitem__(self, idx):
-        key, values, class_id = self.items[idx]
-        text = self._serialize(key, values)
-        return text, class_id
-
-    # def _serialize(self, header, values):
-    #     if values:
-    #         col = pd.DataFrame({header: values})[header]
-    #         data_type = detect_column_type(pd.DataFrame({header: values})[header])
-    #     else:
-    #         data_type = "unknown"
-    #     serialization = {
-    #         "header_values_default": f"{self.tokenizer.cls_token}{header}{self.tokenizer.sep_token}{data_type}{self.tokenizer.sep_token}{','.join(map(str, values))}",
-    #         "header_values_prefix": f"{self.tokenizer.cls_token}header:{header}{self.tokenizer.sep_token}datatype:{data_type}{self.tokenizer.sep_token}values:{', '.join(map(str, values))}",
-    #     }
-    #     return serialization[self.serialization]
-    def _serialize(self, header, values):
-        if values:
-            col = pd.DataFrame({header: values})[header]
-            data_type = detect_column_type(col)
-        else:
-            data_type = "unknown"
-            values = []
-
-        tokens = [str(token) for token in values]
-
-        return self._serialization_methods[self.serialization](
+    def encode(self, df, col):
+        """Encodes the column of a DataFrame using the selected serialization method."""
+        header = col
+        tokens = get_samples(df[col], n=self.n_samples, mode=self.sampling_mode)
+        data_type = detect_column_type(df[col])
+        return self._serialization_methods[self.encoding_mode](
             header, data_type, tokens
         )
 
@@ -160,7 +122,6 @@ class CustomDataset(Dataset):
     def _serialize_header_values_columnvaluepair_notype(
         self, header, data_type, tokens
     ):
-
         tokens = [f"{header}:{token}" for token in tokens]
         return (
             f"{self.cls_token}"
@@ -180,7 +141,6 @@ class CustomDataset(Dataset):
         )
 
     def _serialize_header_values_default_notype(self, header, data_type, tokens):
-
         return (
             f"{self.cls_token}"
             f"{header}{self.sep_token}"

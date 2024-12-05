@@ -16,7 +16,7 @@ warnings.simplefilter('ignore', FutureWarning)
 project_path = os.getcwd()
 sys.path.append(os.path.join(project_path))
 
-import algorithms.schema_matching.match_maker.match_maker as mm
+import algorithms.schema_matching.magneto.magneto as mm
 from experiments.benchmarks.utils import compute_mean_ranking_reciprocal, create_result_file, record_result
 from tqdm import tqdm
 
@@ -121,7 +121,7 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
                   sampling_mode}, {sampling_size}")
 
             # Initialize matcher with current parameter combination
-            matcher = mm.MatchMaker(
+            matcher = mm.Magneto(
                 encoding_mode=encoding_mode,
                 sampling_mode=sampling_mode,
                 sampling_size=sampling_size,
@@ -149,7 +149,7 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
             result = [
                 BENCHMARK, DATASET, folder+'_source.csv', folder+'_target.csv',
                 ncols_src, ncols_tgt, nrows_src, nrows_tgt, nmatches,
-                'MatchMaker', encoding_mode, sampling_mode, sampling_size,
+                'Magneto', encoding_mode, sampling_mode, sampling_size,
                 runtime, mrr_score,
                 all_metrics['Precision'], all_metrics['F1Score'],
                 all_metrics['Recall'], all_metrics['PrecisionTop10Percent'],
@@ -257,7 +257,7 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
                       sampling_mode}, {sampling_size}")
 
                 # Initialize matcher with current parameter combination
-                matcher = mm.MatchMaker(
+                matcher = mm.Magneto(
                     encoding_mode=encoding_mode,
                     sampling_mode=sampling_mode,
                     sampling_size=sampling_size,
@@ -287,7 +287,7 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
                     BENCHMARK, DATASET, type, table_folder, table_folder +
                     '_source.csv', table_folder+'_target.csv',
                     ncols_src, ncols_tgt, nrows_src, nrows_tgt, nmatches,
-                    'MatchMaker', encoding_mode, sampling_mode, sampling_size,
+                    'Magneto', encoding_mode, sampling_mode, sampling_size,
                     runtime, mrr_score,
                     all_metrics['Precision'], all_metrics['F1Score'],
                     all_metrics['Recall'], all_metrics['PrecisionTop10Percent'],

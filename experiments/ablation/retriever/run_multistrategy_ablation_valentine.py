@@ -19,9 +19,8 @@ project_path = os.getcwd()
 sys.path.append(os.path.join(project_path))
 
 
-import algorithms.schema_matching.topk.harmonizer.match_reranker as mr
 from experiments.benchmarks.utils import compute_mean_ranking_reciprocal, compute_mean_ranking_reciprocal_detail, create_result_file, record_result
-import algorithms.schema_matching.topk.match_maker.match_maker as mm
+import algorithms.schema_matching.magneto.magneto as mm
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -123,7 +122,7 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
         for strategy_order in strategies_orders:
 
             # Initialize matcher with current parameter combination
-            matcher = mm.MatchMaker(
+            matcher = mm.Magneto(
                 encoding_mode=encoding_mode,
                 sampling_mode=sampling_mode,
                 sampling_size=sampling_size,
@@ -157,7 +156,7 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
             result = [
                 BENCHMARK, DATASET, folder+'_source.csv', folder+'_target.csv',
                 ncols_src, ncols_tgt, nrows_src, nrows_tgt, nmatches,
-                'MatchMaker', encoding_mode, sampling_mode, sampling_size,
+                'Magneto', encoding_mode, sampling_mode, sampling_size,
                 strsim, emebedding, equal,
                 runtime, mrr_score,
                 all_metrics['Precision'], all_metrics['F1Score'],
@@ -281,7 +280,7 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
             for strategy_order in strategies_orders:
 
                 # Initialize matcher with current parameter combination
-                matcher = mm.MatchMaker(
+                matcher = mm.Magneto(
                     encoding_mode=encoding_mode,
                     sampling_mode=sampling_mode,
                     sampling_size=sampling_size,
@@ -316,7 +315,7 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
                     BENCHMARK, DATASET, type, table_folder, table_folder +
                     '_source.csv', table_folder+'_target.csv',
                     ncols_src, ncols_tgt, nrows_src, nrows_tgt, nmatches,
-                    'MatchMaker', encoding_mode, sampling_mode, sampling_size,
+                    'Magneto', encoding_mode, sampling_mode, sampling_size,
                     strsim, emebedding, equal,
                     runtime, mrr_score,
                     all_metrics['Precision'], all_metrics['F1Score'],

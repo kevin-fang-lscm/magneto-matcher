@@ -1,8 +1,8 @@
 import numpy as np
 import torch
+from sentence_transformers import SentenceTransformer
 from torch import nn
 from torch.utils.data import Sampler
-from sentence_transformers import SentenceTransformer
 
 sentence_transformer_map = {
     "roberta": "sentence-transformers/all-roberta-large-v1",

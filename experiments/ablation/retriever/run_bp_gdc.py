@@ -11,7 +11,7 @@ sys.path.append(os.path.join(project_path))
 
 
 from experiments.benchmarks.utils import compute_mean_ranking_reciprocal,compute_mean_ranking_reciprocal_adjusted, create_result_file, record_result
-import algorithms.schema_matching.match_maker.match_maker as mm
+import algorithms.schema_matching.magneto.magneto as mm
 
 def run_grid_search_experiment(BENCHMARK='gdc_studies', DATASET='gdc_studies', ROOT='./data/gdc'):
 
@@ -73,9 +73,9 @@ def run_grid_search_experiment(BENCHMARK='gdc_studies', DATASET='gdc_studies', R
 
         for use_bp in [False, True]:
             
-            method = 'MatchMaker'+('_BP' if use_bp else 'NonBP')
+            method = 'Magneto'+('_BP' if use_bp else 'NonBP')
             
-            matcher = mm.MatchMaker(
+            matcher = mm.Magneto(
                 use_bp_reranker=use_bp,    
             )
 

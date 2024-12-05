@@ -1,19 +1,16 @@
 import hashlib
-from joblib import Memory
 import os
 from typing import List, Optional, Union
 
 import numpy as np
 import pandas as pd
 import torch
-from .cl_models import (
-    BarlowTwinsSimCLR,
-)
-from .cl_pretrained_dataset import (
-    PretrainTableDataset,
-)
+from joblib import Memory
 from sklearn.metrics.pairwise import cosine_similarity
 from tqdm import tqdm
+
+from .cl_models import BarlowTwinsSimCLR
+from .cl_pretrained_dataset import PretrainTableDataset
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 GDC_TABLE_PATH = os.path.join(dir_path, "resource/gdc_table.csv")
@@ -29,7 +26,6 @@ memory = Memory(location, verbose=0)
 
 
 def hash_dataframe(df: pd.DataFrame) -> str:
-
     hash_object = hashlib.sha256()
 
     columns_string = ",".join(df.columns) + "\n"

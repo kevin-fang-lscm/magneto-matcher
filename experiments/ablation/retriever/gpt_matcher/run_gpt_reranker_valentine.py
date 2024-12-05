@@ -22,7 +22,7 @@ sys.path.append(os.path.join(project_path))
 
 
 import algorithms.schema_matching.gpt_matcher.gpt_matcher as gpt_matcher
-import algorithms.schema_matching.match_maker.match_maker as mm
+import algorithms.schema_matching.magneto.magneto as mm
 from experiments.benchmarks.utils import compute_mean_ranking_reciprocal, create_result_file, record_result
 from tqdm import tqdm
 
@@ -46,21 +46,21 @@ def get_gpt_method(method):
         raise ValueError(f"Unknown method: {method}")
 
 
-def get_match_maker_matcher(method):
-    if method=="MatchMaker":
-        return mm.MatchMaker()
-    elif method=="MatchMakerBP":
-        return mm.MatchMaker(use_bp_reranker=True)
-    elif method.startswith('MatchMakerGPT'):
+def get_magneto_matcher(method):
+    if method=="Magneto":
+        return mm.Magneto()
+    elif method=="MagnetoBP":
+        return mm.Magneto(use_bp_reranker=True)
+    elif method.startswith('MagnetoGPT'):
         print("Method: ", method)
         topk = int(method.split('_')[1])
-        return mm.MatchMaker(use_gpt_reranker=True, topk=topk)
+        return mm.Magneto(use_gpt_reranker=True, topk=topk)
 
 def get_matcher(method):
     if method.startswith('GPT'):
         return get_gpt_method(method)
-    elif method.startswith('MatchMaker'):
-        return get_match_maker_matcher(method)
+    elif method.startswith('Magneto'):
+        return get_magneto_matcher(method)
     else:
         raise ValueError(f"Unknown method: {method}")
 
@@ -111,18 +111,18 @@ def run_valentine_benchmark_one_level(BENCHMARK='valentine', DATASET='musicians'
         nrows_tgt = str(df_target.shape[0])
         nmatches = len(ground_truth)
 
-        # matchers = ["GPTMatcher", "GPTMatcherExample", "MatchMaker"]
-        # matchers = ["GPTMatcher", "GPTMatcherExample", "MatchMaker", "MatchMakerBP", "MatchMakerGPT_5", "MatchMakerGPT_10, MatchMakerGPT_20"]
-        # matchers = ["MatchMaker", "MatchMakerBP"]
-        # matchers = ["MatchMakerGPT_5"]
-        # matchers = [ "MatchMaker", "MatchMakerBP", "MatchMakerGPT_10", "MatchMakerGPT_20", "GPTMatcher", "GPTMatcherExample", "GPTMatcher"]
+        # matchers = ["GPTMatcher", "GPTMatcherExample", "Magneto"]
+        # matchers = ["GPTMatcher", "GPTMatcherExample", "Magneto", "MagnetoBP", "MagnetoGPT_5", "MagnetoGPT_10, MagnetoGPT_20"]
+        # matchers = ["Magneto", "MagnetoBP"]
+        # matchers = ["MagnetoGPT_5"]
+        # matchers = [ "Magneto", "MagnetoBP", "MagnetoGPT_10", "MagnetoGPT_20", "GPTMatcher", "GPTMatcherExample", "GPTMatcher"]
 
         
 
-        matchers = [ "MatchMakerGPT_5"]
+        matchers = [ "MagnetoGPT_5"]
 
-        # gptFull = "MatchMakerGPT_"+str(ncols_tgt)
-        # matchers = ["MatchMakerBP", "MatchMakerGPT_3","MatchMakerGPT_5","MatchMakerGPT_10","MatchMakerGPT_20",  gptFull, "GPTMatcherSchemaOrder",  "GPTMatcherRandomOrder"]
+        # gptFull = "MagnetoGPT_"+str(ncols_tgt)
+        # matchers = ["MagnetoBP", "MagnetoGPT_3","MagnetoGPT_5","MagnetoGPT_10","MagnetoGPT_20",  gptFull, "GPTMatcherSchemaOrder",  "GPTMatcherRandomOrder"]
 
 
         for matcher in matchers:
@@ -247,13 +247,13 @@ def run_valentine_benchmark_three_levels(BENCHMARK='valentine', DATASET='OpenDat
 
 
             # matchers = ["GPTMatcherExample"]
-            # matchers = [ "MatchMaker", "MatchMakerBP", "MatchMakerGPT_5", "MatchMakerGPT_10", "MatchMakerGPT_20", "GPTMatcher", "GPTMatcherExample"]
+            # matchers = [ "Magneto", "MagnetoBP", "MagnetoGPT_5", "MagnetoGPT_10", "MagnetoGPT_20", "GPTMatcher", "GPTMatcherExample"]
 
-            # gptFull = "MatchMakerGPT_"+str(ncols_tgt)
-            # matchers = [ "MatchMakerBP", "MatchMakerGPT_20",gptFull, "GPTMatcherExample", "GPTMatcher"]
+            # gptFull = "MagnetoGPT_"+str(ncols_tgt)
+            # matchers = [ "MagnetoBP", "MagnetoGPT_20",gptFull, "GPTMatcherExample", "GPTMatcher"]
 
-            gptFull = "MatchMakerGPT_"+str(ncols_tgt)
-            matchers = ["MatchMakerBP", "MatchMakerGPT_20",  gptFull, "GPTMatcherSchemaOrder",  "GPTMatcherRandomOrder"]
+            gptFull = "MagnetoGPT_"+str(ncols_tgt)
+            matchers = ["MagnetoBP", "MagnetoGPT_20",  gptFull, "GPTMatcherSchemaOrder",  "GPTMatcherRandomOrder"]
 
             for matcher in matchers:
                 print("Running matcher: ", matcher)

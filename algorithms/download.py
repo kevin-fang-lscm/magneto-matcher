@@ -1,8 +1,8 @@
 import os
 import sys
+
 import requests
 from tqdm.autonotebook import tqdm
-
 
 default_os_cache_dir = os.getenv(
     "XDG_CACHE_HOME", os.path.join(os.path.expanduser("~"), ".cache")

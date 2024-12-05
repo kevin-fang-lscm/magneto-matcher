@@ -1,13 +1,13 @@
-import torch
-from sentence_transformers import SentenceTransformer
-from transformers import AutoTokenizer, AutoModel
-from fuzzywuzzy import fuzz
-
-from .utils import get_samples, detect_column_type
-from .embedding_utils import compute_cosine_similarity_simple
-from .column_encoder import ColumnEncoder
-
 import os
+
+import torch
+from fuzzywuzzy import fuzz
+from sentence_transformers import SentenceTransformer
+from transformers import AutoModel, AutoTokenizer
+
+from .column_encoder import ColumnEncoder
+from .embedding_utils import compute_cosine_similarity_simple
+from .utils import detect_column_type, get_samples
 
 DEFAULT_MODELS = ["sentence-transformers/all-mpnet-base-v2"]
 
@@ -19,16 +19,14 @@ class EmbeddingMatcher:
         self.embedding_threshold = params["embedding_threshold"]
 
         # Dynamically set device to GPU if available, else fallback to CPU
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.model_name = params["embedding_model"]
 
         if self.model_name in DEFAULT_MODELS:
             self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
             # Load the model onto the selected device
-            self.model = AutoModel.from_pretrained(
-                self.model_name).to(self.device)
+            self.model = AutoModel.from_pretrained(self.model_name).to(self.device)
             print(f"Loaded ZeroShot Model on {self.device}")
         else:
             # Base model
@@ -52,8 +50,7 @@ class EmbeddingMatcher:
                 self.model.to(self.device)
             else:
                 print(
-                    f"Trained model not found at {
-                        model_path}, loading default model."
+                    f"Trained model not found at {model_path}, loading default model."
                 )
 
     def _get_embeddings(self, texts, batch_size=32):
@@ -65,7 +62,7 @@ class EmbeddingMatcher:
     def _get_embeddings_zs(self, texts, batch_size=32):
         embeddings = []
         for i in range(0, len(texts), batch_size):
-            batch_texts = texts[i: i + batch_size]
+            batch_texts = texts[i : i + batch_size]
             inputs = self.tokenizer(
                 batch_texts,
                 padding=True,
@@ -81,7 +78,7 @@ class EmbeddingMatcher:
     def _get_embeddings_ft(self, texts, batch_size=32):
         embeddings = []
         for i in range(0, len(texts), batch_size):
-            batch_texts = texts[i: i + batch_size]
+            batch_texts = texts[i : i + batch_size]
             with torch.no_grad():
                 batch_embeddings = self.model.encode(
                     batch_texts, show_progress_bar=False, device=self.device
@@ -126,7 +123,6 @@ class EmbeddingMatcher:
                 similarity = topk_similarity[i, j].item()
 
                 if similarity >= self.embedding_threshold:
-                    candidates[(original_input_col,
-                                original_target_col)] = similarity
+                    candidates[(original_input_col, original_target_col)] = similarity
 
         return candidates
