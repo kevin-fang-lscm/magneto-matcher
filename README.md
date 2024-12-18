@@ -4,13 +4,13 @@ Schema Matching</h2>
 
 > Welcome to Magneto!
 
-This is the code for the paper "Magneto: Combining Small and Large Language Models for Schema Matching" submitted to VLDB 2025.
+This repository contains the codebase of our paper "[Magneto: Combining Small and Large Language Models for Schema Matching](https://arxiv.org/abs/2412.08194)".
 
 Magneto is an innovative framework designed to enhance schema matching (SM) by intelligently combining small, pre-trained language models (SLMs) with large language models (LLMs). Our approach is structured to be both cost-effective and broadly applicable.
 
 The framework operates in two distinct phases:
-- **Candidate Retrieval**: This phase involves using SLMs to quickly identify a manageable subset of potential matches from a vast pool of possibilities.
-- **Reranking**: In this phase, LLMs take over to assess and reorder the candidates, simplifying the process for users to review and select the most suitable matches.
+- **Candidate Retrieval**: This phase involves using SLMs to quickly identify a manageable subset of potential matches from a vast pool of possibilities. Optional LLM-powered fine-tuning can be performed.
+- **Match Reranking**: In this phase, LLMs take over to assess and reorder the candidates, simplifying the process for users to review and select the most suitable matches.
 
 ## Contents
 
@@ -38,9 +38,12 @@ pip install -r requirements.txt
 
 ### 🔥 2.3 Download the data
 
-The data folder contains the datasets used for data integration tasks. You can download the data folder from [this Google Drive link](https://drive.google.com/drive/folders/19kCWQI0CWHs1ZW9RQEUSeK6nuXoA-5B7?usp=sharing).
+The data folder contains the datasets used for data integration tasks. You can download the data folder from [this Google Drive link](https://drive.google.com/drive/folders/19kCWQI0CWHs1ZW9RQEUSeK6nuXoA-5B7?usp=sharing) and should be placed in the `data` directory.
 
 
+### 🔥 2.4 (Optional) Download the fine-tuned model for GDC benchmark
+
+The fine-tuned model for GDC benchmark can be downloaded from [this Google Drive link](https://drive.google.com/drive/folders/1vlWaTm4rpEH4hs-Kq3mhSfTyffhDEp6P?usp=sharing) and should be placed in the `models` directory.
 
 
 ## :gear: 2. Code Structure
@@ -56,7 +59,7 @@ The data folder contains the datasets used for data integration tasks. You can d
             |-- gpt_matcher.py # GPT-based matcher core
         |-- topk_metrics.py # Introducing Recall @ topk
 |-- experiments
-    |-- ablation # code for ablation study
+    |-- ablations # code for ablation study
         |-- run_bp_gdc.py # ablation study for bipartite graph on GDC data
         |-- run_bp_valentine.py # ablation study for bipartite graph on Valentine data
         |-- run_encoding_sampling_ablation_gdc.py # ablation study for encoding sampling on GDC data

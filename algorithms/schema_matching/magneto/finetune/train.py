@@ -1,22 +1,23 @@
 import argparse
 import json
+import torch
+import numpy as np
+from torch.utils.data import DataLoader
+from sentence_transformers import SentenceTransformer, losses
+
+from tqdm import tqdm
+
 import os
 import sys
-
-import numpy as np
-import torch
-from sentence_transformers import SentenceTransformer, losses
-from torch.utils.data import DataLoader
-from tqdm import tqdm
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 project_path = os.getcwd()
 sys.path.append(os.path.join(project_path))
 
-from dataset import CustomDataset
+from train_utils import SimCLRLoss, BalancedBatchSampler, sentence_transformer_map
 from eval import evaluate_metrics
-from train_utils import BalancedBatchSampler, SimCLRLoss, sentence_transformer_map
+from dataset import CustomDataset
 
 
 def train_model(
@@ -41,15 +42,12 @@ def train_model(
             distance_metric=losses.BatchHardTripletLossDistanceFunction.cosine_distance,
         )
     elif loss_type == "simclr":
-        loss_fn = SimCLRLoss(
-            model=model,
-            temperature=0.5,
-        )
+        loss_fn = SimCLRLoss(model=model, temperature=0.5,)
 
     for epoch in range(epochs):
         total_loss = 0
-        # for batch in data_loader:
         for batch in tqdm(data_loader, desc=f"Epoch {epoch+1}/{epochs}", unit="batch"):
+
             texts, labels = batch
             labels = torch.tensor(labels, dtype=torch.float, device=device)
 
@@ -91,9 +89,7 @@ def main():
         description="Match columns between source and target tables using pretrained models."
     )
     parser.add_argument(
-        "--dataset",
-        default="gdc",
-        help="Name of the dataset for model customization",
+        "--dataset", default="gdc", help="Name of the dataset for model customization",
     )
     parser.add_argument(
         "--model_type",
@@ -119,16 +115,10 @@ def main():
         help="Augmentation type (exact, semantic, exact_semantic)",
     )
     parser.add_argument(
-        "--epochs",
-        type=int,
-        default=150,
-        help="Number of epochs for training",
+        "--epochs", type=int, default=150, help="Number of epochs for training",
     )
     parser.add_argument(
-        "--batch_size",
-        type=int,
-        default=32,
-        help="Batch size for training",
+        "--batch_size", type=int, default=64, help="Batch size for training",
     )
     parser.add_argument(
         "--loss_type",
@@ -137,10 +127,7 @@ def main():
         help="Type of loss function to use (triplet or simclr)",
     )
     parser.add_argument(
-        "--margin",
-        type=float,
-        default=0.5,
-        help="Margin value for triplet loss",
+        "--margin", type=float, default=0.5, help="Margin value for triplet loss",
     )
 
     args = parser.parse_args()
@@ -168,7 +155,6 @@ def main():
     )
 
     model = SentenceTransformer(sentence_transformer_map[args.model_type])
-    # optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-5, weight_decay=0.5)
 
     if not os.path.exists("models"):

@@ -1,15 +1,13 @@
 import argparse
-import json
-import os
-import random
-import sys
-
-import pandas as pd
-import tqdm
 from openai import OpenAI
+import json
+import random
+import os
+import sys
+import tqdm
+import pandas as pd
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-# from config import API_KEY
 API_KEY = os.environ.get("OPENAI_API_KEY")
 
 
@@ -22,7 +20,7 @@ class SemanticGenerator:
         if len(column_values) > 0:
             prompt = f"Given the table column '{column_name}' with values {column_values}, \
 generate three alternative column names that adhere to typical database naming conventions such as underscores and abbreviations. \
-Additionally, provide distinct, technically correct synonyms or variants for the listed values \
+Additionally, provide distinct, technically correct synonyms, variants, or abbreviations for the listed values \
 For columns with numerical or datetime data, generate random numbers or dates appropriate to the column's semantic meaning. \
 Ensure that each set does not exceed 15 values. \
 Format your output as follows: \
@@ -40,23 +38,18 @@ Ensure your response excludes additional information and quotations."
     def get_semantic_matches(
         self, column_name, column_values, model="gpt-4-turbo-preview"
     ):
-        print(f"Generating semantic matches for column: {column_name}")
+        # print(f"Generating semantic matches for column: {column_name}")
         # print(f"Column values: {column_values}")
         prompt = self._generate_prompt(column_name, column_values)
         messages = [
             {
                 "role": "system",
-                "content": "You are an AI trained to perform schema matching by providing similarity scores.",
+                "content": "You are an AI trained for generating alternative table column names and appropriate value variants",
             },
-            {
-                "role": "user",
-                "content": prompt,
-            },
+            {"role": "user", "content": prompt,},
         ]
         response = self.client.chat.completions.create(
-            model=model,
-            messages=messages,
-            temperature=0.3,
+            model=model, messages=messages, temperature=0.3,
         )
         matches_content = response.choices[0].message.content
         matches = matches_content.split("; ")
@@ -106,13 +99,13 @@ class ExactGenerator:
 
 def generate_matches(dataset, unique_columns):
     matches = {}
+
     file_path = f"{dataset}_synthetic_matches.json"
     if os.path.exists(file_path):
         with open(file_path, "r") as file:
             matches = json.load(file)
 
     exact_generator = ExactGenerator()
-
     semantic_generator = SemanticGenerator(API_KEY)
 
     for column_name, column_values in tqdm.tqdm(unique_columns.items()):
@@ -133,7 +126,6 @@ def generate_matches(dataset, unique_columns):
             matches[column_name]["exact"].update(exact_matches)
 
         while True:
-            print(f"Generating semantic matches for column: {column_name}")
             semantic_matches = semantic_generator.get_semantic_matches(
                 column_name, column_values
             )
@@ -147,6 +139,7 @@ def generate_matches(dataset, unique_columns):
 
 
 def extract_unique_columns(file_path):
+
     df = pd.read_csv(file_path, low_memory=False)
 
     unique_columns = {}
@@ -161,15 +154,32 @@ def extract_unique_columns(file_path):
 
 
 def main():
-    # base_path = '/Users/pena/nyu-code/data-integration-eval/data/gdc/target-tables/gdc_unique_columns_concat_values.csv'
-    # unique_columns = extract_unique_columns(base_path)
+    parser = argparse.ArgumentParser(
+        description="Match columns between source and target tables using pretrained models."
+    )
+    parser.add_argument(
+        "--dataset", default="gdc", help="Name of the dataset",
+    )
+    args = parser.parse_args()
+    dataset = args.dataset
 
-    path = "/Users/pena/nyu-code/data-integration-eval/data_generation/source/opendata/miller2_horizontal_0_ec_ev_source.csv"
-    unique_columns = extract_unique_columns(path)
-    # print(unique_columns)
-    # extract_unique_columns('gdc_unique_columns_concat_values.csv')
-    print(API_KEY)
-    generate_matches("opendata", unique_columns)
+    if dataset in ["gdc", "wikidata", "magellan"]:
+        try:
+            with open(f"{dataset}_unique_columns.json", "r") as f:
+                unique_columns = json.load(f)
+        except FileNotFoundError:
+            print(f"Error: {dataset}_unique_columns.json not found.")
+            exit()
+    else:
+        dataset_dict = {
+            "chembl": "Chembl",
+            "opendata": "Opendata-base",
+            "tpc": "TPCH-base",
+        }
+        file_path = f"model_generation_valentine/{dataset_dict[dataset]}.csv"
+        unique_columns = extract_unique_columns(file_path)
+
+    generate_matches(dataset, unique_columns)
 
 
 if __name__ == "__main__":
