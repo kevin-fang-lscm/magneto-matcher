@@ -42,7 +42,10 @@ def train_model(
             distance_metric=losses.BatchHardTripletLossDistanceFunction.cosine_distance,
         )
     elif loss_type == "simclr":
-        loss_fn = SimCLRLoss(model=model, temperature=0.5,)
+        loss_fn = SimCLRLoss(
+            model=model,
+            temperature=0.5,
+        )
 
     for epoch in range(epochs):
         total_loss = 0
@@ -89,7 +92,9 @@ def main():
         description="Match columns between source and target tables using pretrained models."
     )
     parser.add_argument(
-        "--dataset", default="gdc", help="Name of the dataset for model customization",
+        "--dataset",
+        default="gdc",
+        help="Name of the dataset for model customization",
     )
     parser.add_argument(
         "--model_type",
@@ -115,10 +120,16 @@ def main():
         help="Augmentation type (exact, semantic, exact_semantic)",
     )
     parser.add_argument(
-        "--epochs", type=int, default=150, help="Number of epochs for training",
+        "--epochs",
+        type=int,
+        default=150,
+        help="Number of epochs for training",
     )
     parser.add_argument(
-        "--batch_size", type=int, default=64, help="Batch size for training",
+        "--batch_size",
+        type=int,
+        default=64,
+        help="Batch size for training",
     )
     parser.add_argument(
         "--loss_type",
@@ -127,7 +138,10 @@ def main():
         help="Type of loss function to use (triplet or simclr)",
     )
     parser.add_argument(
-        "--margin", type=float, default=0.5, help="Margin value for triplet loss",
+        "--margin",
+        type=float,
+        default=0.5,
+        help="Margin value for triplet loss",
     )
 
     args = parser.parse_args()

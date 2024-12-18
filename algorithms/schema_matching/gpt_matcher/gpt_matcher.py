@@ -59,11 +59,17 @@ class GPTMatcher(BaseMatcher):
             matched_columns[source_col] = target_col_list
 
         matched_columns = reranker.rematch(
-            source_table, target_table, source_values, target_values, matched_columns,
+            source_table,
+            target_table,
+            source_values,
+            target_values,
+            matched_columns,
         )
 
         converted_matches = convert_to_valentine_format(
-            matched_columns, source_name, target_name,
+            matched_columns,
+            source_name,
+            target_name,
         )
 
         return converted_matches

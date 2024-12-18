@@ -4,6 +4,7 @@ import pandas as pd
 import time
 import datetime
 import pprint
+import argparse
 
 pp = pprint.PrettyPrinter(indent=4, sort_dicts=True)
 
@@ -25,7 +26,7 @@ from experiments.benchmarks.utils import (
 import algorithms.schema_matching.magneto.magneto as mm
 
 
-def get_matcher(method, model_name):
+def get_matcher(method, model_name=None, mode="header_values_verbose"):
     if method == "Coma":
         return Coma()
     elif method == "ComaInst":
@@ -33,18 +34,34 @@ def get_matcher(method, model_name):
     elif method == "Magneto":
         return mm.Magneto()
     elif method == "MagnetoFT":
-        model_path = os.path.join(project_path, "models", model_name,)
-        return mm.Magneto(embedding_model=model_path)
+        model_path = os.path.join(
+            project_path,
+            "models",
+            model_name,
+        )
+        return mm.Magneto(encoding_mode=mode, embedding_model=model_path)
     elif method == "MagnetoGPT":
         return mm.Magneto(use_bp_reranker=False, use_gpt_reranker=True)
     elif method == "MagnetoFTGPT":
-        model_path = os.path.join(project_path, "models", model_name,)
+        model_path = os.path.join(
+            project_path,
+            "models",
+            model_name,
+        )
         return mm.Magneto(
-            embedding_model=model_path, use_bp_reranker=False, use_gpt_reranker=True
+            encoding_mode=mode,
+            embedding_model=model_path,
+            use_bp_reranker=False,
+            use_gpt_reranker=True,
         )
 
 
-def run_benchmark(BENCHMARK="gdc_studies", DATASET="gdc_studies", ROOT="data/gdc"):
+def run_benchmark(
+    BENCHMARK="gdc_studies",
+    DATASET="gdc_studies",
+    ROOT="data/gdc",
+    MODE="header_values_verbose",
+):
 
     HEADER = [
         "benchmark",
@@ -73,7 +90,7 @@ def run_benchmark(BENCHMARK="gdc_studies", DATASET="gdc_studies", ROOT="data/gdc
     ]
 
     model_names = [
-        "mpnet-gdc-header_values_verbose-semantic-64-0.5.pth",
+        "mpnet-gdc-{MODE}-semantic-64-0.5.pth",
     ]
 
     for model_name in model_names:
@@ -127,7 +144,7 @@ def run_benchmark(BENCHMARK="gdc_studies", DATASET="gdc_studies", ROOT="data/gdc
                     )
 
                     method_name = matcher
-                    matcher = get_matcher(matcher, model_name)
+                    matcher = get_matcher(matcher, model_name, MODE)
 
                     start_time = time.time()
                     matches = valentine_match(df_source, df_target, matcher)
@@ -199,5 +216,19 @@ def run_benchmark(BENCHMARK="gdc_studies", DATASET="gdc_studies", ROOT="data/gdc
                 print("\n")
 
 
+def main():
+    parser = argparse.ArgumentParser(description="Run the Valentine benchmark")
+
+    parser.add_argument(
+        "--mode",
+        type=str,
+        help="serialization mode",
+        default="header_values_default",
+    )
+    args = parser.parse_args()
+
+    run_benchmark(MODE=args.mode)
+
+
 if __name__ == "__main__":
-    run_benchmark()
+    main()

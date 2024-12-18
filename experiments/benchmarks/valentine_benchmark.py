@@ -5,12 +5,12 @@ import json
 import pandas as pd
 import time
 import datetime
+import argparse
 from valentine import valentine_match
 from valentine.algorithms import Coma
 import valentine.algorithms.matcher_results as matcher_results
 
 import warnings
-from tqdm import tqdm
 
 warnings.simplefilter("ignore", FutureWarning)
 
@@ -47,19 +47,23 @@ def get_matcher(method, model_name=None, mode="header_values_default"):
         return Coma()
     elif method == "ComaInst":
         return Coma(use_instances=True, java_xmx="10096m")
-
     elif method == "Magneto":
         return mm.Magneto()
-    elif method == "MagnetoGPT":
-        return mm.Magneto(use_instances=False, use_gpt=True)
-
     elif method == "MagnetoFT":
-        model_path = os.path.join(project_path, "models", model_name,)
+        model_path = os.path.join(
+            project_path,
+            "models",
+            model_name,
+        )
         return mm.Magneto(encoding_mode=mode, embedding_model=model_path)
     elif method == "MagnetoGPT":
         return mm.Magneto(use_bp_reranker=False, use_gpt_reranker=True)
     elif method == "MagnetoFTGPT":
-        model_path = os.path.join(project_path, "models", model_name,)
+        model_path = os.path.join(
+            project_path,
+            "models",
+            model_name,
+        )
         return mm.Magneto(
             encoding_mode=mode,
             embedding_model=model_path,
@@ -120,10 +124,9 @@ def run_valentine_benchmark_one_level(
         result_file = os.path.join(
             results_dir,
             DATASET
-            + "-"
-            + model_name.replace("-16-0.5.pth", "").replace("mpnet-", "")
-            + "_results"
-            + ".csv",
+            # + "-"
+            # + model_name.replace("-16-0.5.pth", "").replace("mpnet-", "")
+            + "_results" + datetime.datetime.now().strftime("%Y%m%d%H%M%S") + ".csv",
         )
         print(result_file)
 
@@ -428,7 +431,10 @@ def main():
     )
 
     parser.add_argument(
-        "--mode", type=str, help="serialization mode", default="header_values_default",
+        "--mode",
+        type=str,
+        help="serialization mode",
+        default="header_values_default",
     )
 
     args = parser.parse_args()

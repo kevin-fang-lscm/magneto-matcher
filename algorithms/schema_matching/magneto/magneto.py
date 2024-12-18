@@ -138,12 +138,18 @@ class Magneto(BaseMatcher):
         # print("Initial Matches:", matched_columns)
 
         matched_columns = reranker.rematch(
-            source_table, target_table, source_values, target_values, matched_columns,
+            source_table,
+            target_table,
+            source_values,
+            target_values,
+            matched_columns,
         )
         # print("Refined Matches:", matched_columns)
 
         converted_matches = convert_to_valentine_format(
-            matched_columns, orig_source_table.name, orig_target_table.name,
+            matched_columns,
+            orig_source_table.name,
+            orig_target_table.name,
         )
 
         return converted_matches

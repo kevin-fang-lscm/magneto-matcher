@@ -18,12 +18,12 @@ This README file is divided into the following sections:
 
 * [1. Environment Setup](#gear-1-environment-setup)
 * [2. Code Structure](#gear-2-code-structure)
+* [3. Example Usage](#gear-3-example-usage)
 
 ## :gear: 1. Environment Setup
 
-### 🔥 2.1 Create a virtual environment (optional, but recommended)
-
-To isolate dependencies and avoid library conflicts with your local environment, you may want to use a Python virtual environment manager. To do so, you should run the following commands to create and activate the virtual environment:
+### 🔥 2.1 Create a virtual environment
+This step is optional but recommended. To isolate dependencies and avoid library conflicts with your local environment, you may want to use a Python virtual environment manager. To do so, you should run the following commands to create and activate the virtual environment:
 ```bash
 python -m venv ./venv
 source ./venv/bin/activate
@@ -38,18 +38,28 @@ pip install -r requirements.txt
 
 ### 🔥 2.3 Download the data
 
-The data folder contains the datasets used for data integration tasks. You can download the data folder from [this Google Drive link](https://drive.google.com/drive/folders/19kCWQI0CWHs1ZW9RQEUSeK6nuXoA-5B7?usp=sharing) and should be placed in the `data` directory.
+The data folder contains the datasets used for data integration tasks. Download the data folder from [this Google Drive link](https://drive.google.com/drive/folders/19kCWQI0CWHs1ZW9RQEUSeK6nuXoA-5B7?usp=sharing) and place it in the `data` directory.
 
 
-### 🔥 2.4 (Optional) Download the fine-tuned model for GDC benchmark
+### 🔥 2.4 Download the fine-tuned model for GDC benchmark
 
-The fine-tuned model for GDC benchmark can be downloaded from [this Google Drive link](https://drive.google.com/drive/folders/1vlWaTm4rpEH4hs-Kq3mhSfTyffhDEp6P?usp=sharing) and should be placed in the `models` directory.
+This step is optional but required for `MagnetoFT` and `MagnetoFTGPT`. Download the fine-tuned model from [this Google Drive link](https://drive.google.com/drive/folders/1vlWaTm4rpEH4hs-Kq3mhSfTyffhDEp6P?usp=sharing) and place it in the `models` directory.
 
+### 🔥 2.5 Set the Environment Variable
+This step is optional but required for `MagnetoGPT` and `MagnetoFTGPT`. Set the `OPENAI_API_KEY` environment variable using the following commands based on your operating system:
+#### For Windows:
+```bash
+set OPENAI_API_KEY=your_api_key_here
+```
+#### For macOS/Linux:
+```bash
+export OPENAI_API_KEY=your_api_key_here
+```
 
 ## :gear: 2. Code Structure
 > note that batched benchmark on baseline methods are on this [repo](https://github.com/VIDA-NYU/data-harmonization-benchmark).
 
-```sh
+```bash
 |-- algorithm
     |-- schema_matching
         |-- magneto # code for Magneto
@@ -72,3 +82,25 @@ The fine-tuned model for GDC benchmark can be downloaded from [this Google Drive
 |-- results_visualization # notebooks for results visualization
 ```
 
+## :gear: 3. Example Usage
+For reproducing the GDC benchmark results, you can run the following command:
+```bash
+python experiments/benchmarks/gdc_benchmark.py --mode [MODE]
+```
+where `[MODE]` can be one of the following:
+- `header-value-default`
+- `header-value-repeat`
+- `header-value-verbose`
+
+For reproducing the Valentine benchmark results, you can run the following command:
+```bash
+python experiments/benchmarks/valentine_benchmark.py --mode [MODE] --dataset [DATASET]
+```
+where `[MODE]` is similar to the GDC benchmark and `[DATASET]` can be one of the following:
+- `chembl`
+- `magellan`
+- `opendata`
+- `tpc`
+- `wikidata`
+
+You can change the Mageto configurations in the corresponding benchmark file.

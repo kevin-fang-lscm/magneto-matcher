@@ -12,7 +12,6 @@ class LLMReranker:
         self.client = self._load_client()
         self.llm_attempts = 5
 
-    # TODO: Add any additional models here
     def _load_client(self):
         if self.llm_model in ["gpt-4-turbo-preview", "gpt-4o-mini"]:
             api_key = os.getenv("OPENAI_API_KEY")
@@ -113,7 +112,10 @@ Candidate Column:"
         return prompt
 
     def _get_matches_w_score(
-        self, cand, targets, other_cols,
+        self,
+        cand,
+        targets,
+        other_cols,
     ):
         prompt = self._get_prompt(cand, targets)
         # print(prompt)
@@ -123,14 +125,19 @@ Candidate Column:"
                     "role": "system",
                     "content": "You are an AI trained to perform schema matching by providing column similarity scores.",
                 },
-                {"role": "user", "content": prompt,},
+                {
+                    "role": "user",
+                    "content": prompt,
+                },
             ]
             # print(messages[1]["content"])
 
             # time_begin = time.time()
 
             response = self.client.chat.completions.create(
-                model=self.llm_model, messages=messages, temperature=0.3,
+                model=self.llm_model,
+                messages=messages,
+                temperature=0.3,
             )
             matches = response.choices[0].message.content
 
@@ -139,7 +146,13 @@ Candidate Column:"
 
         elif self.llm_model in ["gemma2:9b"]:
             response = self.client.chat(
-                model=self.llm_model, messages=[{"role": "user", "content": prompt,},],
+                model=self.llm_model,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt,
+                    },
+                ],
             )
             matches = response["message"]["content"]
         # print(matches)
