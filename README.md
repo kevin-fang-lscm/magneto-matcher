@@ -52,6 +52,8 @@ The data folder contains the datasets used for data integration tasks. You can d
         |-- magneto # code for Magneto
             |-- finetune # code for Magneto FT
             |-- magneto.py # Magneto core
+        |-- gpt_matcher # code for GPT-based matcher
+            |-- gpt_matcher.py # GPT-based matcher core
         |-- topk_metrics.py # Introducing Recall @ topk
 |-- experiments
     |-- ablation # code for ablation study
@@ -65,6 +67,5 @@ The data folder contains the datasets used for data integration tasks. You can d
         |-- gdc_benchmark.py # benchmark study on GDC data
         |-- valentine_benchmark.py # benchmark study on Valentine data
 |-- results_visualization # notebooks for results visualization
-|-- visualizations # graphs and tables
 ```
 
