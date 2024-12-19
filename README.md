@@ -22,30 +22,30 @@ This README file is divided into the following sections:
 
 ## :gear: 1. Environment Setup
 
-### 🔥 2.1 Create a virtual environment
+### 🔥 1.1 Create a virtual environment
 This step is optional but recommended. To isolate dependencies and avoid library conflicts with your local environment, you may want to use a Python virtual environment manager. To do so, you should run the following commands to create and activate the virtual environment:
 ```bash
 python -m venv ./venv
 source ./venv/bin/activate
 ```
 
-### 🔥 2.2 Install dependencies
+### 🔥 1.2 Install dependencies
 
 To install the required dependencies, run the following command:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 🔥 2.3 Download the data
+### 🔥 1.3 Download the data
 
 The data folder contains the datasets used for data integration tasks. Download the data folder from [this Google Drive link](https://drive.google.com/drive/folders/19kCWQI0CWHs1ZW9RQEUSeK6nuXoA-5B7?usp=sharing) and place it in the `data` directory.
 
 
-### 🔥 2.4 Download the fine-tuned model for GDC benchmark
+### 🔥 1.4 Download the fine-tuned model for GDC benchmark
 
 This step is optional but required for `MagnetoFT` and `MagnetoFTGPT`. Download the fine-tuned model from [this Google Drive link](https://drive.google.com/drive/folders/1vlWaTm4rpEH4hs-Kq3mhSfTyffhDEp6P?usp=sharing) and place it in the `models` directory.
 
-### 🔥 2.5 Set the Environment Variable
+### 🔥 1.5 Set the Environment Variable
 This step is optional but required for `MagnetoGPT` and `MagnetoFTGPT`. Set the `OPENAI_API_KEY` environment variable using the following commands based on your operating system:
 #### For Windows:
 ```bash
