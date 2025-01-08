@@ -4,7 +4,7 @@ from sentence_transformers import SentenceTransformer
 from torch.nn.functional import normalize
 from transformers import AutoModel, AutoTokenizer
 
-from .retriever_utils import (
+from magneto.retriever_utils import (
     detect_column_type,
     infer_column_dtype,
     lm_map,

@@ -7,7 +7,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from valentine import MatcherResults
 from valentine.algorithms.match import Match
 
-from .constants import BINARY_VALUES, KEY_REPRESENTATIONS, NULL_REPRESENTATIONS
+from magneto.constants import BINARY_VALUES, KEY_REPRESENTATIONS, NULL_REPRESENTATIONS
 
 PHI_FRACTION = 0.6180339887  # φ - 1
 np.random.seed(42)

@@ -1,4 +1,4 @@
-from .utils import detect_column_type, get_samples
+from magneto.utils import detect_column_type, get_samples
 
 modes = [
     "header_values_default",

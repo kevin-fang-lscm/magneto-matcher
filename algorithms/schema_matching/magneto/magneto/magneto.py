@@ -5,11 +5,11 @@ from valentine.algorithms.base_matcher import BaseMatcher
 from valentine.algorithms.match import Match
 from valentine.data_sources.base_table import BaseTable
 
-from .basic_matcher import get_str_similarity_candidates
-from .bp_reranker import arrange_bipartite_matches
-from .embedding_matcher import DEFAULT_MODELS, EmbeddingMatcher
-from .llm_reranker import LLMReranker
-from .utils import (
+from magneto.basic_matcher import get_str_similarity_candidates
+from magneto.bp_reranker import arrange_bipartite_matches
+from magneto.embedding_matcher import DEFAULT_MODELS, EmbeddingMatcher
+from magneto.llm_reranker import LLMReranker
+from magneto.utils import (
     clean_df,
     convert_simmap_to_valentine_format,
     convert_to_valentine_format,
