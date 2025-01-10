@@ -61,13 +61,12 @@ export OPENAI_API_KEY=your_api_key_here
 
 ```bash
 |-- algorithm
-    |-- schema_matching
-        |-- magneto # code for Magneto
-            |-- finetune # code for Magneto FT
-            |-- magneto.py # Magneto core
-        |-- gpt_matcher # code for GPT-based matcher
-            |-- gpt_matcher.py # GPT-based matcher core
-        |-- topk_metrics.py # Introducing Recall @ topk
+    |-- magneto # code for Magneto
+        |-- finetune # code for Magneto FT
+        |-- magneto # Magneto core
+    |-- gpt_matcher # code for GPT-based matcher
+        |-- gpt_matcher.py # GPT-based matcher core
+    |-- topk_metrics.py # Introducing Recall @ topk
 |-- experiments
     |-- ablations # code for ablation study
         |-- run_bp_gdc.py # ablation study for bipartite graph on GDC data

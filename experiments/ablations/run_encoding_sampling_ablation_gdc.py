@@ -8,9 +8,9 @@ from itertools import product
 project_path = os.getcwd()
 sys.path.append(os.path.join(project_path))
 
-import algorithms.schema_matching.magneto.magneto as mm
+import algorithms.magneto.magneto as mm
 from valentine import valentine_match
-from experiments.benchmarks.utils import (
+from experiments.benchmarks.benchmark_utils import (
     compute_mean_ranking_reciprocal,
     create_result_file,
     record_result,

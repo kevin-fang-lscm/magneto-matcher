@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.optimize import linear_sum_assignment
+from valentine import MatcherResults
 
 
 def bipartite_filtering(
@@ -47,7 +48,7 @@ def bipartite_filtering(
             ((source_table_name, source_col), (target_table_name, target_col))
         ] = score_matrix[source_idx, target_idx]
 
-    return filtered_matches
+    return MatcherResults(filtered_matches)
 
 
 def arrange_bipartite_matches(
@@ -61,14 +62,14 @@ def arrange_bipartite_matches(
         target_table_name,
     )
 
-    # Step 1: Remove all filtered_matches entries from initial_matches
+    # Remove all filtered_matches entries from initial_matches
     for key in filtered_matches.keys():
         initial_matches.pop(key, None)
 
-    # Step 2: Find the minimum score in filtered_matches
+    # Find the minimum score in filtered_matches
     min_filtered_score = min(filtered_matches.values())
 
-    # Step 3: Calculate the scaling factor to keep scores in initial_matches just below min_filtered_score
+    # Calculate the scaling factor to keep scores in initial_matches just below min_filtered_score
     initial_max_score = max(initial_matches.values())
     scaling_factor = (
         (min_filtered_score - 0.01) / initial_max_score if initial_max_score > 0 else 1
@@ -79,34 +80,8 @@ def arrange_bipartite_matches(
         key: score * scaling_factor for key, score in initial_matches.items()
     }
 
-    # Step 4: Combine filtered_matches and adjusted initial_matches
+    # Combine filtered_matches and adjusted initial_matches
     # filtered_matches entries will remain at the beginning
     filtered_matches.update(adjusted_initial_matches)
 
     return filtered_matches
-
-
-## not used
-def _min_max_normalize(self, valentine_matched_columns):
-    matched_columns = {}
-    for entry, score in valentine_matched_columns.items():
-        source_col = entry[0][1]
-        target_col = entry[1][1]
-        if source_col not in matched_columns:
-            matched_columns[source_col] = [(target_col, score)]
-        else:
-            matched_columns[source_col].append((target_col, score))
-
-    normalized_columns = {}
-    for key, values in matched_columns.items():
-        # Extract only the weights for min-max normalization
-        weights = [weight for _, weight in values]
-        min_w = min(weights)
-        max_w = max(weights)
-        range_w = max_w - min_w
-        normalized_list = [
-            (name, (weight - min_w) / range_w if range_w > 0 else 0)
-            for name, weight in values
-        ]
-        normalized_columns[key] = normalized_list
-    return normalized_columns

@@ -19,8 +19,8 @@ project_path = os.getcwd()
 sys.path.append(os.path.join(project_path))
 
 
-from experiments.benchmarks.utils import compute_mean_ranking_reciprocal_adjusted, compute_mean_ranking_reciprocal_detail, create_result_file, record_result
-import algorithms.schema_matching.magneto.magneto as mm
+from experiments.benchmarks.benchmark_utils import compute_mean_ranking_reciprocal_adjusted, compute_mean_ranking_reciprocal_detail, create_result_file, record_result
+import algorithms.magneto.magneto as mm
 
 pp = pprint.PrettyPrinter(indent=4)
 

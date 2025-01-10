@@ -5,8 +5,8 @@ import tiktoken
 from valentine.algorithms.base_matcher import BaseMatcher
 from valentine.data_sources.base_table import BaseTable
 
-from algorithms.schema_matching.magneto.llm_reranker import LLMReranker
-from algorithms.schema_matching.magneto.utils import (
+from algorithms.magneto.llm_reranker import LLMReranker
+from algorithms.magneto.utils import (
     convert_to_valentine_format,
     get_samples,
 )
