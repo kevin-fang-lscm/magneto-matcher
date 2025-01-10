@@ -1,28 +1,32 @@
 import os
-from typing import Dict, Tuple
-
-from valentine.algorithms.base_matcher import BaseMatcher
-from valentine.algorithms.match import Match
-from valentine.data_sources.base_table import BaseTable
+from typing import Dict, Tuple, Any
+import pandas as pd
 
 from magneto.basic_matcher import get_str_similarity_candidates
 from magneto.bp_reranker import arrange_bipartite_matches
 from magneto.embedding_matcher import DEFAULT_MODELS, EmbeddingMatcher
 from magneto.llm_reranker import LLMReranker
-from magneto.utils import (
+from magneto.utils.utils import (
     clean_df,
-    convert_simmap_to_valentine_format,
     convert_to_valentine_format,
     get_samples,
     remove_invalid_characters,
 )
+from magneto.utils.dataframe_table import DataframeTable
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
-class Magneto(BaseMatcher):
-    ## attention
-    ## for ablation experiments, make sure to have the default set correcly
+class Magneto:
+    """
+    Magneto is a class designed to match columns between two Pandas DataFrames.
+    It provides multiple matching strategies, including:
+      - String similarity
+      - Embedding-based similarity
+      - Exact name matching
+    Additionally, the bipartite (BP) and GPT-based re-rankers can refine matches.
+    """
+
     DEFAULT_PARAMS = {
         "embedding_model": "sentence-transformers/all-mpnet-base-v2",
         "encoding_mode": "header_values_verbose",
@@ -37,12 +41,25 @@ class Magneto(BaseMatcher):
         "use_gpt_reranker": False,
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
+        """
+        Initialize Magneto with default or user-specified parameters.
+
+        Args:
+            **kwargs: Overriding parameters for the matching process.
+
+        Attributes:
+            params (Dict[str, Any]): A dictionary of current settings 
+                controlling Magneto’s behavior (e.g., which strategies to apply).
+        """
         # Merge provided kwargs with defaults, use params in case you need more parameters: for ablation, etc
         self.params = {**self.DEFAULT_PARAMS, **kwargs}
-        # print("Magneto Params:", self.params)
 
-    def apply_strsim_matches(self):
+    def apply_strsim_matches(self) -> None:
+        """
+        If 'include_strsim_matches' is True, computes string-similarity 
+        scores for each column pair (source, target) and updates self.input_sim_map.
+        """
         if self.params["include_strsim_matches"]:
             strsim_candidates = get_str_similarity_candidates(
                 self.df_source.columns, self.df_target.columns
@@ -50,7 +67,11 @@ class Magneto(BaseMatcher):
             for (source_col, target_col), score in strsim_candidates.items():
                 self.input_sim_map[source_col][target_col] = score
 
-    def apply_embedding_matches(self):
+    def apply_embedding_matches(self) -> None:
+        """
+        If 'include_embedding_matches' is True, uses EmbeddingMatcher 
+        to compute similarity scores for column pairs, then updates self.input_sim_map.
+        """
         if not self.params["include_embedding_matches"]:
             return
 
@@ -62,34 +83,11 @@ class Magneto(BaseMatcher):
         for (col_source, col_target), score in embedding_candidates.items():
             self.input_sim_map[col_source][col_target] = score
 
-        # if self.params['embedding_model'] in DEFAULT_MODELS:
-
-        #     embeddingMatcher = EmbeddingMatcher(params=self.params)
-
-        #     embedding_candidates = embeddingMatcher.get_embedding_similarity_candidates(
-        #         self.df_source, self.df_target)
-        #     for (col_source, col_target), score in embedding_candidates.items():
-        #         self.input_sim_map[col_source][col_target] = score
-
-        # else:
-
-        #     retriever = Retriever(self.params['embedding_model'])
-
-        #     source_values = {
-        #         col: get_samples_2(self.df_source[col]) for col in self.df_source.columns
-        #     }
-        #     target_values = {
-        #         col: get_samples_2(self.df_target[col]) for col in self.df_target.columns
-        #     }
-        #     matched_columns = retriever.find_matches(
-        #         self.df_source, self.df_target, source_values, target_values, 20
-        #     )
-        #     # print("Initial Matches:", matched_columns)
-        #     for key in matched_columns:
-        #         for match in matched_columns[key]:
-        #             self.input_sim_map[key][match[0]] = match[1]
-
-    def apply_equal_matches(self):
+    def apply_equal_matches(self) -> None:
+        """
+        If 'include_equal_matches' is True, marks columns with identical 
+        cleaned names (lowercased, special chars removed) as perfect matches (score=1.0).
+        """
         if self.params["include_equal_matches"]:
             source_cols_cleaned = {
                 col: remove_invalid_characters(col.strip().lower())
@@ -105,15 +103,36 @@ class Magneto(BaseMatcher):
                     if cand_source == cand_target:
                         self.input_sim_map[source_col][target_col] = 1.0
 
-    def get_top_k_matches(self, col_matches):
+    def get_top_k_matches(self, col_matches: Dict[str, float]) -> list:
+        """
+        Sorts column-to-score mappings and returns the top-K matches.
+
+        Args:
+            col_matches (Dict[str, float]): A dictionary of {column_name: similarity_score}.
+
+        Returns:
+            List of (column_name, score) tuples, up to the number specified by 'topk'.
+        """
         sorted_matches = sorted(
             col_matches.items(), key=lambda item: item[1], reverse=True
         )
         top_k_matches = sorted_matches[: self.params["topk"]]
-        return dict(top_k_matches)
+        return [(col, score) for col, score in top_k_matches]
 
-    def call_llm_reranker(self, source_table, target_table, matches):
-        orig_source_table, orig_target_table = source_table, target_table
+    def call_llm_reranker(self, source_table: DataframeTable, target_table: DataframeTable, 
+                          matches: Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]) -> dict:
+        """
+        If 'use_gpt_reranker' is True, performs an LLM-based reranking of the matched columns.
+
+        Args:
+            source_table (DataframeTable): The wrapper for the source DataFrame.
+            target_table (DataframeTable): The wrapper for the target DataFrame.
+            matches (Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]): 
+                Valentine-style matches to be reranked.
+
+        Returns:
+            A dictionary of {source_col: [(target_col, score), ...]} after LLM reranking.
+        """
         source_table = source_table.get_df()
         target_table = target_table.get_df()
 
@@ -135,8 +154,6 @@ class Magneto(BaseMatcher):
             else:
                 matched_columns[source_col].append((target_col, score))
 
-        # print("Initial Matches:", matched_columns)
-
         matched_columns = reranker.rematch(
             source_table,
             target_table,
@@ -144,21 +161,27 @@ class Magneto(BaseMatcher):
             target_values,
             matched_columns,
         )
-        # print("Refined Matches:", matched_columns)
 
-        converted_matches = convert_to_valentine_format(
-            matched_columns,
-            orig_source_table.name,
-            orig_target_table.name,
-        )
-
-        return converted_matches
+        return matched_columns
 
     def get_matches(
-        self, source_table: BaseTable, target_table: BaseTable
+        self, source: pd.DataFrame, target: pd.DataFrame
     ) -> Dict[Tuple[Tuple[str, str], Tuple[str, str]], float]:
-        self.df_source = clean_df(source_table.get_df())
-        self.df_target = clean_df(target_table.get_df())
+        """
+        The main method for deriving matched columns between the source and target DataFrames.
+
+        Args:
+            source (pd.DataFrame): The source DataFrame to be matched.
+            target (pd.DataFrame): The target DataFrame to be matched.
+
+        Returns:
+            A dictionary (Valentine format) mapping:
+                ((source_table_name, source_col), (target_table_name, target_col)) -> score
+        """
+        source_table = DataframeTable(source, "source")
+        target_table = DataframeTable(target, "target")
+        self.df_source = clean_df(source)
+        self.df_target = clean_df(target)
 
         if len(self.df_source.columns) == 0 or len(self.df_target.columns) == 0:
             return {}
@@ -185,12 +208,11 @@ class Magneto(BaseMatcher):
                 self.input_sim_map[col_source]
             )
 
-        matches = convert_simmap_to_valentine_format(
+        matches = convert_to_valentine_format(
             self.input_sim_map, source_table.name, target_table.name
         )
 
         if self.params["use_bp_reranker"]:
-            # print("Applying bipartite matching")
             matches = arrange_bipartite_matches(
                 matches,
                 self.df_source,
@@ -202,11 +224,21 @@ class Magneto(BaseMatcher):
         if self.params["use_gpt_reranker"]:
             print("Applying GPT reranker")
             matches = self.call_llm_reranker(source_table, target_table, matches)
+            matches = convert_to_valentine_format(
+                matches, source_table.name, target_table.name
+            )
 
         return matches
 
-    ## only used in ablation experiments
-    def apply_strategies_in_order(self, order):
+    def apply_strategies_in_order(self, order: Dict[str, int]) -> None:
+        """
+        Applies match strategies in the user-defined order if provided, 
+        ignoring any strategies assigned a value of -1.
+
+        Args:
+            order (Dict[str, int]): A dictionary mapping strategy names (e.g., 'strsim', 'embedding', 'equal')
+                to their execution order (where -1 means "skip this strategy").
+        """
         strategy_functions = {
             "strsim": self.apply_strsim_matches,
             "embedding": self.apply_embedding_matches,

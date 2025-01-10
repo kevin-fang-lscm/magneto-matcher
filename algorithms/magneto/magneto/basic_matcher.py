@@ -1,6 +1,11 @@
 from fuzzywuzzy import fuzz
 
-from magneto.utils import common_prefix, detect_column_type, get_samples, preprocess_string
+from magneto.utils.utils import (
+    common_prefix,
+    detect_column_type,
+    get_samples,
+    preprocess_string,
+)
 
 
 def alignment_score_consecutive(str1, str2, max_distance=2, size_ratio_threshold=2):

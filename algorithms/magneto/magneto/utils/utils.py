@@ -5,9 +5,13 @@ import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from valentine import MatcherResults
-from valentine.algorithms.match import Match
+from dateutil.parser import parse
 
-from magneto.constants import BINARY_VALUES, KEY_REPRESENTATIONS, NULL_REPRESENTATIONS
+from magneto.utils.constants import (
+    BINARY_VALUES,
+    KEY_REPRESENTATIONS,
+    NULL_REPRESENTATIONS,
+)
 
 PHI_FRACTION = 0.6180339887  # φ - 1
 np.random.seed(42)
@@ -22,17 +26,6 @@ def convert_to_valentine_format(matched_columns, source_table, target_table):
     if isinstance(valentine_format, MatcherResults):
         return valentine_format
     return MatcherResults(valentine_format)
-
-
-def convert_simmap_to_valentine_format(sim_map, source_table_name, target_table_name):
-    matches = {}
-    for col_input, matches_dict in sim_map.items():
-        for col_target, score in matches_dict.items():
-            match = Match(
-                target_table_name, col_target, source_table_name, col_input, score
-            ).to_dict
-            matches.update(match)
-    return MatcherResults(matches)
 
 
 def common_prefix(strings):
@@ -135,54 +128,6 @@ def clean_df(df):
     return df
 
 
-# def detect_column_type(col, key_threshold=0.8, numeric_threshold=0.90):
-
-#     if "gene" in col.name.lower():
-#         # TODO, implement a less naive approach
-#         return "gene"
-
-#     if "date" in col.name.lower():
-#         # TODO, implement a less naive approach
-#         return "date"
-
-#     unique_values = col.dropna().unique()
-#     if len(unique_values)/len(col) > key_threshold and col.dtype not in [np.float64, np.float32, np.float16]:
-#         # columns with many distinct values are considered as "keys"
-#         return "key"
-
-#     if len(unique_values) == 0:
-#         return "Unknown"
-
-#     col_name = col.name.lower()
-#     if any(col_name.startswith(rep) or col_name.endswith(rep) for rep in KEY_REPRESENTATIONS):
-#         return "key"
-
-#     if col.dtype in [np.float64, np.int64]:
-#         return "numerical"
-
-#     numeric_unique_values = pd.Series(
-#         pd.to_numeric(unique_values, errors='coerce'))
-#     numeric_unique_values = numeric_unique_values.dropna()
-
-#     if not numeric_unique_values.empty:
-#         if len(numeric_unique_values) / len(unique_values) > numeric_threshold:
-#             if len(numeric_unique_values) > 2:
-#                 return "numerical"
-#             else:
-#                 unique_values_as_int = set(map(int, unique_values))
-#                 if unique_values_as_int.issubset({0, 1}):
-#                     return "binary"
-#                 else:
-#                     return "numerical"
-
-#     if len(unique_values) == 2 and all(is_binary_value(val) for val in unique_values):
-#         return "binary"
-#     else:
-#         return "categorical"
-
-#     raise ValueError(f"Could not detect type for column {col.name}")
-
-
 def detect_column_type(col, key_threshold=0.8, numeric_threshold=0.90):
     # Try converting to numeric (int or float)
     temp_col = pd.to_numeric(col, errors="coerce")
@@ -257,19 +202,6 @@ def get_type2columns_map(df):
         types2columns_map[col_type].append(col)
 
     return types2columns_map
-
-
-# def get_samples(values, n=15, random=True):
-#     unique_values = values.dropna()#.unique()
-#     if random:
-#         tokens = np.random.choice(
-#             unique_values, min(15, len(unique_values)), replace=False
-#         )
-#     else:
-#         value_counts = values.dropna().value_counts()
-#         most_frequent_values = value_counts.head(n)
-#         tokens = most_frequent_values.index.tolist()
-#     return [str(token) for token in tokens]
 
 
 def fibonacci_hash(x):
@@ -374,3 +306,16 @@ def get_samples(values, n=15, mode="priority_sampling"):
         )
 
     return [str(token) for token in tokens]
+
+
+def is_date(string, fuzzy=False):
+    """
+    Return whether the string can be interpreted as a date.
+    :param string: str, string to check for date
+    :param fuzzy: bool, ignore unknown tokens in string if True
+    """
+    try:
+        parse(str(string), fuzzy=fuzzy)
+        return True
+    except Exception:
+        return False

@@ -14,10 +14,10 @@ project_path = os.getcwd()
 sys.path.append(os.path.join(project_path))
 
 
-from experiments.benchmarks.utils import compute_mean_ranking_reciprocal, create_result_file, record_result
+from experiments.benchmarks.benchmark_utils import compute_mean_ranking_reciprocal, create_result_file, record_result
 
-import algorithms.schema_matching.magneto.magneto as mm
-import algorithms.schema_matching.gpt_matcher.gpt_matcher as gpt_matcher
+import algorithms.magneto.magneto as mm
+import algorithms.gpt_matcher.gpt_matcher as gpt_matcher
 
 
 def get_gpt_method(method):

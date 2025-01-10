@@ -16,14 +16,13 @@ project_path = os.path.dirname(
 )
 sys.path.append(os.path.join(project_path))
 
-from experiments.benchmarks.utils import (
-    compute_mean_ranking_reciprocal,
+from experiments.benchmarks.benchmark_utils import (
     compute_mean_ranking_reciprocal_adjusted,
     create_result_file,
     record_result,
     calculate_recall_at_k,
 )
-import algorithms.schema_matching.magneto.magneto as mm
+from magneto import Magneto
 
 
 def get_matcher(method, model_name=None, mode="header_values_verbose"):
@@ -32,23 +31,23 @@ def get_matcher(method, model_name=None, mode="header_values_verbose"):
     elif method == "ComaInst":
         return Coma(use_instances=True, java_xmx="10096m")
     elif method == "Magneto":
-        return mm.Magneto()
+        return Magneto()
     elif method == "MagnetoFT":
         model_path = os.path.join(
             project_path,
             "models",
             model_name,
         )
-        return mm.Magneto(encoding_mode=mode, embedding_model=model_path)
+        return Magneto(encoding_mode=mode, embedding_model=model_path)
     elif method == "MagnetoGPT":
-        return mm.Magneto(use_bp_reranker=False, use_gpt_reranker=True)
+        return Magneto(use_bp_reranker=False, use_gpt_reranker=True)
     elif method == "MagnetoFTGPT":
         model_path = os.path.join(
             project_path,
             "models",
             model_name,
         )
-        return mm.Magneto(
+        return Magneto(
             encoding_mode=mode,
             embedding_model=model_path,
             use_bp_reranker=False,
@@ -138,18 +137,22 @@ def run_benchmark(
                     "MagnetoFTGPT",
                 ]
 
-                for matcher in matchers:
+                for method_name in matchers:
                     print(
-                        f"Matcher: {matcher}, Source: {source_file}, Target: {target_file}"
+                        f"Matcher: {method_name}, Source: {source_file}, Target: {target_file}"
                     )
 
-                    method_name = matcher
-                    matcher = get_matcher(matcher, model_name, MODE)
+                    matcher = get_matcher(method_name, model_name, MODE)
 
                     start_time = time.time()
-                    matches = valentine_match(df_source, df_target, matcher)
+                    if "Coma" in method_name:
+                        matches = valentine_match(df_source, df_target, matcher)
+                    else:
+                        matches = matcher.get_matches(df_source, df_target)
                     end_time = time.time()
                     runtime = end_time - start_time
+
+                    print("Matches: ", matches)
 
                     mrr_score = compute_mean_ranking_reciprocal_adjusted(
                         matches, ground_truth

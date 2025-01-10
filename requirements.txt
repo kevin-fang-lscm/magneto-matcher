@@ -8,3 +8,4 @@ tiktoken
 transformers
 torch
 mmh3
+valentine

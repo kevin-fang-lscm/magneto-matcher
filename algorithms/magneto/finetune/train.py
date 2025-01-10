@@ -10,8 +10,6 @@ from tqdm import tqdm
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-
 project_path = os.getcwd()
 sys.path.append(os.path.join(project_path))
 
@@ -122,7 +120,7 @@ def main():
     parser.add_argument(
         "--epochs",
         type=int,
-        default=150,
+        default=30,
         help="Number of epochs for training",
     )
     parser.add_argument(

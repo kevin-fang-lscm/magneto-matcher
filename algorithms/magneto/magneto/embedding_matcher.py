@@ -6,8 +6,8 @@ from sentence_transformers import SentenceTransformer
 from transformers import AutoModel, AutoTokenizer
 
 from magneto.column_encoder import ColumnEncoder
-from magneto.embedding_utils import compute_cosine_similarity_simple
-from magneto.utils import detect_column_type, get_samples
+from magneto.utils.embedding_utils import compute_cosine_similarity_simple
+from magneto.utils.utils import detect_column_type, get_samples
 
 DEFAULT_MODELS = ["sentence-transformers/all-mpnet-base-v2"]
 

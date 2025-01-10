@@ -21,12 +21,12 @@ project_path = os.path.dirname(
 sys.path.append(os.path.join(project_path))
 
 
-from experiments.benchmarks.utils import (
+from experiments.benchmarks.benchmark_utils import (
     compute_mean_ranking_reciprocal,
     create_result_file,
     record_result,
 )
-import algorithms.schema_matching.magneto.magneto as mm
+from magneto import Magneto
 
 
 pp = pprint.PrettyPrinter(indent=4)
@@ -48,23 +48,23 @@ def get_matcher(method, model_name=None, mode="header_values_default"):
     elif method == "ComaInst":
         return Coma(use_instances=True, java_xmx="10096m")
     elif method == "Magneto":
-        return mm.Magneto()
+        return Magneto()
     elif method == "MagnetoFT":
         model_path = os.path.join(
             project_path,
             "models",
             model_name,
         )
-        return mm.Magneto(encoding_mode=mode, embedding_model=model_path)
+        return Magneto(encoding_mode=mode, embedding_model=model_path)
     elif method == "MagnetoGPT":
-        return mm.Magneto(use_bp_reranker=False, use_gpt_reranker=True)
+        return Magneto(use_bp_reranker=False, use_gpt_reranker=True)
     elif method == "MagnetoFTGPT":
         model_path = os.path.join(
             project_path,
             "models",
             model_name,
         )
-        return mm.Magneto(
+        return Magneto(
             encoding_mode=mode,
             embedding_model=model_path,
             use_bp_reranker=False,
@@ -151,28 +151,22 @@ def run_valentine_benchmark_one_level(
 
             nmatches = len(ground_truth)
 
-            # print(ground_truth)
-
             if len(ground_truth) == 0:
                 continue
 
             matchers = ["Magneto", "MagnetoGPT", "MagnetoFT", "MagnetoFTGPT"]
 
-            for matcher in matchers:
+            for method_name in matchers:
 
-                print("Running matcher: ", matcher)
-
-                method_name = matcher
-                matcher = get_matcher(matcher, model_name, MODE)
+                print("Running matcher: ", method_name)
+                matcher = get_matcher(method_name, model_name, MODE)
 
                 start_time = time.time()
 
-                try:
+                if "Coma" in method_name:
                     matches = valentine_match(df_source, df_target, matcher)
-                except Exception as e:
-                    print(f"Not able to run the matcher because of exception: {e}")
-                    matches = matcher_results.MatcherResults({})
-                # matches = valentine_match(df_source, df_target, matcher)
+                else:
+                    matches = matcher.get_matches(df_source, df_target)
 
                 end_time = time.time()
                 runtime = end_time - start_time
@@ -352,12 +346,10 @@ def run_valentine_benchmark_three_levels(
 
                     start_time = time.time()
 
-                    try:
+                    if "Coma" in method_name:
                         matches = valentine_match(df_source, df_target, matcher)
-                    except Exception as e:
-                        print(f"Not able to run the matcher because of exception: {e}")
-                        matches = matcher_results.MatcherResults({})
-                    # matches = valentine_match(df_source, df_target, matcher)
+                    else:
+                        matches = matcher.get_matches(df_source, df_target)
 
                     end_time = time.time()
                     runtime = end_time - start_time
@@ -427,7 +419,7 @@ def main():
         "--dataset",
         type=str,
         help="The dataset to run the benchmark on. Default is OpenData",
-        default="OpenData",
+        default="opendata",
     )
 
     parser.add_argument(
