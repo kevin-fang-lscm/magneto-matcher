@@ -63,7 +63,7 @@ export OPENAI_API_KEY=your_api_key_here
 |-- algorithm
     |-- magneto # code for Magneto
         |-- finetune # code for Magneto FT
-        |-- magneto.py # Magneto core
+        |-- magneto # Magneto core
     |-- gpt_matcher # code for GPT-based matcher
         |-- gpt_matcher.py # GPT-based matcher core
     |-- topk_metrics.py # Introducing Recall @ topk
