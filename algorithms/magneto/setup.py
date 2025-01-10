@@ -2,7 +2,7 @@ import os
 import setuptools
 
 
-package_name = "magneto-py"
+package_name = "magneto-python"
 package_dir = "magneto"
 
 

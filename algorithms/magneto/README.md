@@ -5,10 +5,10 @@ Magneto is an innovative framework designed to enhance schema matching (SM) by i
 ## Installation
 
 
-You can install the latest stable version of Magneto from [PyPI](https://pypi.org/project/magneto-py/):
+You can install the latest stable version of Magneto from [PyPI](https://pypi.org/project/magneto-python/):
 
 ```
-pip install magneto-py
+pip install magneto-python
 ```
 
 
