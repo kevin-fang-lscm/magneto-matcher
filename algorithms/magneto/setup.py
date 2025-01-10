@@ -2,7 +2,7 @@ import os
 import setuptools
 
 
-package_name = "magneto"
+package_name = "magneto-py"
 package_dir = "magneto"
 
 
@@ -43,16 +43,16 @@ setuptools.setup(
     install_requires=requires,
     extras_require=extra_requires,
     python_requires=">=3.9",
-    description="library",
+    description="Magneto Python library",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="",
+    url="https://github.com/VIDA-NYU/data-integration-eval/tree/main/algorithms/magneto",
     include_package_data=True,
-    author="",
-    author_email="",
+    author='Yurong Liu, Eduardo Pena, Eden Wu, Aécio Santos, Roque Lopez',
+    author_email='yurong.liu@nyu.edu, em5487@nyu.edu, eden.wu@nyu.edu, aecio.santos@nyu.edu, rlopez@nyu.edu',
     maintainer="",
     maintainer_email="",
-    keywords=["askem", "data integration", "nyu"],
+    keywords=["bdf", "data integration", "nyu"],
     license="Apache-2.0",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
