@@ -2,14 +2,9 @@ import os
 import sys
 import pandas as pd
 import time
-import datetime
 import pprint
-import argparse
 
 pp = pprint.PrettyPrinter(indent=4, sort_dicts=True)
-
-# from valentine.algorithms import Coma
-# from valentine import valentine_match
 
 project_path = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,50 +21,28 @@ from algorithms.magneto.magneto import Magneto
 
 
 def get_matcher(
-    method, embedding_model=None, mode="header_values_verbose", llm_model=None
+    topk = 20,
 ):
-    if method == "Magneto":
-        return Magneto(encoding_mode=mode, embedding_model=embedding_model)
-    elif method == "MagnetoFT":
-        model_path = os.path.join(
-            project_path,
-            "models",
-            embedding_model,
-        )
-        return Magneto(encoding_mode=mode, embedding_model=model_path)
-    elif method == "MagnetoGPT":
-        return Magneto(
-            encoding_mode=mode,
-            embedding_model=embedding_model,
-            llm_model=llm_model,
-            use_bp_reranker=False,
-            use_gpt_reranker=True,
-        )
-    elif method == "MagnetoFTGPT":
-        model_path = os.path.join(
-            project_path,
-            "models",
-            embedding_model,
-        )
-        return Magneto(
-            encoding_mode=mode,
-            embedding_model=model_path,
-            llm_model=llm_model,
-            use_bp_reranker=False,
-            use_gpt_reranker=True,
-        )
-    elif method == "GPT":
-        return Magneto(llm_model=llm_model, gpt_only=True)
+        if topk == 0:
+            return Magneto(
+                encoding_mode="header_values_repeat",
+                embedding_model="mpnet",
+            )
+        else:
+            return Magneto(
+                encoding_mode="header_values_repeat",
+                embedding_model="mpnet",
+                llm_model="gpt-4o-mini",
+                use_bp_reranker=False,
+                use_gpt_reranker=True,
+                topk=topk,
+            )
 
 
 def run_benchmark(
     BENCHMARK="gdc_studies",
     DATASET="gdc_studies",
     ROOT="data/gdc",
-    MODE="header_values_verbose",
-    embedding_model="mpnet-gdc-semantic-64-0.5.pth",
-    llm_model="gpt-4o-mini",
-    gpt_only=False,
 ):
 
     HEADER = [
@@ -105,12 +78,7 @@ def run_benchmark(
         results_dir,
         DATASET
         + "-"
-        + embedding_model
-        + "-"
-        + MODE
-        + "-"
-        + llm_model
-        # + "-gpt_only"
+        + "ablations"
         # + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         + ".csv",
     )
@@ -139,32 +107,12 @@ def run_benchmark(
             gt_df.dropna(inplace=True)
             ground_truth = list(gt_df.itertuples(index=False, name=None))
 
-            if gpt_only:
-                matchers = ["GPT"]
-            else:
-                if embedding_model in ["mpnet", "roberta", "e5", "arctic", "minilm"]:
-                    matchers = ["Magneto", "MagnetoGPT"]
-                else:
-                    if "gpt" in llm_model: 
-                        matchers = ["MagnetoFT", "MagnetoFTGPT"]
-                    else:
-                        matchers = ["MagnetoFTGPT"]
+            matcher_name = "MagnetoGPT"
+            ks = [0, 3, 5, 10]
 
-            for matcher_name in matchers:
-                print(
-                    f"Matcher: {matcher_name}, Source: {source_file}, Target: {target_file}"
-                )
+            for topk in ks:
 
-                if os.path.exists(result_file):
-                    df_existing = pd.read_csv(result_file)
-                    if not df_existing[
-                        (df_existing["method"] == matcher_name)
-                        & (df_existing["target_table"] == gt_file)
-                    ].empty:
-                        print(f"Skipping round for {matcher_name} and {gt_file} because it already exists in results.")
-                        continue
-
-                matcher = get_matcher(matcher_name, embedding_model, MODE, llm_model)
+                matcher = get_matcher(topk=topk)
 
                 start_time = time.time()
                 matches = matcher.get_matches(df_source, df_target)
@@ -218,7 +166,7 @@ def run_benchmark(
                     nrows_src,
                     nrows_tgt,
                     nmatches,
-                    matcher_name,
+                    matcher_name + f"_{topk}",
                     runtime,
                     mrr_score,
                     recall_at_k,
@@ -239,34 +187,7 @@ def run_benchmark(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run the Valentine benchmark")
-
-    parser.add_argument(
-        "--mode",
-        type=str,
-        help="serialization mode",
-        default="header_values_default",
-    )
-    parser.add_argument(
-        "--embedding_model",
-        type=str,
-        help="path to the embedding model",
-        default="mpnet",
-    )
-    parser.add_argument(
-        "--llm_model",
-        type=str,
-        help="reranker to use",
-        default="gpt-4o-mini",
-    )
-    parser.add_argument(
-        "--gpt_only",
-        action="store_true",
-        help="use GPT only",
-    )
-    args = parser.parse_args()
-
-    run_benchmark(MODE=args.mode, embedding_model=args.embedding_model, llm_model=args.llm_model, gpt_only=args.gpt_only)
+    run_benchmark()
 
 
 if __name__ == "__main__":

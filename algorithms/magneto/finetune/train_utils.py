@@ -7,6 +7,8 @@ from torch.utils.data import Sampler
 sentence_transformer_map = {
     "roberta": "sentence-transformers/all-roberta-large-v1",
     "mpnet": "sentence-transformers/all-mpnet-base-v2",
+    "e5": "intfloat/e5-base",
+    "arctic": "Snowflake/snowflake-arctic-embed-l-v2.0"
 }
 
 

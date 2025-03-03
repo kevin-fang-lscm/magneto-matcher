@@ -5,7 +5,6 @@ import time
 import tiktoken
 from openai import OpenAI
 
-
 class LLMReranker:
     def __init__(self, llm_model="gpt-4o-mini"):
         self.llm_model = llm_model
@@ -15,11 +14,17 @@ class LLMReranker:
     def _load_client(self):
         if self.llm_model in ["gpt-4-turbo-preview", "gpt-4o-mini"]:
             api_key = os.getenv("OPENAI_API_KEY")
-
             if not api_key:
                 raise ValueError("API key not found in environment variables.")
-
             return OpenAI(api_key=api_key)
+        
+        elif self.llm_model in ["llama3.3-70b"]:
+            self.llm_model = "meta-llama/Llama-3.3-70B-Instruct"
+            return OpenAI(
+                api_key = os.getenv("LLAMA_API_KEY"),
+                base_url = "https://api.deepinfra.com/v1/openai"
+            )
+            
 
     def num_tokens_from_string(self, string, encoding_name="gpt-4o-mini"):
         encoding = tiktoken.encoding_for_model(encoding_name)
@@ -106,9 +111,6 @@ Candidate Column:"
             + targets
             + "\n\nResponse: "
         )
-        # print('\n')
-        # print(prompt)
-        # print('\n')
         return prompt
 
     def _get_matches_w_score(
@@ -118,8 +120,7 @@ Candidate Column:"
         other_cols,
     ):
         prompt = self._get_prompt(cand, targets)
-        # print(prompt)
-        if self.llm_model in ["gpt-4-turbo-preview", "gpt-4o-mini"]:
+        if self.llm_model in ["gpt-4-turbo-preview", "gpt-4o-mini", "llama3.3-70b", "meta-llama/Llama-3.3-70B-Instruct"]:
             messages = [
                 {
                     "role": "system",
@@ -130,9 +131,6 @@ Candidate Column:"
                     "content": prompt,
                 },
             ]
-            # print(messages[1]["content"])
-
-            # time_begin = time.time()
 
             response = self.client.chat.completions.create(
                 model=self.llm_model,
@@ -141,21 +139,9 @@ Candidate Column:"
             )
             matches = response.choices[0].message.content
 
-            # time_end = time.time()
-            # print("Time taken for completion:", time_end - time_begin)
+        else:
+            raise ValueError("Invalid model name.")
 
-        elif self.llm_model in ["gemma2:9b"]:
-            response = self.client.chat(
-                model=self.llm_model,
-                messages=[
-                    {
-                        "role": "user",
-                        "content": prompt,
-                    },
-                ],
-            )
-            matches = response["message"]["content"]
-        # print(matches)
         return matches
 
     def _parse_scored_matches(self, refined_match):

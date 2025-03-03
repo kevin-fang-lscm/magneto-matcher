@@ -137,11 +137,17 @@ def compute_mean_ranking_reciprocal_detail(matches, ground_truth, details):
 def create_result_file(result_folder, result_file, header):
     if not os.path.exists(result_folder):
         os.makedirs(result_folder)
-    with open(result_file, "w", newline="") as file:
+    
+    file_exists = os.path.isfile(result_file)
+
+    with open(result_file, "a" if file_exists else "w", newline="") as file:
         writer = csv.writer(file)
 
-        writer.writerow(header)
-        print(f"Result file created at {result_file}")
+        if not file_exists:
+            writer.writerow(header)
+            print(f"Result file created at {result_file}")
+        else:
+            print(f"Result file already exists at {result_file}. Appending new rows.")
 
 
 def record_result(result_file, result):

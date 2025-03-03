@@ -2,88 +2,76 @@ import os
 
 import torch
 from fuzzywuzzy import fuzz
-from sentence_transformers import SentenceTransformer
-from transformers import AutoModel, AutoTokenizer
+from sentence_transformers import SentenceTransformer, models
+from transformers import AutoTokenizer
 
 from magneto.column_encoder import ColumnEncoder
 from magneto.utils.embedding_utils import compute_cosine_similarity_simple
 from magneto.utils.utils import detect_column_type, get_samples
 
-DEFAULT_MODELS = ["sentence-transformers/all-mpnet-base-v2"]
-
+DEFAULT_MODELS = {
+    "mpnet": "sentence-transformers/all-mpnet-base-v2",
+    "roberta": "sentence-transformers/all-roberta-large-v1",
+    "e5": "intfloat/e5-base",
+    "arctic": "Snowflake/snowflake-arctic-embed-l-v2.0",
+    "minilm": "sentence-transformers/all-MiniLM-L6-v2"
+}
 
 class EmbeddingMatcher:
     def __init__(self, params):
         self.params = params
         self.topk = params["topk"]
         self.embedding_threshold = params["embedding_threshold"]
-
-        # Dynamically set device to GPU if available, else fallback to CPU
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
         self.model_name = params["embedding_model"]
+        self.use_prompt_query = True if "arctic" in self.model_name else False
 
+        base_key = next((key for key in DEFAULT_MODELS if key in self.model_name), "mpnet")
+        if base_key not in DEFAULT_MODELS:
+            print(f"Warning: No base model detected in {self.model_name}, defaulting to 'mpnet'")
+            base_key = "mpnet"
+
+        base_model_path = DEFAULT_MODELS[base_key]
+        self.model = SentenceTransformer(base_model_path, device=self.device)
+        self.tokenizer = AutoTokenizer.from_pretrained(base_model_path)
+
+        # Load model and tokenizer
         if self.model_name in DEFAULT_MODELS:
-            self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-            # Load the model onto the selected device
-            self.model = AutoModel.from_pretrained(self.model_name).to(self.device)
-            print(f"Loaded ZeroShot Model on {self.device}")
+            print(f"Loaded default model '{self.model_name}' on {self.device}")
         else:
-            # Base model
-            base_model = "sentence-transformers/all-mpnet-base-v2"
-            self.model = SentenceTransformer(base_model)
-            self.tokenizer = AutoTokenizer.from_pretrained(base_model)
-
-            print(f"Loaded SentenceTransformer Model on {self.device}")
-
-            # path to the trained model weights
-            model_path = params["embedding_model"]
-            if os.path.exists(model_path):
-                print(f"Loading trained model from {model_path}")
-                # Load state dict for the SentenceTransformer model
-                state_dict = torch.load(
-                    model_path, map_location=self.device, weights_only=True
-                )
-                # Assuming the state_dict contains the proper model weights and is compatible with SentenceTransformer
+            print(f"Loaded base model '{base_key}' on {self.device}")
+            # Load fine-tuned weights if available
+            if os.path.exists(self.model_name):
+                print(f"Loading fine-tuned weights from {self.model_name}")
+                state_dict = torch.load(self.model_name, map_location=self.device)
                 self.model.load_state_dict(state_dict)
-                self.model.eval()
-                self.model.to(self.device)
+                self.model.eval().to(self.device)
             else:
-                print(
-                    f"Trained model not found at {model_path}, loading default model."
-                )
+                print(f"No local model found at {self.model_name}, using base model")
 
-    def _get_embeddings(self, texts, batch_size=32):
-        if self.model_name in DEFAULT_MODELS:
-            return self._get_embeddings_zs(texts, batch_size)
-        else:
-            return self._get_embeddings_ft(texts, batch_size)
-
-    def _get_embeddings_zs(self, texts, batch_size=32):
+    def _get_embeddings(self, texts, use_prompt_query=False, batch_size=32):
+        """Get embeddings using Sentence Transformer's encode method"""
         embeddings = []
         for i in range(0, len(texts), batch_size):
-            batch_texts = texts[i : i + batch_size]
-            inputs = self.tokenizer(
-                batch_texts,
-                padding=True,
-                # Move inputs to device
-                truncation=True,
-                return_tensors="pt",
-            ).to(self.device)
+            batch = texts[i:i + batch_size]
             with torch.no_grad():
-                outputs = self.model(**inputs)
-            embeddings.append(outputs.last_hidden_state.mean(dim=1))
-        return torch.cat(embeddings)
-
-    def _get_embeddings_ft(self, texts, batch_size=32):
-        embeddings = []
-        for i in range(0, len(texts), batch_size):
-            batch_texts = texts[i : i + batch_size]
-            with torch.no_grad():
-                batch_embeddings = self.model.encode(
-                    batch_texts, show_progress_bar=False, device=self.device
-                )
-            embeddings.append(torch.tensor(batch_embeddings))
+                if use_prompt_query:
+                    print("Using prompt query")
+                    embeds = self.model.encode(
+                        batch,
+                        convert_to_tensor=True,
+                        show_progress_bar=False,
+                        device=self.device,
+                        prompt_name="query"
+                    )
+                else:
+                    embeds = self.model.encode(
+                        batch,
+                        convert_to_tensor=True,
+                        show_progress_bar=False,
+                        device=self.device
+                    )
+            embeddings.append(embeds)
         return torch.cat(embeddings)
 
     def get_embedding_similarity_candidates(self, source_df, target_df):
@@ -94,35 +82,28 @@ class EmbeddingMatcher:
             n_samples=self.params["sampling_size"],
         )
 
-        input_col_repr_dict = {
-            encoder.encode(source_df, col): col for col in source_df.columns
-        }
-        target_col_repr_dict = {
-            encoder.encode(target_df, col): col for col in target_df.columns
-        }
+        input_col_repr_dict = {encoder.encode(source_df, col): col for col in source_df.columns}
+        target_col_repr_dict = {encoder.encode(target_df, col): col for col in target_df.columns}
 
-        cleaned_input_col_repr = list(input_col_repr_dict.keys())
-        cleaned_target_col_repr = list(target_col_repr_dict.keys())
+        cleaned_input_cols = list(input_col_repr_dict.keys())
+        cleaned_target_cols = list(target_col_repr_dict.keys())
 
-        embeddings_input = self._get_embeddings(cleaned_input_col_repr)
-        embeddings_target = self._get_embeddings(cleaned_target_col_repr)
+        input_embeddings = self._get_embeddings(cleaned_input_cols, self.use_prompt_query)
+        target_embeddings = self._get_embeddings(cleaned_target_cols)
 
-        top_k = min(self.topk, len(cleaned_target_col_repr))
-        topk_similarity, topk_indices = compute_cosine_similarity_simple(
-            embeddings_input, embeddings_target, top_k
+        top_k = min(self.topk, len(cleaned_target_cols))
+        similarities, indices = compute_cosine_similarity_simple(
+            input_embeddings, target_embeddings, top_k
         )
 
         candidates = {}
-
-        for i, cleaned_input_col in enumerate(cleaned_input_col_repr):
-            original_input_col = input_col_repr_dict[cleaned_input_col]
-
+        for i, input_col in enumerate(cleaned_input_cols):
+            original_input = input_col_repr_dict[input_col]
             for j in range(top_k):
-                cleaned_target_col = cleaned_target_col_repr[topk_indices[i, j]]
-                original_target_col = target_col_repr_dict[cleaned_target_col]
-                similarity = topk_similarity[i, j].item()
-
+                target_idx = indices[i, j]
+                similarity = similarities[i, j].item()
                 if similarity >= self.embedding_threshold:
-                    candidates[(original_input_col, original_target_col)] = similarity
+                    original_target = target_col_repr_dict[cleaned_target_cols[target_idx]]
+                    candidates[(original_input, original_target)] = similarity
 
         return candidates

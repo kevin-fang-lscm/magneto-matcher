@@ -97,7 +97,7 @@ def main():
     parser.add_argument(
         "--model_type",
         default="mpnet",
-        help="Type of model (roberta, distilbert, mpnet)",
+        help="Type of model (roberta, mpnet)",
     )
     parser.add_argument(
         "--serialization",

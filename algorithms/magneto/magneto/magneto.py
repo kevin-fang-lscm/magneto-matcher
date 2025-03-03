@@ -16,7 +16,6 @@ from magneto.utils.dataframe_table import DataframeTable
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-
 class Magneto:
     """
     Magneto is a class designed to match columns between two Pandas DataFrames.
@@ -28,7 +27,8 @@ class Magneto:
     """
 
     DEFAULT_PARAMS = {
-        "embedding_model": "sentence-transformers/all-mpnet-base-v2",
+        "embedding_model": "mpnet",
+        "llm_model": "gpt-4o-mini",
         "encoding_mode": "header_values_verbose",
         "sampling_mode": "mixed",
         "sampling_size": 10,
@@ -39,6 +39,7 @@ class Magneto:
         "include_equal_matches": True,
         "use_bp_reranker": True,
         "use_gpt_reranker": False,
+        "gpt_only": False,
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -136,7 +137,7 @@ class Magneto:
         source_table = source_table.get_df()
         target_table = target_table.get_df()
 
-        reranker = LLMReranker()
+        reranker = LLMReranker(llm_model=self.params["llm_model"])
 
         source_values = {
             col: get_samples(source_table[col], 10) for col in source_table.columns
@@ -163,6 +164,27 @@ class Magneto:
         )
 
         return matched_columns
+    
+    def apply_strategies_in_order(self, order: Dict[str, int]) -> None:
+        """
+        Applies match strategies in the user-defined order if provided, 
+        ignoring any strategies assigned a value of -1.
+
+        Args:
+            order (Dict[str, int]): A dictionary mapping strategy names (e.g., 'strsim', 'embedding', 'equal')
+                to their execution order (where -1 means "skip this strategy").
+        """
+        strategy_functions = {
+            "strsim": self.apply_strsim_matches,
+            "embedding": self.apply_embedding_matches,
+            "equal": self.apply_equal_matches,
+        }
+
+        order = {k: v for k, v in order.items() if v != -1}
+        sorted_strategies = sorted(order.items(), key=lambda item: item[1])
+
+        for strategy, _ in sorted_strategies:
+            strategy_functions[strategy]()
 
     def get_matches(
         self, source: pd.DataFrame, target: pd.DataFrame
@@ -188,65 +210,60 @@ class Magneto:
 
         # store similarity scores between columns
         # we replace the (col_src: col_tgt:score) entries with scores from "stronger" matchers as we progress
-        self.input_sim_map = {col: {} for col in self.df_source.columns}
 
-        if "strategy_order" in self.params:
-            self.apply_strategies_in_order(self.params["strategy_order"])
-        else:
-            match_strategies = [
-                self.apply_strsim_matches,
-                self.apply_embedding_matches,
-                self.apply_equal_matches,
-            ]
+        if self.params["gpt_only"]:
+            self.input_sim_map = {col: [] for col in self.df_source.columns}
+            # set self.input_sim_map to be all target columns for each source column
+            for col in self.df_source.columns:
+                self.input_sim_map[col] = [(tgt_col, 0.0) for tgt_col in self.df_target.columns]
 
-            for strategy in match_strategies:
-                strategy()  # runs the strategy and updates the input_sim_map
-
-        # filter top-k matcher per column
-        for col_source in self.input_sim_map:
-            self.input_sim_map[col_source] = self.get_top_k_matches(
-                self.input_sim_map[col_source]
+            matches = convert_to_valentine_format(
+                self.input_sim_map, source_table.name, target_table.name
             )
-
-        matches = convert_to_valentine_format(
-            self.input_sim_map, source_table.name, target_table.name
-        )
-
-        if self.params["use_bp_reranker"]:
-            matches = arrange_bipartite_matches(
-                matches,
-                self.df_source,
-                source_table.name,
-                self.df_target,
-                target_table.name,
-            )
-
-        if self.params["use_gpt_reranker"]:
-            print("Applying GPT reranker")
             matches = self.call_llm_reranker(source_table, target_table, matches)
             matches = convert_to_valentine_format(
                 matches, source_table.name, target_table.name
             )
+        
+        else:
+            self.input_sim_map = {col: {} for col in self.df_source.columns}
+            
+            if "strategy_order" in self.params:
+                self.apply_strategies_in_order(self.params["strategy_order"])
+            else:
+                match_strategies = [
+                    self.apply_strsim_matches,
+                    self.apply_embedding_matches,
+                    self.apply_equal_matches,
+                ]
+
+                for strategy in match_strategies:
+                    strategy()  # runs the strategy and updates the input_sim_map
+
+            # filter top-k matcher per column
+            for col_source in self.input_sim_map:
+                self.input_sim_map[col_source] = self.get_top_k_matches(
+                    self.input_sim_map[col_source]
+                )
+
+            matches = convert_to_valentine_format(
+                self.input_sim_map, source_table.name, target_table.name
+            )
+
+            if self.params["use_bp_reranker"]:
+                matches = arrange_bipartite_matches(
+                    matches,
+                    self.df_source,
+                    source_table.name,
+                    self.df_target,
+                    target_table.name,
+                )
+
+            if self.params["use_gpt_reranker"]:
+                print("Applying GPT reranker")
+                matches = self.call_llm_reranker(source_table, target_table, matches)
+                matches = convert_to_valentine_format(
+                    matches, source_table.name, target_table.name
+                )
 
         return matches
-
-    def apply_strategies_in_order(self, order: Dict[str, int]) -> None:
-        """
-        Applies match strategies in the user-defined order if provided, 
-        ignoring any strategies assigned a value of -1.
-
-        Args:
-            order (Dict[str, int]): A dictionary mapping strategy names (e.g., 'strsim', 'embedding', 'equal')
-                to their execution order (where -1 means "skip this strategy").
-        """
-        strategy_functions = {
-            "strsim": self.apply_strsim_matches,
-            "embedding": self.apply_embedding_matches,
-            "equal": self.apply_equal_matches,
-        }
-
-        order = {k: v for k, v in order.items() if v != -1}
-        sorted_strategies = sorted(order.items(), key=lambda item: item[1])
-
-        for strategy, _ in sorted_strategies:
-            strategy_functions[strategy]()

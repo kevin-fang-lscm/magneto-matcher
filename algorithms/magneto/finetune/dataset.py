@@ -84,17 +84,6 @@ class CustomDataset(Dataset):
         text = self._serialize(key, values)
         return text, class_id
 
-    # def _serialize(self, header, values):
-    #     if values:
-    #         col = pd.DataFrame({header: values})[header]
-    #         data_type = detect_column_type(pd.DataFrame({header: values})[header])
-    #     else:
-    #         data_type = "unknown"
-    #     serialization = {
-    #         "header_values_default": f"{self.tokenizer.cls_token}{header}{self.tokenizer.sep_token}{data_type}{self.tokenizer.sep_token}{','.join(map(str, values))}",
-    #         "header_values_prefix": f"{self.tokenizer.cls_token}header:{header}{self.tokenizer.sep_token}datatype:{data_type}{self.tokenizer.sep_token}values:{', '.join(map(str, values))}",
-    #     }
-    #     return serialization[self.serialization]
     def _serialize(self, header, values):
         if values:
             col = pd.DataFrame({header: values})[header]
