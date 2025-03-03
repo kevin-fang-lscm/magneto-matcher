@@ -49,12 +49,13 @@ This step is optional but required for `MagnetoFT` and `MagnetoFTGPT`. Download 
 This step is optional but required for `MagnetoGPT` and `MagnetoFTGPT`. Set the `OPENAI_API_KEY` environment variable using the following commands based on your operating system:
 #### For Windows:
 ```bash
-set OPENAI_API_KEY=your_api_key_here
+set OPENAI_API_KEY=your_openai_api_key_here
 ```
 #### For macOS/Linux:
 ```bash
 export OPENAI_API_KEY=your_api_key_here
 ```
+To use `LLaMA3.3` as the LLM reranker, you can also set up `LLAMA_API_KEY` accordingly.
 
 ## :gear: 2. Code Structure
 > note that batched benchmark on baseline methods are on this [repo](https://github.com/VIDA-NYU/data-harmonization-benchmark).
@@ -82,16 +83,15 @@ export OPENAI_API_KEY=your_api_key_here
 ```
 
 ## :gear: 3. Example Usage
-For reproducing the GDC benchmark results, you can run the following command:
+To reproduce the GDC benchmark results, you can run the following command:
 ```bash
-python experiments/benchmarks/gdc_benchmark.py --mode [MODE]
+python experiments/benchmarks/gdc_benchmark.py --mode [MODE] --embedding_model [EMBEDDING_MODEL] --llm_model [LLM_MODEL]
 ```
-where `[MODE]` can be one of the following:
-- `header-value-default`
-- `header-value-repeat`
-- `header-value-verbose`
+- `[MODE]`: Specifies the operational mode. Options include: `header-value-default`, `header-value-repeat`, and `header-value-verbose`.
+- `[EMBEDDING_MODEL]`: Selects the pre-trained language model to use as the retriever. Available options are `mpnet`, `roberta`, `e5`, `arctic`, or `minilm`. The default model is `mpnet`.
+- `[LLM_MODEL]`: Specifies the llm-based reranker. Options are `gpt-4o-mini` or `llama3.3-70b`.
 
-For reproducing the Valentine benchmark results, you can run the following command:
+To reproduce the Valentine benchmark results, you can run the following command:
 ```bash
 python experiments/benchmarks/valentine_benchmark.py --mode [MODE] --dataset [DATASET]
 ```
@@ -102,4 +102,4 @@ where `[MODE]` is similar to the GDC benchmark and `[DATASET]` can be one of the
 - `tpc`
 - `wikidata`
 
-You can change the Mageto configurations in the corresponding benchmark file.
+You can also change other Mageto configurations in the corresponding benchmark file.
