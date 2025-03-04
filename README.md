@@ -40,7 +40,7 @@ pip install -r requirements.txt
 The data folder contains the datasets used for data integration tasks. Download the data folder from [this Google Drive link](https://drive.google.com/drive/folders/19kCWQI0CWHs1ZW9RQEUSeK6nuXoA-5B7?usp=sharing) and place it in the `data` directory. Contents include:
 - **`gdc`**: GDC benchmark from the paper. Contains ten tumor analysis study datasets to be matched to Genomics Data Commons (GDC) standards.
 - **`Valentine-datasets`**: Schema matching benchmark from [Valentine paper](https://delftdata.github.io/valentine/) (also available on [Zenodo](https://zenodo.org/records/5084605#.YOgWHBMzY-Q): DOI 10.5281/zenodo.5084605).
-- **`synthetic`**: Synthetic data generated using `llm-aug` and `struct-aug` for LLM-based fine-tuning. You can use the provided JSON files directly or regenerate by modifying the underlying LLM model and other configurations in the [code](https://github.com/VIDA-NYU/data-integration-eval/blob/main/algorithms/magneto/finetune/data_generation/synthetic_data_gen.py).
+- **`synthetic`**: Synthetic data generated using `llm-aug` and `struct-aug` for LLM-based fine-tuning. You can use the provided JSON files directly or regenerate by modifying the underlying LLM model and other configurations in the [code](https://github.com/VIDA-NYU/data-integration-eval/blob/main/algorithms/magneto/finetune/data_generation/synthetic_data_gen.py). Processed data for synthetic match generation is located in the same folder under `unique_columns` directory.
 
 ### 🔥 1.4 Download the fine-tuned model for GDC benchmark
 
