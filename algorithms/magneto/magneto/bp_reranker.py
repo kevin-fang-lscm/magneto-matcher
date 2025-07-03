@@ -1,54 +1,54 @@
 import numpy as np
 from scipy.optimize import linear_sum_assignment
-from valentine import MatcherResults
+#from valentine import MatcherResults
 
 
-def bipartite_filtering(
-    initial_matches, source_table_name, source_table, target_table, target_table_name
-):
-    source_cols = set()
-    target_cols = set()
-    for (col_source, col_target), score in initial_matches.items():
-        col_source = col_source[1]
-        col_target = col_target[1]
-        source_cols.add(col_source)
-        target_cols.add(col_target)
+# def bipartite_filtering(
+#     initial_matches, source_table_name, source_table, target_table, target_table_name
+# ):
+#     source_cols = set()
+#     target_cols = set()
+#     for (col_source, col_target), score in initial_matches.items():
+#         col_source = col_source[1]
+#         col_target = col_target[1]
+#         source_cols.add(col_source)
+#         target_cols.add(col_target)
 
-    # Map columns to indices
-    source_col_to_num = {col: idx for idx, col in enumerate(source_cols)}
-    target_col_to_num = {col: idx for idx, col in enumerate(target_cols)}
+#     # Map columns to indices
+#     source_col_to_num = {col: idx for idx, col in enumerate(source_cols)}
+#     target_col_to_num = {col: idx for idx, col in enumerate(target_cols)}
 
-    # Initialize the score matrix with zeros
-    score_matrix = np.zeros((len(source_cols), len(target_cols)))
+#     # Initialize the score matrix with zeros
+#     score_matrix = np.zeros((len(source_cols), len(target_cols)))
 
-    # Populate the matrix with scores from initial matches
-    for (col_source, col_target), score in initial_matches.items():
-        col_source = col_source[1]
-        col_target = col_target[1]
-        source_idx = source_col_to_num[col_source]
-        target_idx = target_col_to_num[col_target]
-        score_matrix[source_idx, target_idx] = score
+#     # Populate the matrix with scores from initial matches
+#     for (col_source, col_target), score in initial_matches.items():
+#         col_source = col_source[1]
+#         col_target = col_target[1]
+#         source_idx = source_col_to_num[col_source]
+#         target_idx = target_col_to_num[col_target]
+#         score_matrix[source_idx, target_idx] = score
 
-    # print("Score Matrix:\n", score_matrix)
+#     # print("Score Matrix:\n", score_matrix)
 
-    row_ind, col_ind = linear_sum_assignment(score_matrix, maximize=True)
-    assignment = list(zip(row_ind, col_ind))
+#     row_ind, col_ind = linear_sum_assignment(score_matrix, maximize=True)
+#     assignment = list(zip(row_ind, col_ind))
 
-    # print("Assignment:", assignment)
+#     # print("Assignment:", assignment)
 
-    filtered_matches = {}
+#     filtered_matches = {}
 
-    source_idx_to_col = {idx: col for col, idx in source_col_to_num.items()}
-    target_idx_to_col = {idx: col for col, idx in target_col_to_num.items()}
+#     source_idx_to_col = {idx: col for col, idx in source_col_to_num.items()}
+#     target_idx_to_col = {idx: col for col, idx in target_col_to_num.items()}
 
-    for source_idx, target_idx in assignment:
-        source_col = source_idx_to_col[source_idx]
-        target_col = target_idx_to_col[target_idx]
-        filtered_matches[
-            ((source_table_name, source_col), (target_table_name, target_col))
-        ] = score_matrix[source_idx, target_idx]
+#     for source_idx, target_idx in assignment:
+#         source_col = source_idx_to_col[source_idx]
+#         target_col = target_idx_to_col[target_idx]
+#         filtered_matches[
+#             ((source_table_name, source_col), (target_table_name, target_col))
+#         ] = score_matrix[source_idx, target_idx]
 
-    return MatcherResults(filtered_matches)
+#     return MatcherResults(filtered_matches)
 
 
 def arrange_bipartite_matches(

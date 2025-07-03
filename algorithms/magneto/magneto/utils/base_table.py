@@ -5,8 +5,8 @@ from typing import Dict, List
 
 import pandas as pd
 
-from magneto.utils.base_column import BaseColumn
-from magneto.utils.utils import is_date
+from .base_column import BaseColumn
+from .utils import is_date
 
 
 class BaseTable(ABC):

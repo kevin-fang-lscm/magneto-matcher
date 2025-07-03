@@ -1,6 +1,6 @@
 # Source: https://github.com/delftdata/valentine/blob/master/valentine/data_sources/dataframe/dataframe_table.py
 
-from magneto.utils.base_column import BaseColumn
+from .base_column import BaseColumn
 
 
 class DataframeColumn(BaseColumn):

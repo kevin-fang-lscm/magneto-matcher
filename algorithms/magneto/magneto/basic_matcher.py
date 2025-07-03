@@ -1,6 +1,6 @@
 from fuzzywuzzy import fuzz
 
-from magneto.utils.utils import (
+from .utils.utils import (
     common_prefix,
     detect_column_type,
     get_samples,

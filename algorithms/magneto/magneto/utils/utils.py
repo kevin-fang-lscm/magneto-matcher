@@ -4,10 +4,10 @@ import mmh3
 import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
-from valentine import MatcherResults
+#from valentine import MatcherResults
 from dateutil.parser import parse
 
-from magneto.utils.constants import (
+from .constants import (
     BINARY_VALUES,
     KEY_REPRESENTATIONS,
     NULL_REPRESENTATIONS,
@@ -17,15 +17,15 @@ PHI_FRACTION = 0.6180339887  # φ - 1
 np.random.seed(42)
 
 
-def convert_to_valentine_format(matched_columns, source_table, target_table):
-    valentine_format = {}
-    for source_column, matches in matched_columns.items():
-        for target_column, score in matches:
-            key = (source_table, source_column), (target_table, target_column)
-            valentine_format[key] = score
-    if isinstance(valentine_format, MatcherResults):
-        return valentine_format
-    return MatcherResults(valentine_format)
+# def convert_to_valentine_format(matched_columns, source_table, target_table):
+#     valentine_format = {}
+#     for source_column, matches in matched_columns.items():
+#         for target_column, score in matches:
+#             key = (source_table, source_column), (target_table, target_column)
+#             valentine_format[key] = score
+#     if isinstance(valentine_format, MatcherResults):
+#         return valentine_format
+#     return MatcherResults(valentine_format)
 
 
 def common_prefix(strings):

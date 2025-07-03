@@ -5,9 +5,9 @@ from fuzzywuzzy import fuzz
 from sentence_transformers import SentenceTransformer, models
 from transformers import AutoTokenizer
 
-from magneto.column_encoder import ColumnEncoder
-from magneto.utils.embedding_utils import compute_cosine_similarity_simple
-from magneto.utils.utils import detect_column_type, get_samples
+from .column_encoder import ColumnEncoder
+from .utils.embedding_utils import compute_cosine_similarity_simple
+from .utils.utils import detect_column_type, get_samples
 
 DEFAULT_MODELS = {
     "mpnet": "sentence-transformers/all-mpnet-base-v2",

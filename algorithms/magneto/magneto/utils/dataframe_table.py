@@ -3,8 +3,8 @@
 from typing import List
 import pandas as pd
 
-from magneto.utils.base_table import BaseTable
-from magneto.utils.dataframe_column import DataframeColumn
+from .base_table import BaseTable
+from .dataframe_column import DataframeColumn
 
 
 class DataframeTable(BaseTable):

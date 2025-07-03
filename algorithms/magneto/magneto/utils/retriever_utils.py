@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from pandas.api.types import is_datetime64_any_dtype, is_float_dtype, is_integer_dtype
 
-from magneto.utils.constants import (
+from .constants import (
     BINARY_VALUES,
     KEY_REPRESENTATIONS,
     NULL_REPRESENTATIONS,

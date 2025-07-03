@@ -2,17 +2,17 @@ import os
 from typing import Dict, Tuple, Any
 import pandas as pd
 
-from magneto.basic_matcher import get_str_similarity_candidates
-from magneto.bp_reranker import arrange_bipartite_matches
-from magneto.embedding_matcher import DEFAULT_MODELS, EmbeddingMatcher
-from magneto.llm_reranker import LLMReranker
-from magneto.utils.utils import (
+from .basic_matcher import get_str_similarity_candidates
+from .bp_reranker import arrange_bipartite_matches
+from .embedding_matcher import DEFAULT_MODELS, EmbeddingMatcher
+from .llm_reranker import LLMReranker
+from .utils.utils import (
     clean_df,
-    convert_to_valentine_format,
+   # convert_to_valentine_format,
     get_samples,
     remove_invalid_characters,
 )
-from magneto.utils.dataframe_table import DataframeTable
+from .utils.dataframe_table import DataframeTable
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -211,19 +211,22 @@ class Magneto:
         # store similarity scores between columns
         # we replace the (col_src: col_tgt:score) entries with scores from "stronger" matchers as we progress
 
-        if self.params["gpt_only"]:
-            self.input_sim_map = {col: [] for col in self.df_source.columns}
-            # set self.input_sim_map to be all target columns for each source column
-            for col in self.df_source.columns:
-                self.input_sim_map[col] = [(tgt_col, 0.0) for tgt_col in self.df_target.columns]
+        # if self.params["gpt_only"]:
+        #     self.input_sim_map = {col: [] for col in self.df_source.columns}
+        #     # set self.input_sim_map to be all target columns for each source column
+        #     for col in self.df_source.columns:
+        #         self.input_sim_map[col] = [(tgt_col, 0.0) for tgt_col in self.df_target.columns]
 
-            matches = convert_to_valentine_format(
-                self.input_sim_map, source_table.name, target_table.name
-            )
-            matches = self.call_llm_reranker(source_table, target_table, matches)
-            matches = convert_to_valentine_format(
-                matches, source_table.name, target_table.name
-            )
+        #     matches = convert_to_valentine_format(
+        #         self.input_sim_map, source_table.name, target_table.name
+        #     )
+        #     matches = self.call_llm_reranker(source_table, target_table, matches)
+        #     matches = convert_to_valentine_format(
+        #         matches, source_table.name, target_table.name
+        #     )
+
+        if False:
+            pass
         
         else:
             self.input_sim_map = {col: {} for col in self.df_source.columns}
@@ -246,24 +249,24 @@ class Magneto:
                     self.input_sim_map[col_source]
                 )
 
-            matches = convert_to_valentine_format(
-                self.input_sim_map, source_table.name, target_table.name
-            )
+        #     matches = convert_to_valentine_format(
+        #         self.input_sim_map, source_table.name, target_table.name
+        #     )
 
-            if self.params["use_bp_reranker"]:
-                matches = arrange_bipartite_matches(
-                    matches,
-                    self.df_source,
-                    source_table.name,
-                    self.df_target,
-                    target_table.name,
-                )
+        #     if self.params["use_bp_reranker"]:
+        #         matches = arrange_bipartite_matches(matches,
+        #             self.df_source,
+        #             source_table.name,
+        #             self.df_target,
+        #             target_table.name,
+        #         )
 
-            if self.params["use_gpt_reranker"]:
-                print("Applying GPT reranker")
-                matches = self.call_llm_reranker(source_table, target_table, matches)
-                matches = convert_to_valentine_format(
-                    matches, source_table.name, target_table.name
-                )
+        #     if self.params["use_gpt_reranker"]:
+        #         print("Applying GPT reranker")
+        #         matches = self.call_llm_reranker(source_table, target_table, matches)
+        #         matches = convert_to_valentine_format(
+        #             matches, source_table.name, target_table.name
+        #         )
 
-        return matches
+        # return matches
+        return self.input_sim_map
